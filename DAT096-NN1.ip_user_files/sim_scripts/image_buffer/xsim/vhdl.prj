@@ -1,0 +1,4 @@
+vhdl xil_defaultlib  \
+"../../../../DAT096-NN1.srcs/sources_1/ip/image_buffer/image_buffer_sim_netlist.vhdl" \
+
+nosort

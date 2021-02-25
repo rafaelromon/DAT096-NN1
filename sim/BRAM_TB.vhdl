@@ -5,8 +5,8 @@ use ieee.numeric_std.all;
 
 entity BRAM_TB is
     GENERIC(IMG_ADDR:INTEGER:=4;
-            IMG_WIDTH:INTEGER:=14;
-            IMG_DEPTH:INTEGER:=12);
+            IMG_WIDTH:INTEGER:=128;
+            IMG_DEPTH:INTEGER:=12*128);
 end BRAM_TB;
 
 architecture Behavioral of BRAM_TB is
