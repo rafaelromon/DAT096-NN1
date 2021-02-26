@@ -4,7 +4,7 @@ use ieee.std_logic_unsigned.all;
 use ieee.numeric_std.all;
 
 entity BRAM_TB is
-    GENERIC(IMG_ADDR:INTEGER:=4;
+    GENERIC(IMG_ADDR:INTEGER:=11;
             IMG_WIDTH:INTEGER:=128;
             IMG_DEPTH:INTEGER:=12*128);
 end BRAM_TB;
