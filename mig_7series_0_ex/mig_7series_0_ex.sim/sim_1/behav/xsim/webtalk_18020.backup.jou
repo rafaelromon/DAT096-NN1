@@ -1,0 +1,12 @@
+#-----------------------------------------------------------
+# Webtalk v2019.1 (64-bit)
+# SW Build 2552052 on Fri May 24 14:49:42 MDT 2019
+# IP Build 2548770 on Fri May 24 18:01:18 MDT 2019
+# Start of session at: Wed Feb 24 14:46:55 2021
+# Process ID: 18020
+# Current directory: Z:/git/github/DAT096-NN1/mig_7series_0_ex/mig_7series_0_ex.sim/sim_1/behav/xsim
+# Command line: wbtcv.exe -mode batch -source Z:/git/github/DAT096-NN1/mig_7series_0_ex/mig_7series_0_ex.sim/sim_1/behav/xsim/xsim.dir/sim_tb_top_behav/webtalk/xsim_webtalk.tcl -notrace
+# Log file: Z:/git/github/DAT096-NN1/mig_7series_0_ex/mig_7series_0_ex.sim/sim_1/behav/xsim/webtalk.log
+# Journal file: Z:/git/github/DAT096-NN1/mig_7series_0_ex/mig_7series_0_ex.sim/sim_1/behav/xsim\webtalk.jou
+#-----------------------------------------------------------
+source Z:/git/github/DAT096-NN1/mig_7series_0_ex/mig_7series_0_ex.sim/sim_1/behav/xsim/xsim.dir/sim_tb_top_behav/webtalk/xsim_webtalk.tcl -notrace

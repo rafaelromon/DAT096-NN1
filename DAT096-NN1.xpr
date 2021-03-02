@@ -41,13 +41,13 @@
     <Option Name="WTVcsLaunchSim" Val="0"/>
     <Option Name="WTRivieraLaunchSim" Val="0"/>
     <Option Name="WTActivehdlLaunchSim" Val="0"/>
-    <Option Name="WTXSimExportSim" Val="3"/>
-    <Option Name="WTModelSimExportSim" Val="3"/>
-    <Option Name="WTQuestaExportSim" Val="3"/>
-    <Option Name="WTIesExportSim" Val="3"/>
-    <Option Name="WTVcsExportSim" Val="3"/>
-    <Option Name="WTRivieraExportSim" Val="3"/>
-    <Option Name="WTActivehdlExportSim" Val="3"/>
+    <Option Name="WTXSimExportSim" Val="5"/>
+    <Option Name="WTModelSimExportSim" Val="5"/>
+    <Option Name="WTQuestaExportSim" Val="5"/>
+    <Option Name="WTIesExportSim" Val="5"/>
+    <Option Name="WTVcsExportSim" Val="5"/>
+    <Option Name="WTRivieraExportSim" Val="5"/>
+    <Option Name="WTActivehdlExportSim" Val="5"/>
     <Option Name="GenerateIPUpgradeLog" Val="TRUE"/>
     <Option Name="XSimRadix" Val="hex"/>
     <Option Name="XSimTimeUnit" Val="ns"/>
@@ -87,6 +87,18 @@
           <Attr Name="ScopedToCell" Val="mig_7series_0"/>
         </FileInfo>
       </File>
+      <File Path="$PSRCDIR/sources_1/new/state_machine_scribble.vhd">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
+      <File Path="$PSRCDIR/sources_1/new/address_decoder.vhd">
+        <FileInfo>
+          <Attr Name="UsedIn" Val="synthesis"/>
+          <Attr Name="UsedIn" Val="simulation"/>
+        </FileInfo>
+      </File>
       <Config>
         <Option Name="DesignMode" Val="RTL"/>
         <Option Name="TopModule" Val="DDR_TB"/>
@@ -94,7 +106,7 @@
     </FileSet>
     <FileSet Name="constrs_1" Type="Constrs" RelSrcDir="$PSRCDIR/constrs_1">
       <Filter Type="Constrs"/>
-      <File Path="$PPRDIR/constraints/Nexys4DDR_Master.xdc">
+      <File Path="$PPRDIR/AC701_Rev1_0_ucf.xdc">
         <FileInfo>
           <Attr Name="UsedIn" Val="synthesis"/>
           <Attr Name="UsedIn" Val="implementation"/>
