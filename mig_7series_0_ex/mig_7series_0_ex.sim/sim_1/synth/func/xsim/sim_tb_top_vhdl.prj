@@ -1,6 +1,0 @@
-# compile vhdl design source files
-vhdl xil_defaultlib  \
-"sim_tb_top_func_synth.vhd" \
-
-# Do not sort compile order
-nosort
