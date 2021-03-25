@@ -4,7 +4,7 @@ use ieee.numeric_std.all;
 
 entity CNN is
  PORT (clk:in std_logic;
-       resetn: in std_logic;
+       reset_p: in std_logic;
        start:in std_logic;       
        image:in std_logic_vector(16383 downto 0);
        
@@ -17,9 +17,9 @@ architecture CNN_arch of CNN is
     signal enable: std_logic := '0';
 
 begin
-    stupid_cnn: process(clk, resetn)
+    stupid_cnn: process(clk, reset_p)
     begin
-        if resetn='1' then
+        if reset_p='1' then
              finished <= '0';
              result <= (others => '0');                           
         elsif RISING_EDGE(clk) then
