@@ -15,14 +15,22 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
+library UNISIM;
+USE UNISIM.Vcomponents.ALL;
+
 ENTITY TOP_LEVEL IS
 	PORT
 	(
-		SYSCLK_P     : IN STD_LOGIC;
+		ref_clk_clk_p     : IN STD_LOGIC;
+		ref_clk_clk_n     : IN STD_LOGIC;
 		CPU_RESET    : IN STD_LOGIC;
 		GPIO_SW_N    : IN STD_LOGIC;
 		USB_UART_TX  : OUT STD_LOGIC;
-		USB_UART_RTS : OUT STD_LOGIC
+		USB_UART_RTS : OUT STD_LOGIC;
+		GPIO_LED_0: OUT STD_LOGIC;
+		GPIO_LED_1: OUT STD_LOGIC;
+		GPIO_LED_2: OUT STD_LOGIC;
+		GPIO_LED_3: OUT STD_LOGIC
 	);
 END TOP_LEVEL;
 
@@ -30,13 +38,14 @@ ARCHITECTURE TOP_LEVEL_arch OF TOP_LEVEL IS
 
 	TYPE states IS (Idle, LoadImage, ProcessImage, SendResult);
 	SIGNAL state_machine : states := Idle;
-	SIGNAL reset_signal: STD_LOGIC := '0';
-
+	SIGNAL reset_signal: STD_LOGIC := '0';        
+    SIGNAL clk: STD_LOGIC;
+    
 	SIGNAL cnn_start : STD_LOGIC := '0';
 	SIGNAL loaded_image : STD_LOGIC_VECTOR(16383 DOWNTO 0);
 	SIGNAL cnn_finished : STD_LOGIC;
 	SIGNAL cnn_result : STD_LOGIC_VECTOR(5 DOWNTO 0);
-
+    
 	COMPONENT CNN IS
 		PORT
 		(
@@ -66,10 +75,22 @@ ARCHITECTURE TOP_LEVEL_arch OF TOP_LEVEL IS
 	END COMPONENT UART_TX;
 
 BEGIN
+    
+    -- LVDS input to internal single
+  CLK_IBUFDS : IBUFDS
+  generic map(
+    IOSTANDARD => "DEFAULT"
+  )
+  port map(
+    I  => ref_clk_clk_p,
+    IB => ref_clk_clk_n,
+    O  => clk
+    );
+    
 	CNN_comp : CNN -- Instantiate CNN transmitter
 	PORT MAP
 	(
-		clk       => SYSCLK_P,
+		clk       => clk,
 		reset_p   => reset_signal,
 		start     => cnn_start,
 		image     => loaded_image,
@@ -80,7 +101,7 @@ BEGIN
 	UART_TX_comp : UART_TX -- Instantiate UART transmitter
 	PORT MAP
 	(
-		clk        => SYSCLK_P,
+		clk        => clk,
 		TX_DV      => TX_DV,
 		TX_Byte    => TX_Byte,
 		TX_Active  => USB_UART_RTS,
@@ -89,16 +110,27 @@ BEGIN
 	);
 
 	-- Purpose: Control state machine
-	TOP_LEVEL_process : PROCESS (SYSCLK_P, CPU_RESET)
+	TOP_LEVEL_process : PROCESS (clk, CPU_RESET)
 	BEGIN
-	    IF CPU_RESET = '1' THEN
+	    IF CPU_RESET = '1' THEN	      
+	    
+	       GPIO_LED_0 <= '1';
+	       GPIO_LED_1 <= '1';
+	       GPIO_LED_2 <= '1';
+	       GPIO_LED_3 <= '1';
+	       	       
            state_machine <= Idle;
 
-		ELSIF RISING_EDGE(SYSCLK_P) THEN
+		ELSIF RISING_EDGE(clk) THEN
 			CASE state_machine IS
 				WHEN Idle =>
-
-					IF GPIO_SW_N = '0' THEN -- TODO this will cause problems once moved into the board
+                                       
+                    GPIO_LED_0 <= '1';
+                    GPIO_LED_1 <= '0';
+                    GPIO_LED_2 <= '0';
+                    GPIO_LED_3 <= '0';                                        
+                    
+					IF GPIO_SW_N = '1' THEN -- TODO this will cause problems once moved into the board
 						reset_signal <= '0';
 						state_machine <= LoadImage;
 					ELSE
@@ -106,12 +138,19 @@ BEGIN
 					END IF;
 
 				WHEN LoadImage =>
+				
+				    GPIO_LED_0 <= '0';
+                    GPIO_LED_1 <= '1';
+				
 					-- TODO this does nothing at the moment
 					loaded_image <= (OTHERS => '0');
 					state_machine <= ProcessImage;
 
 				WHEN ProcessImage =>
-
+                    
+                    GPIO_LED_1 <= '0';
+                    GPIO_LED_2 <= '1';
+                    
 					IF cnn_finished = '1' THEN
 						cnn_start <= '0';
 					    state_machine <= SendResult;
@@ -120,13 +159,16 @@ BEGIN
                     END IF;
 
 				WHEN SendResult =>
-
-					IF TX_DONE = '1' THEN
+                    
+                    GPIO_LED_2 <= '0';
+                    GPIO_LED_3 <= '1';
+                    
+					IF TX_Done = '1' THEN
 						TX_DV <= '0';
 						state_machine <= Idle;
 					ELSE
 						TX_DV <= '1';
-						TX_BYTE <= cnn_result;
+						TX_Byte <= cnn_result & "00";
 					END IF;
 
 			END CASE;

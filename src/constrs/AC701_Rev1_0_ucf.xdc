@@ -2,12 +2,30 @@
 # CLOCK
 ####
 
-set_property PACKAGE_PIN R3 [get_ports SYSCLK_P]
-set_property IOSTANDARD LVDS_25 [get_ports SYSCLK_P]
+#set_property PACKAGE_PIN R3 [get_ports SYSCLK_P]
+#set_property IOSTANDARD LVDS_25  [get_ports SYSCLK_P]
 #set_property PACKAGE_PIN P3 [get_ports SYSCLK_N]
-#set_property IOSTANDARD LVDS_25 [get_ports SYSCLK_N]
+#set_property IOSTANDARD DIFF_SSTL15  [get_ports SYSCLK_N]
 
-create_clock -period 10.00 -name SYSCLK_P -waveform {0.00 5.00} [get_ports SYSCLK_P]
+#set_property PACKAGE_PIN M21 [get_ports USER_CLOCK_P]
+#set_property IOSTANDARD LVDS_25 [get_ports USER_CLOCK_P]
+#set_property PACKAGE_PIN M22 [get_ports USER_CLOCK_N]
+#set_property IOSTANDARD LVDS_25 [get_ports USER_CLOCK_N]
+
+#set_property PACKAGE_PIN P16 [get_ports clk]
+#set_property IOSTANDARD LVCMOS33 [get_ports clk]
+
+set_property DIFF_TERM TRUE [get_ports ref_clk_clk_p]
+#set_property DIFF_TERM TRUE [get_ports ref_clk_clk_n]
+
+set_property PACKAGE_PIN D19 [get_ports ref_clk_clk_p]
+set_property PACKAGE_PIN C19 [get_ports ref_clk_clk_n]
+
+set_property IOSTANDARD LVDS_25 [get_ports ref_clk_clk_p]
+set_property IOSTANDARD LVDS_25 [get_ports ref_clk_clk_n]
+
+create_clock -period 10.00 -name ref_clk_clk_p -waveform {0.00 5.00} [get_ports ref_clk_clk_p]
+create_clock -period 10.00 -name ref_clk_clk_n -waveform {5.00 10.00} [get_ports ref_clk_clk_n]
 
 ####
 # UART
@@ -39,6 +57,19 @@ set_property IOSTANDARD LVCMOS15 [get_ports GPIO_SW_N]
 
 set_property PACKAGE_PIN U4 [get_ports CPU_RESET]
 set_property IOSTANDARD LVCMOS15 [get_ports CPU_RESET]
+
+####
+# LED 
+####
+
+set_property PACKAGE_PIN M26 [get_ports GPIO_LED_0]
+set_property IOSTANDARD LVCMOS33 [get_ports GPIO_LED_0]
+set_property PACKAGE_PIN T24 [get_ports GPIO_LED_1]
+set_property IOSTANDARD LVCMOS33 [get_ports GPIO_LED_1]
+set_property PACKAGE_PIN T25 [get_ports GPIO_LED_2]
+set_property IOSTANDARD LVCMOS33 [get_ports GPIO_LED_2]
+set_property PACKAGE_PIN R26 [get_ports GPIO_LED_3]
+set_property IOSTANDARD LVCMOS33 [get_ports GPIO_LED_3]
 
 #set_property PACKAGE_PIN AB22 [get_ports No]
 #set_property IOSTANDARD LVCMOS25 [get_ports No]
@@ -245,8 +276,6 @@ set_property IOSTANDARD LVCMOS15 [get_ports CPU_RESET]
 #set_property IOSTANDARD LVCMOS33 [get_ports FLASH_D3]
 #set_property PACKAGE_PIN P15 [get_ports CTRL2_PWRGOOD]
 #set_property IOSTANDARD LVCMOS33 [get_ports CTRL2_PWRGOOD]
-#set_property PACKAGE_PIN P16 [get_ports FPGA_EMCclk]
-#set_property IOSTANDARD LVCMOS33 [get_ports FPGA_EMCclk]
 #set_property PACKAGE_PIN N16 [get_ports FMC1_HPC_PRSNT_M2C_B]
 #set_property IOSTANDARD LVCMOS33 [get_ports FMC1_HPC_PRSNT_M2C_B]
 #set_property PACKAGE_PIN N17 [get_ports FMC1_HPC_PG_M2C]
@@ -279,10 +308,6 @@ set_property IOSTANDARD LVCMOS15 [get_ports CPU_RESET]
 #set_property IOSTANDARD LVCMOS33 [get_ports LCD_DB7_LS]
 #set_property PACKAGE_PIN L23 [get_ports LCD_RS_LS]
 #set_property IOSTANDARD LVCMOS33 [get_ports LCD_RS_LS]
-#set_property PACKAGE_PIN M21 [get_ports USER_CLOCK_P]
-#set_property IOSTANDARD LVDS_25 [get_ports USER_CLOCK_P]
-#set_property PACKAGE_PIN M22 [get_ports USER_CLOCK_N]
-#set_property IOSTANDARD LVDS_25 [get_ports USER_CLOCK_N]
 #set_property PACKAGE_PIN N21 [get_ports ROTARY_PUSH]
 #set_property IOSTANDARD LVCMOS33 [get_ports ROTARY_PUSH]
 #set_property PACKAGE_PIN N22 [get_ports ROTARY_INCA]
@@ -313,14 +338,7 @@ set_property IOSTANDARD LVCMOS15 [get_ports CPU_RESET]
 #set_property IOSTANDARD LVCMOS33 [get_ports PMBUS_CTRL_LS]
 #set_property PACKAGE_PIN N26 [get_ports PMBUS_ALERT_LS]
 #set_property IOSTANDARD LVCMOS33 [get_ports PMBUS_ALERT_LS]
-#set_property PACKAGE_PIN M26 [get_ports GPIO_LED_0]
-#set_property IOSTANDARD LVCMOS33 [get_ports GPIO_LED_0]
-#set_property PACKAGE_PIN T24 [get_ports GPIO_LED_1]
-#set_property IOSTANDARD LVCMOS33 [get_ports GPIO_LED_1]
-#set_property PACKAGE_PIN T25 [get_ports GPIO_LED_2]
-#set_property IOSTANDARD LVCMOS33 [get_ports GPIO_LED_2]
-#set_property PACKAGE_PIN R26 [get_ports GPIO_LED_3]
-#set_property IOSTANDARD LVCMOS33 [get_ports GPIO_LED_3]
+
 #set_property PACKAGE_PIN P26 [get_ports PMOD_0]
 #set_property IOSTANDARD LVCMOS33 [get_ports PMOD_0]
 #set_property PACKAGE_PIN T22 [get_ports PMOD_1]
