@@ -27,11 +27,11 @@ begin
                 enable <= '1';
                 finished <= '0';
             elsif enable ='1' then
-                -- put image into buffers                
+                -- put image into buffers
                 -- do cnn stuff
-                finished <= '1';       
-                result <= "101010";
-                enable <= '0';
+               finished <= '1';       
+               result <= "101010";
+               enable <= '0';                               
             end if;
         end if;
     end process;

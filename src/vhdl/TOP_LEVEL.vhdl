@@ -19,10 +19,14 @@ library UNISIM;
 USE UNISIM.Vcomponents.ALL;
 
 ENTITY TOP_LEVEL IS
+    GENERIC
+	(
+		clk_freq    : INTEGER := 100 --system clock frequency in MHz
+	);	    
 	PORT
 	(
-		ref_clk_clk_p     : IN STD_LOGIC;
-		ref_clk_clk_n     : IN STD_LOGIC;
+		SYSCLK_P     : IN STD_LOGIC;
+		SYSCLK_N     : IN STD_LOGIC;
 		CPU_RESET    : IN STD_LOGIC;
 		GPIO_SW_N    : IN STD_LOGIC;
 		USB_UART_TX  : OUT STD_LOGIC;
@@ -38,14 +42,31 @@ ARCHITECTURE TOP_LEVEL_arch OF TOP_LEVEL IS
 
 	TYPE states IS (Idle, LoadImage, ProcessImage, SendResult);
 	SIGNAL state_machine : states := Idle;
-	SIGNAL reset_signal: STD_LOGIC := '0';        
     SIGNAL clk: STD_LOGIC;
-    
+	SIGNAL reset_signal: STD_LOGIC := '0';
+	
+	SIGNAL reset_p: STD_LOGIC:='0';
+	SIGNAL start_signal: STD_LOGIC := '0';
+
+	COMPONENT button_debounce IS
+		GENERIC
+		(
+			clk_freq    : INTEGER := 10; --system clock frequency in MHz
+		  stable_time : INTEGER := 10); --time button must remain stable in ms
+		PORT
+		(
+			clk     : IN STD_LOGIC;
+			reset_p : IN STD_LOGIC;
+			button  : IN STD_LOGIC;
+	  	    result  : OUT STD_LOGIC
+	  	 );
+	END COMPONENT button_debounce;
+
 	SIGNAL cnn_start : STD_LOGIC := '0';
 	SIGNAL loaded_image : STD_LOGIC_VECTOR(16383 DOWNTO 0);
 	SIGNAL cnn_finished : STD_LOGIC;
 	SIGNAL cnn_result : STD_LOGIC_VECTOR(5 DOWNTO 0);
-    
+
 	COMPONENT CNN IS
 		PORT
 		(
@@ -75,18 +96,18 @@ ARCHITECTURE TOP_LEVEL_arch OF TOP_LEVEL IS
 	END COMPONENT UART_TX;
 
 BEGIN
-    
+
     -- LVDS input to internal single
   CLK_IBUFDS : IBUFDS
   generic map(
     IOSTANDARD => "DEFAULT"
   )
   port map(
-    I  => ref_clk_clk_p,
-    IB => ref_clk_clk_n,
+    I  => SYSCLK_P,
+    IB => SYSCLK_N,
     O  => clk
     );
-    
+
 	CNN_comp : CNN -- Instantiate CNN transmitter
 	PORT MAP
 	(
@@ -109,28 +130,89 @@ BEGIN
 		TX_Done    => TX_Done
 	);
 
+  reset_debounce_comp: button_debounce -- debouncer for CPU_RESET
+	PORT MAP
+	(
+		clk     => clk,
+		reset_p => '0',
+		button  => CPU_RESET,
+		result  => reset_p
+	);
+
+
+	start_debounce_comp: button_debounce -- debouncer for GPIO_SW_N
+	PORT MAP
+	(
+		clk     => clk,
+		reset_p => reset_p,
+		button  => GPIO_SW_N,
+		result  => start_signal
+	);
+    
+    LED_indicator_process: PROCESS (clk)    
+    VARIABLE count : INTEGER RANGE 0 TO clk_freq*100000; -- 100ms
+    VARIABLE blinking_led: STD_LOGIC := '1'; 
+    BEGIN
+        IF reset_p = '1' THEN           
+           GPIO_LED_0 <= '1';
+           GPIO_LED_1 <= '1';
+           GPIO_LED_2 <= '1';
+           GPIO_LED_3 <= '1';           	     
+    
+		ELSIF RISING_EDGE(clk) THEN		
+		  
+		    IF (count < clk_freq*100000) THEN
+               count := count + 1;
+            ELSE
+               blinking_led := not(blinking_led);
+               count := 0;
+            END IF;
+		 
+			CASE state_machine IS
+				WHEN Idle =>                    
+                    GPIO_LED_0 <= '1';
+                    GPIO_LED_1 <= '0';
+                    GPIO_LED_2 <= '0';
+                    GPIO_LED_3 <= '0';
+                                       
+				WHEN LoadImage =>
+				    GPIO_LED_0 <= '0';
+                    GPIO_LED_1 <= blinking_led;
+                    GPIO_LED_2 <= '0';
+                    GPIO_LED_3 <= '0';
+
+				WHEN ProcessImage =>
+
+                    GPIO_LED_0 <= '0';
+                    GPIO_LED_1 <= '0';
+                    GPIO_LED_2 <= blinking_led;
+                    GPIO_LED_3 <= '0';
+
+				WHEN SendResult =>
+
+                    GPIO_LED_0 <= '0';
+                    GPIO_LED_1 <= '0';
+                    GPIO_LED_2 <= '0';
+                    GPIO_LED_3 <= blinking_led;
+
+			END CASE;
+		END IF;
+    END PROCESS LED_indicator_process;
+    
 	-- Purpose: Control state machine
 	TOP_LEVEL_process : PROCESS (clk, CPU_RESET)
+	VARIABLE count : INTEGER RANGE 0 TO clk_freq*5000000; -- 5s
 	BEGIN
-	    IF CPU_RESET = '1' THEN	      
-	    
-	       GPIO_LED_0 <= '1';
-	       GPIO_LED_1 <= '1';
-	       GPIO_LED_2 <= '1';
-	       GPIO_LED_3 <= '1';
-	       	       
-           state_machine <= Idle;
+	    IF reset_p = '1' THEN
+
+		  reset_signal <= '1';
+          state_machine <= Idle;
 
 		ELSIF RISING_EDGE(clk) THEN
 			CASE state_machine IS
 				WHEN Idle =>
-                                       
-                    GPIO_LED_0 <= '1';
-                    GPIO_LED_1 <= '0';
-                    GPIO_LED_2 <= '0';
-                    GPIO_LED_3 <= '0';                                        
-                    
-					IF GPIO_SW_N = '1' THEN -- TODO this will cause problems once moved into the board
+
+					IF start_signal = '1' THEN -- TODO this will cause problems once moved into the board
 						reset_signal <= '0';
 						state_machine <= LoadImage;
 					ELSE
@@ -138,38 +220,47 @@ BEGIN
 					END IF;
 
 				WHEN LoadImage =>
-				
-				    GPIO_LED_0 <= '0';
-                    GPIO_LED_1 <= '1';
-				
-					-- TODO this does nothing at the moment
-					loaded_image <= (OTHERS => '0');
-					state_machine <= ProcessImage;
+                    
+                    IF (count < 100*2000000) THEN -- temporal to simulate time
+                        count := count + 1;
+                    ELSE
+                       -- TODO this does nothing at the moment
+					   loaded_image <= (OTHERS => '0');
+					   state_machine <= ProcessImage;                     
+                       count := 0;					 
+                                      
+                    END IF;  
 
 				WHEN ProcessImage =>
+                    IF (count < 100*2000000) THEN -- temporal to simulate time
+                        count := count + 1;
+                    ELSE
                     
-                    GPIO_LED_1 <= '0';
-                    GPIO_LED_2 <= '1';
-                    
-					IF cnn_finished = '1' THEN
-						cnn_start <= '0';
-					    state_machine <= SendResult;
-					ELSE
-						cnn_start <= '1';
-                    END IF;
+                       IF cnn_finished = '1' THEN
+						   cnn_start <= '0';
+                           state_machine <= SendResult;
+					       count := 0;
+					   ELSE
+					       cnn_start <= '1';
+                       END IF;          
+                                    
+                    END IF;                         
 
 				WHEN SendResult =>
+                    IF (count < 100*2000000) THEN -- temporal to simulate time
+                        count := count + 1;
+                    ELSE
                     
-                    GPIO_LED_2 <= '0';
-                    GPIO_LED_3 <= '1';
-                    
-					IF TX_Done = '1' THEN
-						TX_DV <= '0';
-						state_machine <= Idle;
-					ELSE
-						TX_DV <= '1';
-						TX_Byte <= cnn_result & "00";
-					END IF;
+                       IF TX_Done = '1' THEN
+						  TX_DV <= '0';
+						  state_machine <= Idle;
+						  count := 0;
+					   ELSE
+						  TX_DV <= '1';
+						  TX_Byte <= cnn_result & "00";
+					   END IF;
+                                                                  
+                    END IF;                     					
 
 			END CASE;
 		END IF;
