@@ -1,6 +1,6 @@
 -----------------------------------------------------
 -- Title: TOP_LEVEL.vhdl
--- Author: Rafael Romón/NN-1
+-- Author: Rafael Romï¿½n/NN-1
 -- DAT096 - spring 2021
 -----------------------------------------------------
 -- Description:
@@ -22,7 +22,7 @@ ENTITY TOP_LEVEL IS
     GENERIC
 	(
 		clk_freq    : INTEGER := 100 --system clock frequency in MHz
-	);	    
+	);
 	PORT
 	(
 		SYSCLK_P     : IN STD_LOGIC;
@@ -44,7 +44,7 @@ ARCHITECTURE TOP_LEVEL_arch OF TOP_LEVEL IS
 	SIGNAL state_machine : states := Idle;
     SIGNAL clk: STD_LOGIC;
 	SIGNAL reset_signal: STD_LOGIC := '0';
-	
+
 	SIGNAL reset_p: STD_LOGIC:='0';
 	SIGNAL start_signal: STD_LOGIC := '0';
 
@@ -148,33 +148,33 @@ BEGIN
 		button  => GPIO_SW_N,
 		result  => start_signal
 	);
-    
-    LED_indicator_process: PROCESS (clk)    
-    VARIABLE count : INTEGER RANGE 0 TO clk_freq*100000; -- 100ms
-    VARIABLE blinking_led: STD_LOGIC := '1'; 
+
+    LED_indicator_process: PROCESS (clk)
+        VARIABLE count : INTEGER RANGE 0 TO clk_freq*100000; -- 100ms
+        VARIABLE blinking_led: STD_LOGIC := '1'; 
     BEGIN
-        IF reset_p = '1' THEN           
+        IF reset_p = '1' THEN
            GPIO_LED_0 <= '1';
            GPIO_LED_1 <= '1';
            GPIO_LED_2 <= '1';
-           GPIO_LED_3 <= '1';           	     
-    
-		ELSIF RISING_EDGE(clk) THEN		
-		  
+           GPIO_LED_3 <= '1';
+
+		ELSIF RISING_EDGE(clk) THEN
+
 		    IF (count < clk_freq*100000) THEN
                count := count + 1;
             ELSE
                blinking_led := not(blinking_led);
                count := 0;
             END IF;
-		 
+
 			CASE state_machine IS
-				WHEN Idle =>                    
+				WHEN Idle =>
                     GPIO_LED_0 <= '1';
                     GPIO_LED_1 <= '0';
                     GPIO_LED_2 <= '0';
                     GPIO_LED_3 <= '0';
-                                       
+
 				WHEN LoadImage =>
 				    GPIO_LED_0 <= '0';
                     GPIO_LED_1 <= blinking_led;
@@ -198,7 +198,7 @@ BEGIN
 			END CASE;
 		END IF;
     END PROCESS LED_indicator_process;
-    
+
 	-- Purpose: Control state machine
 	TOP_LEVEL_process : PROCESS (clk, CPU_RESET)
 	VARIABLE count : INTEGER RANGE 0 TO clk_freq*5000000; -- 5s
@@ -220,37 +220,37 @@ BEGIN
 					END IF;
 
 				WHEN LoadImage =>
-                    
+
                     IF (count < 100*2000000) THEN -- temporal to simulate time
                         count := count + 1;
                     ELSE
                        -- TODO this does nothing at the moment
 					   loaded_image <= (OTHERS => '0');
-					   state_machine <= ProcessImage;                     
-                       count := 0;					 
-                                      
-                    END IF;  
+					   state_machine <= ProcessImage;
+                       count := 0;
+
+                    END IF;
 
 				WHEN ProcessImage =>
                     IF (count < 100*2000000) THEN -- temporal to simulate time
                         count := count + 1;
                     ELSE
-                    
+
                        IF cnn_finished = '1' THEN
 						   cnn_start <= '0';
                            state_machine <= SendResult;
 					       count := 0;
 					   ELSE
 					       cnn_start <= '1';
-                       END IF;          
-                                    
-                    END IF;                         
+                       END IF;
+
+                    END IF;
 
 				WHEN SendResult =>
                     IF (count < 100*2000000) THEN -- temporal to simulate time
                         count := count + 1;
                     ELSE
-                    
+
                        IF TX_Done = '1' THEN
 						  TX_DV <= '0';
 						  state_machine <= Idle;
@@ -259,8 +259,8 @@ BEGIN
 						  TX_DV <= '1';
 						  TX_Byte <= cnn_result & "00";
 					   END IF;
-                                                                  
-                    END IF;                     					
+
+                    END IF;
 
 			END CASE;
 		END IF;
