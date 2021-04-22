@@ -39,7 +39,7 @@ create_clock -period 10.00 -name SYSCLK_N -waveform {5.00 10.00} [get_ports SYSC
 
 set_property PACKAGE_PIN U19 [get_ports USB_UART_TX]
 set_property IOSTANDARD LVCMOS18 [get_ports USB_UART_TX]
-#set_property PACKAGE_PIN U19 [get_ports USB_UART_RX]
+#set_property PACKAGE_PIN T19 [get_ports USB_UART_RX]
 #set_property IOSTANDARD LVCMOS18 [get_ports USB_UART_RX]
 #set_property PACKAGE_PIN V19 [get_ports USB_UART_RTS]
 #set_property IOSTANDARD LVCMOS18 [get_ports USB_UART_RTS]
