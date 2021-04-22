@@ -13,7 +13,7 @@ ENTITY UART_TX IS
 	GENERIC 
 	(
 		--clkS_PER_BIT : integer := 87 -- (Frequency of clk)/(Frequency of UART)
-		clkS_PER_BIT : INTEGER := 868 -- 100 MHz / 115200 baud rate
+		clkS_PER_BIT : INTEGER := 867 -- 100 MHz / 115200 baud rate
 	);
 	PORT 
 	(

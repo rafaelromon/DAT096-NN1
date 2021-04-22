@@ -2,17 +2,12 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
-ENTITY TOP_LEVEL_TB IS
-END TOP_LEVEL_TB;
+ENTITY TOP_LEVEL_UART_TX_TB IS
+END TOP_LEVEL_UART_TX_TB;
 
-ARCHITECTURE TOP_LEVEL_TB_arch OF TOP_LEVEL_TB IS
+ARCHITECTURE TOP_LEVEL_UART_TX_TB_arch OF TOP_LEVEL_UART_TX_TB IS
 
-	COMPONENT TOP_LEVEL
-		GENERIC
-		(
-			clk_freq  : INTEGER := 100;
-			testbench : STD_LOGIC
-		);
+	COMPONENT TOP_LEVEL_UART_TX
 		PORT
 		(
 			SYSCLK_P     : IN  STD_LOGIC;
@@ -25,14 +20,13 @@ ARCHITECTURE TOP_LEVEL_TB_arch OF TOP_LEVEL_TB IS
 			GPIO_LED_2   : OUT STD_LOGIC;
 			GPIO_LED_3   : OUT STD_LOGIC
 		);
-	END COMPONENT TOP_LEVEL;
-	
+	END COMPONENT TOP_LEVEL_UART_TX;
+
 	SIGNAL clk_p_tb      : STD_LOGIC := '0';
 	SIGNAL clk_n_tb      : STD_LOGIC := '1';
-	SIGNAL reset_tb      : STD_LOGIC;
+	SIGNAL reset_tb      : STD_LOGIC := '0';
 	SIGNAL pushbutton_tb : STD_LOGIC := '0';
 	SIGNAL uart_tx_tb    : STD_LOGIC;
-	SIGNAL uart_rts_tb   : STD_LOGIC;
 	SIGNAL led_0_tb      : STD_LOGIC;
 	SIGNAL led_1_tb      : STD_LOGIC;
 	SIGNAL led_2_tb      : STD_LOGIC;
@@ -40,11 +34,7 @@ ARCHITECTURE TOP_LEVEL_TB_arch OF TOP_LEVEL_TB IS
 
 BEGIN
 
-	TOP_LEVEL_comp : TOP_LEVEL
-	GENERIC
-	MAP (
-	testbench => '1'
-	)
+	TOP_LEVEL_UART_TX_comp : TOP_LEVEL_UART_TX
 	PORT MAP
 	(
 		SYSCLK_P     => clk_p_tb,
@@ -65,14 +55,14 @@ BEGIN
 	BEGIN
 
 		reset_tb <= '1';
-		WAIT FOR 20ns;
+		WAIT FOR 100us;
 		reset_tb <= '0';
-		WAIT FOR 20ns;
+		WAIT FOR 100us;
 		pushbutton_tb <= '1';
-		WAIT FOR 20ns;
+		WAIT FOR 100us;
 		pushbutton_tb <= '0';
-		WAIT FOR 10000ms;
+		WAIT FOR 3ms;
 
 	END PROCESS;
 
-END TOP_LEVEL_TB_arch;
+END TOP_LEVEL_UART_TX_TB_arch;

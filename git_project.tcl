@@ -27,22 +27,28 @@
 #
 # 3. The following remote source files that were added to the original project:-
 #
-#    "D:/Cloud/Github/Chalmers/DAT096-NN1/src/vhdl/IMG_BUFFER_CONT.vhdl"
-#    "D:/Cloud/Github/Chalmers/DAT096-NN1/src/vhdl/CNN.vhdl"
-#    "D:/Cloud/Github/Chalmers/DAT096-NN1/src/vhdl/UART_TX.vhdl"
-#    "D:/Cloud/Github/Chalmers/DAT096-NN1/src/vhdl/button_debounce.vhdl"
-#    "D:/Cloud/Github/Chalmers/DAT096-NN1/src/vhdl/TOP_LEVEL.vhdl"
-#    "D:/Cloud/Github/Chalmers/DAT096-NN1/src/ip/mem_init/image_buffer.coe"
-#    "D:/Cloud/Github/Chalmers/DAT096-NN1/src/ip/config_rom/config_rom.xci"
-#    "D:/Cloud/Github/Chalmers/DAT096-NN1/src/ip/mem_init/config_rom.coe"
-#    "D:/Cloud/Github/Chalmers/DAT096-NN1/src/vhdl/UART_RX.vhdl"
-#    "D:/Cloud/Github/Chalmers/DAT096-NN1/src/vhdl/state_machine_scribble.vhdl"
-#    "D:/Cloud/Github/Chalmers/DAT096-NN1/src/ip/mig_7series_1/mig_7series_1.xci"
-#    "D:/Cloud/Github/Chalmers/DAT096-NN1/src/ip/mig_7series_1/mig_a.prj"
-#    "D:/Cloud/Github/Chalmers/DAT096-NN1/src/ip/image_buffer/image_buffer.xci"
-#    "D:/Cloud/Github/Chalmers/DAT096-NN1/src/constrs/AC701_Rev1_0_ucf.xdc"
-#    "D:/Cloud/Github/Chalmers/DAT096-NN1/sim/vhdl/IMG_BUFFER_CONT_TB.vhdl"
-#    "D:/Cloud/Github/Chalmers/DAT096-NN1/sim/config/IMG_BUFFER_CONT_TB_behav.wcfg"
+#    "Z:/git/DAT096-NN1/src/vhdl/UART_TX.vhdl"
+#    "Z:/git/DAT096-NN1/src/vhdl/TOP_LEVEL_UART_TX.vhdl"
+#    "Z:/git/DAT096-NN1/src/vhdl/UART.vhdl"
+#    "Z:/git/DAT096-NN1/src/vhdl/TOP_LEVEL_UART.vhdl"
+#    "Z:/git/DAT096-NN1/src/ip/mig_7series_1/mig_7series_1.xci"
+#    "Z:/git/DAT096-NN1/src/ip/mig_7series_1/mig_a.prj"
+#    "Z:/git/DAT096-NN1/src/ip/image_buffer/image_buffer.xci"
+#    "Z:/git/DAT096-NN1/src/ip/config_rom/config_rom.xci"
+#    "Z:/git/DAT096-NN1/src/ip/mem_init/config_rom.coe"
+#    "Z:/git/DAT096-NN1/src/vhdl/CNN.vhdl"
+#    "Z:/git/DAT096-NN1/src/vhdl/TOP_LEVEL.vhdl"
+#    "Z:/git/DAT096-NN1/src/vhdl/UART_RX.vhdl"
+#    "Z:/git/DAT096-NN1/src/vhdl/button_debounce.vhdl"
+#    "Z:/git/DAT096-NN1/src/vhdl/state_machine_scribble.vhdl"
+#    "Z:/git/DAT096-NN1/src/constrs/AC701_Rev1_0_ucf.xdc"
+#    "Z:/git/DAT096-NN1/sim/vhdl/TOP_LEVEL_UART_tb.vhdl"
+#    "Z:/git/DAT096-NN1/sim/vhdl/UART_TB.vhdl"
+#    "Z:/git/DAT096-NN1/sim/vhdl/BRAM_TB.vhdl"
+#    "Z:/git/DAT096-NN1/sim/vhdl/CNN_TB.vhdl"
+#    "Z:/git/DAT096-NN1/sim/vhdl/TOP_LEVEL_TB.vhdl"
+#    "Z:/git/DAT096-NN1/sim/vhdl/TOP_LEVEL_UART_TX_tb.vhdl"
+#    "Z:/git/DAT096-NN1/sim/config/TOP_LEVEL_UART_TB_behav.wcfg"
 #
 #*****************************************************************************************
 
@@ -132,16 +138,14 @@ set_property -name "sim.central_dir" -value "$proj_dir/${_xil_proj_name_}.ip_use
 set_property -name "sim.ip.auto_export_scripts" -value "1" -objects $obj
 set_property -name "simulator_language" -value "VHDL" -objects $obj
 set_property -name "target_language" -value "VHDL" -objects $obj
-set_property -name "webtalk.activehdl_export_sim" -value "5" -objects $obj
-set_property -name "webtalk.ies_export_sim" -value "5" -objects $obj
-set_property -name "webtalk.modelsim_export_sim" -value "5" -objects $obj
-set_property -name "webtalk.questa_export_sim" -value "5" -objects $obj
-set_property -name "webtalk.riviera_export_sim" -value "5" -objects $obj
-set_property -name "webtalk.vcs_export_sim" -value "5" -objects $obj
-set_property -name "webtalk.xcelium_export_sim" -value "1" -objects $obj
-set_property -name "webtalk.xsim_export_sim" -value "5" -objects $obj
-set_property -name "webtalk.xsim_launch_sim" -value "38" -objects $obj
-set_property -name "xpm_libraries" -value "XPM_MEMORY" -objects $obj
+set_property -name "webtalk.activehdl_export_sim" -value "4" -objects $obj
+set_property -name "webtalk.ies_export_sim" -value "4" -objects $obj
+set_property -name "webtalk.modelsim_export_sim" -value "4" -objects $obj
+set_property -name "webtalk.questa_export_sim" -value "4" -objects $obj
+set_property -name "webtalk.riviera_export_sim" -value "4" -objects $obj
+set_property -name "webtalk.vcs_export_sim" -value "4" -objects $obj
+set_property -name "webtalk.xsim_export_sim" -value "4" -objects $obj
+set_property -name "webtalk.xsim_launch_sim" -value "97" -objects $obj
 
 # Create 'sources_1' fileset (if not found)
 if {[string equal [get_filesets -quiet sources_1] ""]} {
@@ -151,62 +155,40 @@ if {[string equal [get_filesets -quiet sources_1] ""]} {
 # Set 'sources_1' fileset object
 set obj [get_filesets sources_1]
 set files [list \
- [file normalize "${origin_dir}/src/vhdl/IMG_BUFFER_CONT.vhdl"] \
- [file normalize "${origin_dir}/src/vhdl/CNN.vhdl"] \
  [file normalize "${origin_dir}/src/vhdl/UART_TX.vhdl"] \
- [file normalize "${origin_dir}/src/vhdl/button_debounce.vhdl"] \
- [file normalize "${origin_dir}/src/vhdl/TOP_LEVEL.vhdl"] \
- [file normalize "${origin_dir}/src/ip/mem_init/image_buffer.coe"] \
- [file normalize "${origin_dir}/src/ip/config_rom/config_rom.xci"] \
- [file normalize "${origin_dir}/src/ip/mem_init/config_rom.coe"] \
- [file normalize "${origin_dir}/src/vhdl/UART_RX.vhdl"] \
- [file normalize "${origin_dir}/src/vhdl/state_machine_scribble.vhdl"] \
+ [file normalize "${origin_dir}/src/vhdl/TOP_LEVEL_UART_TX.vhdl"] \
+ [file normalize "${origin_dir}/src/vhdl/UART.vhdl"] \
+ [file normalize "${origin_dir}/src/vhdl/TOP_LEVEL_UART.vhdl"] \
  [file normalize "${origin_dir}/src/ip/mig_7series_1/mig_7series_1.xci"] \
  [file normalize "${origin_dir}/src/ip/mig_7series_1/mig_a.prj"] \
+ [file normalize "${origin_dir}/src/ip/image_buffer/image_buffer.xci"] \
+ [file normalize "${origin_dir}/src/ip/config_rom/config_rom.xci"] \
+ [file normalize "${origin_dir}/src/ip/mem_init/config_rom.coe"] \
+ [file normalize "${origin_dir}/src/vhdl/CNN.vhdl"] \
+ [file normalize "${origin_dir}/src/vhdl/TOP_LEVEL.vhdl"] \
+ [file normalize "${origin_dir}/src/vhdl/UART_RX.vhdl"] \
+ [file normalize "${origin_dir}/src/vhdl/button_debounce.vhdl"] \
+ [file normalize "${origin_dir}/src/vhdl/state_machine_scribble.vhdl"] \
 ]
 add_files -norecurse -fileset $obj $files
 
 # Set 'sources_1' fileset file properties for remote files
-set file "$origin_dir/src/vhdl/IMG_BUFFER_CONT.vhdl"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "VHDL" -objects $file_obj
-
-set file "$origin_dir/src/vhdl/CNN.vhdl"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "VHDL" -objects $file_obj
-
 set file "$origin_dir/src/vhdl/UART_TX.vhdl"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "$origin_dir/src/vhdl/button_debounce.vhdl"
+set file "$origin_dir/src/vhdl/TOP_LEVEL_UART_TX.vhdl"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "$origin_dir/src/vhdl/TOP_LEVEL.vhdl"
+set file "$origin_dir/src/vhdl/UART.vhdl"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
 
-set file "$origin_dir/src/ip/config_rom/config_rom.xci"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
-set_property -name "registered_with_manager" -value "1" -objects $file_obj
-if { ![get_property "is_locked" $file_obj] } {
-  set_property -name "synth_checkpoint_mode" -value "Singular" -objects $file_obj
-}
-
-set file "$origin_dir/src/vhdl/UART_RX.vhdl"
-set file [file normalize $file]
-set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
-set_property -name "file_type" -value "VHDL" -objects $file_obj
-
-set file "$origin_dir/src/vhdl/state_machine_scribble.vhdl"
+set file "$origin_dir/src/vhdl/TOP_LEVEL_UART.vhdl"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
@@ -225,13 +207,56 @@ set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
 set_property -name "scoped_to_cells" -value "mig_7series_1" -objects $file_obj
 
+set file "$origin_dir/src/ip/image_buffer/image_buffer.xci"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
+set_property -name "registered_with_manager" -value "1" -objects $file_obj
+if { ![get_property "is_locked" $file_obj] } {
+  set_property -name "synth_checkpoint_mode" -value "Singular" -objects $file_obj
+}
+
+set file "$origin_dir/src/ip/config_rom/config_rom.xci"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "generate_files_for_reference" -value "0" -objects $file_obj
+set_property -name "registered_with_manager" -value "1" -objects $file_obj
+if { ![get_property "is_locked" $file_obj] } {
+  set_property -name "synth_checkpoint_mode" -value "Singular" -objects $file_obj
+}
+
+set file "$origin_dir/src/vhdl/CNN.vhdl"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "VHDL" -objects $file_obj
+
+set file "$origin_dir/src/vhdl/TOP_LEVEL.vhdl"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "VHDL" -objects $file_obj
+
+set file "$origin_dir/src/vhdl/UART_RX.vhdl"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "VHDL" -objects $file_obj
+
+set file "$origin_dir/src/vhdl/button_debounce.vhdl"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "VHDL" -objects $file_obj
+
+set file "$origin_dir/src/vhdl/state_machine_scribble.vhdl"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sources_1] [list "*$file"]]
+set_property -name "file_type" -value "VHDL" -objects $file_obj
+
 
 # Set 'sources_1' fileset file properties for local files
 # None
 
 # Set 'sources_1' fileset properties
 set obj [get_filesets sources_1]
-set_property -name "top" -value "IMG_BUFFER_CONTROLLER" -objects $obj
+set_property -name "top" -value "TOP_LEVEL_UART_TX" -objects $obj
 set_property -name "top_auto_set" -value "0" -objects $obj
 
 # Set 'sources_1' fileset object
@@ -284,13 +309,43 @@ if {[string equal [get_filesets -quiet sim_1] ""]} {
 # Set 'sim_1' fileset object
 set obj [get_filesets sim_1]
 set files [list \
- [file normalize "${origin_dir}/sim/vhdl/IMG_BUFFER_CONT_TB.vhdl"] \
- [file normalize "${origin_dir}/sim/config/IMG_BUFFER_CONT_TB_behav.wcfg"] \
+ [file normalize "${origin_dir}/sim/vhdl/TOP_LEVEL_UART_tb.vhdl"] \
+ [file normalize "${origin_dir}/sim/vhdl/UART_TB.vhdl"] \
+ [file normalize "${origin_dir}/sim/vhdl/BRAM_TB.vhdl"] \
+ [file normalize "${origin_dir}/sim/vhdl/CNN_TB.vhdl"] \
+ [file normalize "${origin_dir}/sim/vhdl/TOP_LEVEL_TB.vhdl"] \
+ [file normalize "${origin_dir}/sim/vhdl/TOP_LEVEL_UART_TX_tb.vhdl"] \
+ [file normalize "${origin_dir}/sim/config/TOP_LEVEL_UART_TB_behav.wcfg"] \
 ]
 add_files -norecurse -fileset $obj $files
 
 # Set 'sim_1' fileset file properties for remote files
-set file "$origin_dir/sim/vhdl/IMG_BUFFER_CONT_TB.vhdl"
+set file "$origin_dir/sim/vhdl/TOP_LEVEL_UART_tb.vhdl"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
+set_property -name "file_type" -value "VHDL" -objects $file_obj
+
+set file "$origin_dir/sim/vhdl/UART_TB.vhdl"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
+set_property -name "file_type" -value "VHDL" -objects $file_obj
+
+set file "$origin_dir/sim/vhdl/BRAM_TB.vhdl"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
+set_property -name "file_type" -value "VHDL" -objects $file_obj
+
+set file "$origin_dir/sim/vhdl/CNN_TB.vhdl"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
+set_property -name "file_type" -value "VHDL" -objects $file_obj
+
+set file "$origin_dir/sim/vhdl/TOP_LEVEL_TB.vhdl"
+set file [file normalize $file]
+set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
+set_property -name "file_type" -value "VHDL" -objects $file_obj
+
+set file "$origin_dir/sim/vhdl/TOP_LEVEL_UART_TX_tb.vhdl"
 set file [file normalize $file]
 set file_obj [get_files -of_objects [get_filesets sim_1] [list "*$file"]]
 set_property -name "file_type" -value "VHDL" -objects $file_obj
@@ -301,9 +356,10 @@ set_property -name "file_type" -value "VHDL" -objects $file_obj
 
 # Set 'sim_1' fileset properties
 set obj [get_filesets sim_1]
-set_property -name "top" -value "IMG_BUFFER_CONT_TB" -objects $obj
+set_property -name "top" -value "TOP_LEVEL_UART_TB" -objects $obj
 set_property -name "top_auto_set" -value "0" -objects $obj
 set_property -name "top_lib" -value "xil_defaultlib" -objects $obj
+set_property -name "xsim.simulate.runtime" -value "250us" -objects $obj
 
 # Set 'utils_1' fileset object
 set obj [get_filesets utils_1]
