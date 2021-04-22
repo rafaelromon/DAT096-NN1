@@ -1,7 +1,7 @@
 -- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2019.2 (win64) Build 2708876 Wed Nov  6 21:40:23 MST 2019
--- Date        : Tue Apr 20 11:13:09 2021
+-- Date        : Thu Apr 22 22:36:45 2021
 -- Host        : roach running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode synth_stub
 --               D:/Cloud/Github/Chalmers/DAT096-NN1/src/ip/image_buffer/image_buffer_stub.vhdl
@@ -17,13 +17,13 @@ entity image_buffer is
     clka : in STD_LOGIC;
     ena : in STD_LOGIC;
     wea : in STD_LOGIC_VECTOR ( 0 to 0 );
-    addra : in STD_LOGIC_VECTOR ( 8 downto 0 );
+    addra : in STD_LOGIC_VECTOR ( 5 downto 0 );
     dina : in STD_LOGIC_VECTOR ( 4095 downto 0 );
     douta : out STD_LOGIC_VECTOR ( 4095 downto 0 );
     clkb : in STD_LOGIC;
     enb : in STD_LOGIC;
     web : in STD_LOGIC_VECTOR ( 0 to 0 );
-    addrb : in STD_LOGIC_VECTOR ( 8 downto 0 );
+    addrb : in STD_LOGIC_VECTOR ( 5 downto 0 );
     dinb : in STD_LOGIC_VECTOR ( 4095 downto 0 );
     doutb : out STD_LOGIC_VECTOR ( 4095 downto 0 )
   );
@@ -34,7 +34,7 @@ architecture stub of image_buffer is
 attribute syn_black_box : boolean;
 attribute black_box_pad_pin : string;
 attribute syn_black_box of stub : architecture is true;
-attribute black_box_pad_pin of stub : architecture is "clka,ena,wea[0:0],addra[8:0],dina[4095:0],douta[4095:0],clkb,enb,web[0:0],addrb[8:0],dinb[4095:0],doutb[4095:0]";
+attribute black_box_pad_pin of stub : architecture is "clka,ena,wea[0:0],addra[5:0],dina[4095:0],douta[4095:0],clkb,enb,web[0:0],addrb[5:0],dinb[4095:0],doutb[4095:0]";
 attribute x_core_info : string;
 attribute x_core_info of stub : architecture is "blk_mem_gen_v8_4_4,Vivado 2019.2";
 begin

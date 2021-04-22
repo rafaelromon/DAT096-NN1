@@ -15,19 +15,12 @@ def dump_numpy(input, output):
     f.write("memory_initaialization_radix=2;\n") # specify we are writing in binary format
     f.write("memory_initialization_vector=")
 
-    for id_image, image in enumerate(data):
-
-        for id_row, row in enumerate(image):
-
+    for image in data:
+        for row in image:
             for pixel in row:
                 f.write(str(pixel.item())) # directly write pixel value
 
-            if not (id_row+1)%32 and id_row != 0: # we store 32 rows in every word in the buffer
-                if id_image==11 and id_row==127: # last row so just finish .coe file
-                    f.write(";")
-                else: # new line on the image buffer
-                    f.write(",\n")
-
+    f.write(";")
 
 def main(argv):
     input = ""
