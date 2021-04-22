@@ -1,6 +1,6 @@
 -----------------------------------------------------
 -- Title: TOP_LEVEL.vhdl
--- Author: Rafael Romón/NN-1
+-- Author: Rafael Romï¿½n/NN-1
 -- DAT096 - spring 2021
 -----------------------------------------------------
 -- Description:
