@@ -41,12 +41,12 @@ BEGIN
 	);
 
 	clk_tb <= NOT clk_tb AFTER 5 ns;
-	
+
 	reset_p_tb <= '0',
-		        '1' AFTER 10 ns,
-		        '0' AFTER 20 ns;
+		'1' AFTER 10 ns,
+		'0' AFTER 20 ns;
 	start_tb <= '0',
-		        '1' AFTER 30 ns,
-		        '0' AFTER 40 ns;
+		'1' AFTER 30 ns,
+		'0' AFTER 40 ns;
 
 END ARCHITECTURE IMG_BUFFER_CONT_TB_arch;

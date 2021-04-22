@@ -1,61 +1,63 @@
 
-library IEEE;
-use IEEE.STD_LOGIC_1164.ALL;
+LIBRARY IEEE;
+USE IEEE.STD_LOGIC_1164.ALL;
 
-entity CNN_TB is
-end CNN_TB;
+ENTITY CNN_TB IS
+END CNN_TB;
 
-architecture CNN_TB_arch of CNN_TB is
+ARCHITECTURE CNN_TB_arch OF CNN_TB IS
 
-COMPONENT CNN
- PORT (clk:in std_logic;
-       resetn: in std_logic;
-       start:in std_logic;       
-       image:in std_logic_vector(16383 downto 0);
-       
-       finished: out std_logic;
-       result: out std_logic_vector(5 downto 0)
-       );     
-END COMPONENT CNN;
+	COMPONENT CNN
+		PORT (
+			clk : IN STD_LOGIC;
+			resetn : IN STD_LOGIC;
+			start : IN STD_LOGIC;
+			image : IN STD_LOGIC_VECTOR(16383 DOWNTO 0);
 
-signal clk_tb: std_logic := '1';
-signal resetn_tb: std_logic := '1';
-signal start_tb: std_logic := '0';
-signal image_tb: std_logic_vector(16383 downto 0);
+			finished : OUT STD_LOGIC;
+			result : OUT STD_LOGIC_VECTOR(5 DOWNTO 0)
+		);
+	END COMPONENT CNN;
 
-signal finished_tb: std_logic;
-signal result_tb:  std_logic_vector(5 downto 0);
+	SIGNAL clk_tb : STD_LOGIC := '1';
+	SIGNAL resetn_tb : STD_LOGIC := '1';
+	SIGNAL start_tb : STD_LOGIC := '0';
+	SIGNAL image_tb : STD_LOGIC_VECTOR(16383 DOWNTO 0);
 
-begin
+	SIGNAL finished_tb : STD_LOGIC;
+	SIGNAL result_tb : STD_LOGIC_VECTOR(5 DOWNTO 0);
 
-    CNN_comp:
-    component CNN
-    PORT MAP(clk => clk_tb,
-            resetn => resetn_tb,
-            start => start_tb,
-            image => image_tb,
-            finished => finished_tb,
-            result => result_tb
-            );
-            
-    resetn_tb<='1',
-               '0' AFTER 20 ns,
-               '1' AFTER 50 ns;
-               
-    testprocess: process
-    begin
-        image_tb <= (others=>'0');
-        start_tb <= '1';       
-        wait until finished_tb = '1';
-        assert result_tb = "101010"
-        severity ERROR;     
-    end process;
-    
-    clock_process:
- process
-    begin
-        clk_tb <= not(clk_tb);
-        wait for 5 ns;
-    end process;
+BEGIN
 
-end CNN_TB_arch;
+	CNN_comp :
+	COMPONENT CNN
+		PORT MAP(
+			clk => clk_tb,
+			resetn => resetn_tb,
+			start => start_tb,
+			image => image_tb,
+			finished => finished_tb,
+			result => result_tb
+		);
+
+		resetn_tb <= '1',
+		'0' AFTER 20 ns,
+		'1' AFTER 50 ns;
+
+		testprocess : PROCESS
+		BEGIN
+			image_tb <= (OTHERS => '0');
+			start_tb <= '1';
+			WAIT UNTIL finished_tb = '1';
+			ASSERT result_tb = "101010"
+			SEVERITY ERROR;
+		END PROCESS;
+
+	clock_process :
+	PROCESS
+	BEGIN
+		clk_tb <= NOT(clk_tb);
+		WAIT FOR 5 ns;
+	END PROCESS;
+
+END CNN_TB_arch;
