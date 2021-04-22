@@ -139,11 +139,10 @@ BEGIN
 						tx_ena_signal  <= '1';
 						tx_data_signal <= "01010101";
 						sent_flag := '1';
-					ELSIF sent_flag = '1' THEN
-					   tx_ena_signal <= '0';
+					ELSIF sent_flag = '1' THEN					   
 					   IF tx_busy_signal = '1' THEN
 							tx_ena_signal <= '0';
-					   ELSE
+					   ELSIF tx_ena_signal = '0' AND tx_busy_signal = '0' THEN
 							sent_flag := '0';
 							state_machine <= Finished;
 						END IF;

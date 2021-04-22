@@ -55,11 +55,11 @@ BEGIN
 	BEGIN
 
 		reset_tb <= '1';
-		WAIT FOR 100us;
+		WAIT FOR 20ns;
 		reset_tb <= '0';
-		WAIT FOR 100us;
+		WAIT FOR 20ns;
 		pushbutton_tb <= '1';
-		WAIT FOR 100us;
+		WAIT FOR 20ns;
 		pushbutton_tb <= '0';
 		WAIT FOR 3ms;
 
