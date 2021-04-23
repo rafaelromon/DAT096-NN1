@@ -1,39 +1,51 @@
-library IEEE;
-use ieee.std_logic_1164.all;
-use ieee.numeric_std.all;
+-----------------------------------------------------
+-- Title: CNN.vhdl
+-- Author: Rafael Romon/NN-1
+-- DAT096 - spring 2021
+-----------------------------------------------------
+-- Description:
+-- simulates the image recognition CNN
+-- TODO:
+-- * actually implement the CNN
+-----------------------------------------------------
 
-entity CNN is
- PORT (clk:in std_logic;
-       reset_p: in std_logic;
-       start:in std_logic;       
-       image:in std_logic_vector(16383 downto 0);
-       
-       finished: out std_logic;
-       result: out std_logic_vector(5 downto 0)
-       );             
-end CNN;
+LIBRARY IEEE;
+USE ieee.std_logic_1164.ALL;
+USE ieee.numeric_std.ALL;
 
-architecture CNN_arch of CNN is
-    signal enable: std_logic := '0';
+ENTITY CNN IS
+	PORT (
+		clk : IN STD_LOGIC;
+		reset_p : IN STD_LOGIC;
+		start : IN STD_LOGIC;
+		image : IN STD_LOGIC_VECTOR(16383 DOWNTO 0);
 
-begin
-    stupid_cnn: process(clk, reset_p)
-    begin
-        if reset_p='1' then
-             finished <= '0';
-             result <= (others => '0');                           
-        elsif RISING_EDGE(clk) then
-            if start='1' and enable='0' then
-                enable <= '1';
-                finished <= '0';
-            elsif enable ='1' then
-                -- put image into buffers
-                -- do cnn stuff
-               finished <= '1';       
-               result <= "101010";
-               enable <= '0';                               
-            end if;
-        end if;
-    end process;
-    
-end CNN_arch;
+		finished : OUT STD_LOGIC;
+		result : OUT STD_LOGIC_VECTOR(5 DOWNTO 0)
+	);
+END CNN;
+
+ARCHITECTURE CNN_arch OF CNN IS
+	SIGNAL enable : STD_LOGIC := '0';
+
+BEGIN
+	stupid_cnn : PROCESS (clk, reset_p)
+	BEGIN
+		IF reset_p = '1' THEN
+			finished <= '0';
+			result <= (OTHERS => '0');
+		ELSIF RISING_EDGE(clk) THEN
+			IF start = '1' AND enable = '0' THEN
+				enable <= '1';
+				finished <= '0';
+			ELSIF enable = '1' THEN
+				-- put image into buffers
+				-- do cnn stuff
+				finished <= '1';
+				result <= "101010";
+				enable <= '0';
+			END IF;
+		END IF;
+	END PROCESS;
+
+END CNN_arch;

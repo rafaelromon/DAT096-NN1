@@ -1,10 +1,15 @@
 -----------------------------------------------------
--- Title: IMG_BUFF_.vhdl
+-- Title: IMG_BUFFER_CONT.vhdl
 -- Author: Rafael Romon/NN-1
 -- DAT096 - spring 2021
 -----------------------------------------------------
 -- Description:
---
+-- gets image from image buffer when start is high
+-- busy signal indicates the controller is reading
+-- TODO:
+-- * Allow reading specific position in buffers
+-- * Loop around once end is reached
+-- * Allow writing to position
 -----------------------------------------------------
 
 LIBRARY ieee;
@@ -13,8 +18,8 @@ USE ieee.numeric_std.ALL;
 
 ENTITY IMG_BUFFER_CONTROLLER IS
 	GENERIC (
-		ROW_WIDTH: INTEGER := 4096;
-		IMAGE_DEPTH : INTEGER := 4;		
+		ROW_WIDTH : INTEGER := 4096;
+		IMAGE_DEPTH : INTEGER := 4;
 		ADDR_WIDTH : INTEGER := 9
 	);
 	PORT (
@@ -22,14 +27,14 @@ ENTITY IMG_BUFFER_CONTROLLER IS
 		reset_p : IN STD_LOGIC; -- reset signal active high
 		start : IN STD_LOGIC; -- signal to start reading new image
 		busy : OUT STD_LOGIC; -- signal indicating controller is busy reading new image
-		image : OUT STD_LOGIC_VECTOR((ROW_WIDTH*IMAGE_DEPTH) - 1 DOWNTO 0) -- output image
+		image : OUT STD_LOGIC_VECTOR((ROW_WIDTH * IMAGE_DEPTH) - 1 DOWNTO 0) -- output image
 	);
 END IMG_BUFFER_CONTROLLER;
 
 ARCHITECTURE IMG_BUFFER_CONTROLLER_arch OF IMG_BUFFER_CONTROLLER IS
 
 	SIGNAL base_addr : INTEGER := 0;
-	SIGNAL temp_img : STD_LOGIC_VECTOR((ROW_WIDTH*IMAGE_DEPTH) - 1 DOWNTO 0);
+	SIGNAL temp_img : STD_LOGIC_VECTOR((ROW_WIDTH * IMAGE_DEPTH) - 1 DOWNTO 0);
 
 	SIGNAL addra : STD_LOGIC_VECTOR (5 DOWNTO 0) := "000000";
 	SIGNAL douta : STD_LOGIC_VECTOR (4095 DOWNTO 0);
@@ -87,22 +92,22 @@ BEGIN
 			IF start = '1' THEN
 				busy <= '1';
 				start_flag := '1';
-				up_limit := (ROW_WIDTH*IMAGE_DEPTH) - 1;
+				up_limit := (ROW_WIDTH * IMAGE_DEPTH) - 1;
 			END IF;
 
 			IF start_flag = '1' THEN
 
 				IF word_count < IMAGE_DEPTH THEN
 
-						addra <= STD_LOGIC_VECTOR(to_unsigned(base_addr + word_count, addra'length));
-						addrb <= STD_LOGIC_VECTOR(to_unsigned(base_addr + word_count + 1, addrb'length));
+					addra <= STD_LOGIC_VECTOR(to_unsigned(base_addr + word_count, addra'length));
+					addrb <= STD_LOGIC_VECTOR(to_unsigned(base_addr + word_count + 1, addrb'length));
 
-						low_limit := up_limit - (ROW_WIDTH * 2);
+					low_limit := up_limit - (ROW_WIDTH * 2);
 
-						temp_img(up_limit DOWNTO low_limit+1) <= douta & doutb;
-                        
-						word_count := word_count + 2;
-						up_limit := low_limit;
+					temp_img(up_limit DOWNTO low_limit + 1) <= douta & doutb;
+
+					word_count := word_count + 2;
+					up_limit := low_limit;
 
 				ELSE
 					image <= temp_img;
