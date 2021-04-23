@@ -1,6 +1,6 @@
 -----------------------------------------------------
 -- Title: button_debounce.vhdl
--- Author: Rafael Romón/NN-1
+-- Author: Rafael Romon/NN-1
 -- DAT096 - spring 2021
 -----------------------------------------------------
 -- Description:
@@ -39,7 +39,7 @@ BEGIN
     ELSIF RISING_EDGE(clk) THEN
 			registers(0) <= button; --store button value in 1st register
 			registers(1) <= registers(0); --store 1st register value in 2nd register
-      
+
 			IF (counter_set = '1') THEN --reset counter because input is changing
 				count := 0; --clear the counter
 

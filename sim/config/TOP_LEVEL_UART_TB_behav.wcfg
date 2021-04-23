@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="TOP_LEVEL_UART_TB_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="TOP_LEVEL_UART_TB" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="1000000fs"></ZoomEndTime>
+      <Cursor1Time time="1000000fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="175"></NameColumnWidth>
+      <ValueColumnWidth column_width="146"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="7" />
+   <wvobject fp_name="/TOP_LEVEL_UART_TB/clk_p_tb" type="logic">
+      <obj_property name="ElementShortName">clk_p_tb</obj_property>
+      <obj_property name="ObjectShortName">clk_p_tb</obj_property>
+   </wvobject>
+   <wvobject fp_name="/TOP_LEVEL_UART_TB/clk_n_tb" type="logic">
+      <obj_property name="ElementShortName">clk_n_tb</obj_property>
+      <obj_property name="ObjectShortName">clk_n_tb</obj_property>
+   </wvobject>
+   <wvobject fp_name="/TOP_LEVEL_UART_TB/reset_tb" type="logic">
+      <obj_property name="ElementShortName">reset_tb</obj_property>
+      <obj_property name="ObjectShortName">reset_tb</obj_property>
+   </wvobject>
+   <wvobject fp_name="/TOP_LEVEL_UART_TB/pushbutton_tb" type="logic">
+      <obj_property name="ElementShortName">pushbutton_tb</obj_property>
+      <obj_property name="ObjectShortName">pushbutton_tb</obj_property>
+   </wvobject>
+   <wvobject fp_name="/TOP_LEVEL_UART_TB/uart_tx_tb" type="logic">
+      <obj_property name="ElementShortName">uart_tx_tb</obj_property>
+      <obj_property name="ObjectShortName">uart_tx_tb</obj_property>
+   </wvobject>
+   <wvobject fp_name="group23" type="group">
+      <obj_property name="label">leds</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/TOP_LEVEL_UART_TB/led_1_tb" type="logic">
+         <obj_property name="ElementShortName">led_1_tb</obj_property>
+         <obj_property name="ObjectShortName">led_1_tb</obj_property>
+      </wvobject>
+      <wvobject fp_name="/TOP_LEVEL_UART_TB/led_0_tb" type="logic">
+         <obj_property name="ElementShortName">led_0_tb</obj_property>
+         <obj_property name="ObjectShortName">led_0_tb</obj_property>
+      </wvobject>
+      <wvobject fp_name="/TOP_LEVEL_UART_TB/led_2_tb" type="logic">
+         <obj_property name="ElementShortName">led_2_tb</obj_property>
+         <obj_property name="ObjectShortName">led_2_tb</obj_property>
+      </wvobject>
+      <wvobject fp_name="/TOP_LEVEL_UART_TB/led_3_tb" type="logic">
+         <obj_property name="ElementShortName">led_3_tb</obj_property>
+         <obj_property name="ObjectShortName">led_3_tb</obj_property>
+      </wvobject>
+   </wvobject>
+   <wvobject fp_name="group24" type="group">
+      <obj_property name="label">internal</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/TOP_LEVEL_UART_TB/TOP_LEVEL_UART_comp/tx_ena_signal" type="logic">
+         <obj_property name="ElementShortName">tx_ena_signal</obj_property>
+         <obj_property name="ObjectShortName">tx_ena_signal</obj_property>
+      </wvobject>
+      <wvobject fp_name="/TOP_LEVEL_UART_TB/TOP_LEVEL_UART_comp/tx_busy_signal" type="logic">
+         <obj_property name="ElementShortName">tx_busy_signal</obj_property>
+         <obj_property name="ObjectShortName">tx_busy_signal</obj_property>
+      </wvobject>
+      <wvobject fp_name="/TOP_LEVEL_UART_TB/TOP_LEVEL_UART_comp/state_machine" type="other">
+         <obj_property name="ElementShortName">state_machine</obj_property>
+         <obj_property name="ObjectShortName">state_machine</obj_property>
+      </wvobject>
+   </wvobject>
+</wave_config>
