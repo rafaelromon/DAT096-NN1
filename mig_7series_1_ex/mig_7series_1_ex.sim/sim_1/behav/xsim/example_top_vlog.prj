@@ -1,0 +1,72 @@
+# compile verilog/system verilog design source files
+verilog xil_defaultlib  --include "../../../../imports" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/clocking/mig_7series_v4_2_clk_ibuf.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/clocking/mig_7series_v4_2_infrastructure.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/clocking/mig_7series_v4_2_iodelay_ctrl.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/clocking/mig_7series_v4_2_tempmon.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/controller/mig_7series_v4_2_arb_mux.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/controller/mig_7series_v4_2_arb_row_col.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/controller/mig_7series_v4_2_arb_select.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/controller/mig_7series_v4_2_bank_cntrl.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/controller/mig_7series_v4_2_bank_common.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/controller/mig_7series_v4_2_bank_compare.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/controller/mig_7series_v4_2_bank_mach.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/controller/mig_7series_v4_2_bank_queue.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/controller/mig_7series_v4_2_bank_state.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/controller/mig_7series_v4_2_col_mach.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/controller/mig_7series_v4_2_mc.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/controller/mig_7series_v4_2_rank_cntrl.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/controller/mig_7series_v4_2_rank_common.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/controller/mig_7series_v4_2_rank_mach.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/controller/mig_7series_v4_2_round_robin_arb.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/ecc/mig_7series_v4_2_ecc_buf.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/ecc/mig_7series_v4_2_ecc_dec_fix.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/ecc/mig_7series_v4_2_ecc_gen.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/ecc/mig_7series_v4_2_ecc_merge_enc.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/ecc/mig_7series_v4_2_fi_xor.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/ip_top/mig_7series_v4_2_memc_ui_top_std.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/ip_top/mig_7series_v4_2_mem_intfc.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_byte_group_io.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_byte_lane.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_calib_top.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_if_post_fifo.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_mc_phy.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_mc_phy_wrapper.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_of_pre_fifo.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_phy_4lanes.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_phy_ck_addr_cmd_delay.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_phy_dqs_found_cal.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_phy_dqs_found_cal_hr.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_phy_init.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_phy_ocd_cntlr.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_phy_ocd_data.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_phy_ocd_edge.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_phy_ocd_lim.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_phy_ocd_mux.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_phy_ocd_po_cntlr.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_phy_ocd_samp.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_phy_oclkdelay_cal.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_phy_prbs_rdlvl.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_phy_rdlvl.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_phy_tempmon.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_phy_wrcal.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_phy_wrlvl.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_phy_wrlvl_off_delay.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_prbs_gen.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_ddr_skip_calib_tap.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_poc_cc.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_poc_edge_store.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_poc_meta.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_poc_pd.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_poc_tap_base.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/phy/mig_7series_v4_2_poc_top.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/ui/mig_7series_v4_2_ui_cmd.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/ui/mig_7series_v4_2_ui_rd_data.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/ui/mig_7series_v4_2_ui_top.v" \
+"z:/git/github/DAT096-NN1/mig_7series_1_ex/mig_7series_1_ex.srcs/sources_1/ip/mig_7series_1/mig_7series_1/user_design/rtl/ui/mig_7series_v4_2_ui_wr_data.v" \
+
+# compile glbl module
+verilog xil_defaultlib "glbl.v"
+
+# Do not sort compile order
+nosort

@@ -157,7 +157,7 @@ entity example_top is
    --***************************************************************************
    -- System clock frequency parameters
    --***************************************************************************
-   nCK_PER_CLK           : integer := 2;
+   nCK_PER_CLK           : integer := 4;
                                      -- # of memory CKs per fabric CLK
 
    --***************************************************************************
@@ -194,17 +194,15 @@ entity example_top is
    ddr3_ck_p                      : out   std_logic_vector(0 downto 0);
    ddr3_ck_n                      : out   std_logic_vector(0 downto 0);
    ddr3_cke                       : out   std_logic_vector(0 downto 0);
-   ddr3_cs_n                      : out   std_logic_vector(0 downto 0);
+   
    ddr3_dm                        : out   std_logic_vector(7 downto 0);
    ddr3_odt                       : out   std_logic_vector(0 downto 0);
 
    -- Inputs
-   -- Differential system clocks
-   sys_clk_p                      : in    std_logic;
-   sys_clk_n                      : in    std_logic;
-   -- differential iodelayctrl clk (reference clock)
-   clk_ref_p                                : in    std_logic;
-   clk_ref_n                                : in    std_logic;
+   -- Single-ended system clock
+   sys_clk_i                      : in    std_logic;
+   -- Single-ended iodelayctrl clk (reference clock)
+   clk_ref_i                                : in    std_logic;
    
    tg_compare_error              : out std_logic;
    init_calib_complete           : out std_logic;
@@ -293,17 +291,16 @@ architecture arch_example_top of example_top is
       ddr3_ck_p     : out   std_logic_vector(0 downto 0);
       ddr3_ck_n     : out   std_logic_vector(0 downto 0);
       ddr3_cke      : out   std_logic_vector(0 downto 0);
-      ddr3_cs_n     : out   std_logic_vector(0 downto 0);
       ddr3_dm       : out   std_logic_vector(7 downto 0);
       ddr3_odt      : out   std_logic_vector(0 downto 0);
       app_addr                  : in    std_logic_vector(27 downto 0);
       app_cmd                   : in    std_logic_vector(2 downto 0);
       app_en                    : in    std_logic;
-      app_wdf_data              : in    std_logic_vector(255 downto 0);
+      app_wdf_data              : in    std_logic_vector(511 downto 0);
       app_wdf_end               : in    std_logic;
-      app_wdf_mask         : in    std_logic_vector(31 downto 0);
+      app_wdf_mask         : in    std_logic_vector(63 downto 0);
       app_wdf_wren              : in    std_logic;
-      app_rd_data               : out   std_logic_vector(255 downto 0);
+      app_rd_data               : out   std_logic_vector(511 downto 0);
       app_rd_data_end           : out   std_logic;
       app_rd_data_valid         : out   std_logic;
       app_rdy                   : out   std_logic;
@@ -318,11 +315,9 @@ architecture arch_example_top of example_top is
       ui_clk_sync_rst           : out   std_logic;
       init_calib_complete       : out   std_logic;
       -- System Clock Ports
-      sys_clk_p                      : in    std_logic;
-      sys_clk_n                      : in    std_logic;
+      sys_clk_i                      : in    std_logic;
       -- Reference Clock Ports
-      clk_ref_p                                : in    std_logic;
-      clk_ref_n                                : in    std_logic;
+      clk_ref_i                                : in    std_logic;
       device_temp     : out std_logic_vector(11 downto 0);
       sys_rst             : in std_logic
       );
@@ -548,7 +543,6 @@ begin
        ddr3_dqs_p                     => ddr3_dqs_p,
        init_calib_complete  => init_calib_complete_i,
        device_temp                    => device_temp,
-       ddr3_cs_n                      => ddr3_cs_n,
        ddr3_dm                        => ddr3_dm,
        ddr3_odt                       => ddr3_odt,
 -- Application interface ports
@@ -573,11 +567,9 @@ begin
        ui_clk_sync_rst                => rst,
        app_wdf_mask                   => app_wdf_mask,
 -- System Clock Ports
-       sys_clk_p                       => sys_clk_p,
-       sys_clk_n                       => sys_clk_n,
+       sys_clk_i                       => sys_clk_i,
 -- Reference Clock Ports
-       clk_ref_p                      => clk_ref_p,
-       clk_ref_n                      => clk_ref_n,
+       clk_ref_i                      => clk_ref_i,
         sys_rst                        => sys_rst
         );
 -- End of User Design top instance

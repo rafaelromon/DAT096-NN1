@@ -147,7 +147,7 @@ module sim_tb_top;
    // The following parameters are multiplier and divisor factors for PLLE2.
    // Based on the selected design frequency these parameters vary.
    //***************************************************************************
-   parameter CLKIN_PERIOD          = 3000;
+   parameter CLKIN_PERIOD          = 2500;
                                      // Input Clock Period
 
 
@@ -181,10 +181,10 @@ module sim_tb_top;
    //***************************************************************************
    // System clock frequency parameters
    //***************************************************************************
-   parameter tCK                   = 3000;
+   parameter tCK                   = 2500;
                                      // memory tCK paramter.
                      // # = Clock Period in pS.
-   parameter nCK_PER_CLK           = 2;
+   parameter nCK_PER_CLK           = 4;
                                      // # of memory CKs per fabric CLK
 
    
@@ -237,14 +237,8 @@ module sim_tb_top;
 
 
   reg                     sys_clk_i;
-  wire                               sys_clk_p;
-  wire                               sys_clk_n;
-    
 
   reg clk_ref_i;
-  wire                               clk_ref_p;
-  wire                               clk_ref_n;
-    
 
   
   wire                               ddr3_reset_n;
@@ -263,15 +257,13 @@ module sim_tb_top;
   
   wire                               init_calib_complete;
   wire                               tg_compare_error;
-  wire [(CS_WIDTH*1)-1:0] ddr3_cs_n_fpga;
-    
+  
   wire [DM_WIDTH-1:0]                ddr3_dm_fpga;
     
   wire [ODT_WIDTH-1:0]               ddr3_odt_fpga;
     
   
-  reg [(CS_WIDTH*1)-1:0] ddr3_cs_n_sdram_tmp;
-    
+  
   reg [DM_WIDTH-1:0]                 ddr3_dm_sdram_tmp;
     
   reg [ODT_WIDTH-1:0]                ddr3_odt_sdram_tmp;
@@ -317,16 +309,12 @@ module sim_tb_top;
   always
     sys_clk_i = #(CLKIN_PERIOD/2.0) ~sys_clk_i;
 
-  assign sys_clk_p = sys_clk_i;
-  assign sys_clk_n = ~sys_clk_i;
 
   initial
     clk_ref_i = 1'b0;
   always
     clk_ref_i = #REFCLK_PERIOD ~clk_ref_i;
 
-  assign clk_ref_p = clk_ref_i;
-  assign clk_ref_n = ~clk_ref_i;
 
 
 
@@ -354,9 +342,7 @@ module sim_tb_top;
   end
     
 
-  always @( * )
-    ddr3_cs_n_sdram_tmp   <=  #(TPROP_PCB_CTRL) ddr3_cs_n_fpga;
-  assign ddr3_cs_n_sdram =  ddr3_cs_n_sdram_tmp;
+  assign ddr3_cs_n_sdram =  {(CS_WIDTH*1){1'b0}};
     
 
   always @( * )
@@ -498,18 +484,14 @@ module sim_tb_top;
      .ddr3_ck_p            (ddr3_ck_p_fpga),
      .ddr3_ck_n            (ddr3_ck_n_fpga),
      .ddr3_cke             (ddr3_cke_fpga),
-     .ddr3_cs_n            (ddr3_cs_n_fpga),
-    
      .ddr3_dm              (ddr3_dm_fpga),
     
      .ddr3_odt             (ddr3_odt_fpga),
     
      
-     .sys_clk_p            (sys_clk_p),
-     .sys_clk_n            (sys_clk_n),
+     .sys_clk_i            (sys_clk_i),
     
-     .clk_ref_p            (clk_ref_p),
-     .clk_ref_n            (clk_ref_n),
+     .clk_ref_i            (clk_ref_i),
     
       .init_calib_complete (init_calib_complete),
       .tg_compare_error    (tg_compare_error),

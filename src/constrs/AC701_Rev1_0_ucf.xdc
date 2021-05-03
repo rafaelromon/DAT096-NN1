@@ -61,6 +61,15 @@ set_property IOSTANDARD LVCMOS15 [get_ports GPIO_SW_N]
 #set_property PACKAGE_PIN U5 [get_ports GPIO_SW_E]
 #set_property IOSTANDARD SSTL15 [get_ports GPIO_SW_E]
 
+###
+# DDR
+###
+# The DDR reset is on package pin A19 in bank 16
+# and init_calib_complete on package pin A22 bank 16
+# set_property PACKAGE_PIN A19 [get_ports sys_rst]
+# set_property PACKAGE_PIN A22 [get_ports init_calib_complete]
+
+### CPU_RESET ###
 set_property PACKAGE_PIN U4 [get_ports CPU_RESET]
 set_property IOSTANDARD LVCMOS15 [get_ports CPU_RESET]
 

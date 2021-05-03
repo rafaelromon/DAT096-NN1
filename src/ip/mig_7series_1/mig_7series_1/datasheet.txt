@@ -12,10 +12,10 @@ MIG Output Options:
    Selected Compatible Device(s)   : --
 
 FPGA Options:
-   System Clock Type               : Differential
-   Reference Clock Type            : Differential
+   System Clock Type               : No Buffer
+   Reference Clock Type            : No Buffer
    Debug Port                      : OFF
-   Internal Vref                   : disabled
+   Internal Vref                   : enabled
    IO Power Reduction              : ON
    XADC instantiation in MIG       : Enabled
 
@@ -36,13 +36,13 @@ Controller Options :
 
    Interface                     : NATIVE
 
-   Design Clock Frequency        : 3000 ps (  0.00 MHz)
+   Design Clock Frequency        : 2500 ps (  0.00 MHz)
 
-   Phy to Controller Clock Ratio : 2:1
+   Phy to Controller Clock Ratio : 4:1
 
-   Input Clock Period            : 3000 ps
+   Input Clock Period            : 2500 ps
 
-   CLKFBOUT_MULT (PLL)           : 4
+   CLKFBOUT_MULT (PLL)           : 2
 
    DIVCLK_DIVIDE (PLL)           : 1
 
@@ -66,7 +66,7 @@ Controller Options :
 
 AXI Parameters :
 
-   Data Width                    : 256
+   Data Width                    : 512
 
    Arbitration Scheme            : RD_PRI_REG
 
@@ -82,11 +82,11 @@ Memory Options:
 
    Read Burst Type (MR0[3])         : Sequential
 
-   CAS Latency (MR0[6:4])           : 5
+   CAS Latency (MR0[6:4])           : 6
 
    Output Drive Strength (MR1[5,1]) : RZQ/7
 
-   Controller CS option             : Enable
+   Controller CS option             : Disable
 
    Rtt_NOM - ODT (MR1[9,6,2])       : RZQ/4
 
@@ -104,8 +104,7 @@ Bank Selections:
 		Byte Group T2:	DQ[48-55]
 		Byte Group T3:	DQ[56-63]
 	Bank: 34
-		Byte Group T1:	Address/Ctrl-0
-		Byte Group T2:	Address/Ctrl-2
+		Byte Group T2:	Address/Ctrl-0
 		Byte Group T3:	Address/Ctrl-1
 	Bank: 35
 		Byte Group T0:	DQ[0-7]
@@ -114,21 +113,13 @@ Bank Selections:
 		Byte Group T3:	DQ[24-31]
 
 
-Reference_Clock: 
-	SignalName: clk_ref_p/n
-		PadLocation: R3/P3(CC_P/N)  Bank: 34
-
-System_Clock: 
-	SignalName: sys_clk_p/n
-		PadLocation: P4/N4(CC_P/N)  Bank: 34
-
 System_Control: 
 	SignalName: sys_rst
-		PadLocation: A17  Bank: 16
-	SignalName: init_calib_complete
-		PadLocation: A18  Bank: 16
-	SignalName: tg_compare_error
 		PadLocation: A19  Bank: 16
+	SignalName: init_calib_complete
+		PadLocation: A22  Bank: 16
+	SignalName: tg_compare_error
+		PadLocation: No connect  Bank: Select Bank
 
 
 

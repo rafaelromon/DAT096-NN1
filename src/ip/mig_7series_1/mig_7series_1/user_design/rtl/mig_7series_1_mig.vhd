@@ -91,7 +91,7 @@ entity mig_7series_1_mig is
                                      -- # of unique CS outputs per rank for phy
    CKE_WIDTH             : integer := 1;
                                      -- # of CKE outputs to memory.
-   DATA_BUF_ADDR_WIDTH   : integer := 4;
+   DATA_BUF_ADDR_WIDTH   : integer := 5;
    DQ_CNT_WIDTH          : integer := 6;
                                      -- = ceil(log2(DQ_WIDTH))
    DQ_PER_DM             : integer := 8;
@@ -129,7 +129,7 @@ entity mig_7series_1_mig is
                                      --     + ROW_WIDTH + COL_WIDTH;
                                      -- Chip Select is always tied to low for
                                      -- single rank devices
-   USE_CS_PORT          : integer := 1;
+   USE_CS_PORT          : integer := 0;
                                      -- # = 1, When Chip Select (CS#) output is enabled
                                      --   = 0, When Chip Select (CS#) output is disabled
                                      -- If CS_N disabled, user must connect
@@ -185,7 +185,7 @@ entity mig_7series_1_mig is
                                      -- DDR2 SDRAM: Burst Type (Mode Register).
                                      -- # = "SEQ" - (Sequential),
                                      --   = "INT" - (Interleaved).
-   CL                    : integer := 5;
+   CL                    : integer := 6;
                                      -- in number of clock cycles
                                      -- DDR3 SDRAM: CAS Latency (Mode Register 0).
                                      -- DDR2 SDRAM: CAS Latency (Mode Register).
@@ -222,25 +222,25 @@ entity mig_7series_1_mig is
    -- The following parameters are multiplier and divisor factors for PLLE2.
    -- Based on the selected design frequency these parameters vary.
    --***************************************************************************
-   CLKIN_PERIOD          : integer := 3000;
+   CLKIN_PERIOD          : integer := 2500;
                                      -- Input Clock Period
-   CLKFBOUT_MULT         : integer := 4;
+   CLKFBOUT_MULT         : integer := 2;
                                      -- write PLL VCO multiplier
    DIVCLK_DIVIDE         : integer := 1;
                                      -- write PLL VCO divisor
    CLKOUT0_PHASE         : real    := 0.0;
                                      -- Phase for PLL output clock (CLKOUT0)
-   CLKOUT0_DIVIDE        : integer := 2;
+   CLKOUT0_DIVIDE        : integer := 1;
                                      -- VCO output divisor for PLL output clock (CLKOUT0)
-   CLKOUT1_DIVIDE        : integer := 4;
+   CLKOUT1_DIVIDE        : integer := 2;
                                      -- VCO output divisor for PLL output clock (CLKOUT1)
-   CLKOUT2_DIVIDE        : integer := 64;
+   CLKOUT2_DIVIDE        : integer := 32;
                                      -- VCO output divisor for PLL output clock (CLKOUT2)
    CLKOUT3_DIVIDE        : integer := 8;
                                      -- VCO output divisor for PLL output clock (CLKOUT3)
-   MMCM_VCO              : integer := 666;
+   MMCM_VCO              : integer := 800;
                                      -- Max Freq (MHz) of MMCM VCO
-   MMCM_MULT_F           : integer := 4;
+   MMCM_MULT_F           : integer := 8;
                                      -- write MMCM VCO multiplier
    MMCM_DIVCLK_DIVIDE    : integer := 1;
                                      -- write MMCM VCO divisor
@@ -297,7 +297,7 @@ entity mig_7series_1_mig is
    --***************************************************************************
    BYTE_LANES_B0         : std_logic_vector(3 downto 0) := "1111";
                                      -- Byte lanes used in an IO column.
-   BYTE_LANES_B1         : std_logic_vector(3 downto 0) := "0111";
+   BYTE_LANES_B1         : std_logic_vector(3 downto 0) := "0011";
                                      -- Byte lanes used in an IO column.
    BYTE_LANES_B2         : std_logic_vector(3 downto 0) := "1111";
                                      -- Byte lanes used in an IO column.
@@ -330,21 +330,21 @@ entity mig_7series_1_mig is
                                      -- or control Byte lane. '1' in a bit
                                      -- position indicates a data byte lane and
                                      -- a '0' indicates a control byte lane
-   PHY_0_BITLANES        : std_logic_vector(47 downto 0) := X"3FE3FE3FE2FF";
-   PHY_1_BITLANES        : std_logic_vector(47 downto 0) := X"000FFFC003FE";
-   PHY_2_BITLANES        : std_logic_vector(47 downto 0) := X"3FE3FE3FE2FF";
+   PHY_0_BITLANES        : std_logic_vector(47 downto 0) := X"3FE3FE3FE3FE";
+   PHY_1_BITLANES        : std_logic_vector(47 downto 0) := X"000000FFF3FF";
+   PHY_2_BITLANES        : std_logic_vector(47 downto 0) := X"3FE3FE3FE3FE";
 
    -- control/address/data pin mapping parameters
    CK_BYTE_MAP
      : std_logic_vector(143 downto 0) := X"000000000000000000000000000000000010";
    ADDR_MAP
-     : std_logic_vector(191 downto 0) := X"00000012912812712612B12A125124123122121120109108";
+     : std_logic_vector(191 downto 0) := X"00000011911811711611B11A115114113112111110109108";
    BANK_MAP   : std_logic_vector(35 downto 0) := X"107106105";
    CAS_MAP    : std_logic_vector(11 downto 0) := X"103";
    CKE_ODT_BYTE_MAP : std_logic_vector(7 downto 0) := X"00";
-   CKE_MAP    : std_logic_vector(95 downto 0) := X"00000000000000000000011B";
-   ODT_MAP    : std_logic_vector(95 downto 0) := X"00000000000000000000011A";
-   CS_MAP     : std_logic_vector(119 downto 0) := X"000000000000000000000000000101";
+   CKE_MAP    : std_logic_vector(95 downto 0) := X"000000000000000000000101";
+   ODT_MAP    : std_logic_vector(95 downto 0) := X"000000000000000000000100";
+   CS_MAP     : std_logic_vector(119 downto 0) := X"000000000000000000000000000000";
    PARITY_MAP : std_logic_vector(11 downto 0) := X"000";
    RAS_MAP    : std_logic_vector(11 downto 0) := X"104";
    WE_MAP     : std_logic_vector(11 downto 0) := X"102";
@@ -353,11 +353,11 @@ entity mig_7series_1_mig is
    DATA0_MAP  : std_logic_vector(95 downto 0) := X"031032033034035036037038";
    DATA1_MAP  : std_logic_vector(95 downto 0) := X"021022023024025026027028";
    DATA2_MAP  : std_logic_vector(95 downto 0) := X"011012013014016017018019";
-   DATA3_MAP  : std_logic_vector(95 downto 0) := X"000001002003004005006007";
+   DATA3_MAP  : std_logic_vector(95 downto 0) := X"001002003004005006007008";
    DATA4_MAP  : std_logic_vector(95 downto 0) := X"231232233234235236237238";
    DATA5_MAP  : std_logic_vector(95 downto 0) := X"221222223224225226227228";
    DATA6_MAP  : std_logic_vector(95 downto 0) := X"211212213214216217218219";
-   DATA7_MAP  : std_logic_vector(95 downto 0) := X"200201202203204205206207";
+   DATA7_MAP  : std_logic_vector(95 downto 0) := X"201202203204205206207208";
    DATA8_MAP  : std_logic_vector(95 downto 0) := X"000000000000000000000000";
    DATA9_MAP  : std_logic_vector(95 downto 0) := X"000000000000000000000000";
    DATA10_MAP : std_logic_vector(95 downto 0) := X"000000000000000000000000";
@@ -416,10 +416,10 @@ entity mig_7series_1_mig is
                                      -- It is associated to a set of IODELAYs with
                                      -- an IDELAYCTRL that have same IODELAY CONTROLLER
                                      -- clock frequency (300MHz/400MHz).
-   SYSCLK_TYPE           : string  := "DIFFERENTIAL";
+   SYSCLK_TYPE           : string  := "NO_BUFFER";
                                      -- System clock type DIFFERENTIAL, SINGLE_ENDED,
                                      -- NO_BUFFER
-   REFCLK_TYPE           : string  := "DIFFERENTIAL";
+   REFCLK_TYPE           : string  := "NO_BUFFER";
                                      -- Reference clock type DIFFERENTIAL, SINGLE_ENDED
                                      -- NO_BUFFER, USE_SYSTEM_CLOCK
    SYS_RST_PORT          : string  := "TRUE";
@@ -444,18 +444,18 @@ entity mig_7series_1_mig is
    --***************************************************************************
    REFCLK_FREQ           : real    := 200.0;
                                      -- IODELAYCTRL reference clock frequency
-   DIFF_TERM_REFCLK      : string  := "FALSE";
+   DIFF_TERM_REFCLK      : string  := "TRUE";
                                      -- Differential Termination for idelay
                                      -- reference clock input pins
    --***************************************************************************
    -- System clock frequency parameters
    --***************************************************************************
-   tCK                   : integer := 3000;
+   tCK                   : integer := 2500;
                                      -- memory tCK paramter.
                                      -- # = Clock Period in pS.
-   nCK_PER_CLK           : integer := 2;
+   nCK_PER_CLK           : integer := 4;
                                      -- # of memory CKs per fabric CLK
-   DIFF_TERM_SYSCLK      : string  := "FALSE";
+   DIFF_TERM_SYSCLK      : string  := "TRUE";
                                      -- Differential Termination for System
                                      -- clock input pins
 
@@ -499,17 +499,15 @@ entity mig_7series_1_mig is
    ddr3_ck_p                      : out   std_logic_vector(CK_WIDTH-1 downto 0);
    ddr3_ck_n                      : out   std_logic_vector(CK_WIDTH-1 downto 0);
    ddr3_cke                       : out   std_logic_vector(CKE_WIDTH-1 downto 0);
-   ddr3_cs_n                      : out   std_logic_vector((CS_WIDTH*nCS_PER_RANK)-1 downto 0);
+   
    ddr3_dm                        : out   std_logic_vector(DM_WIDTH-1 downto 0);
    ddr3_odt                       : out   std_logic_vector(ODT_WIDTH-1 downto 0);
 
    -- Inputs
-   -- Differential system clocks
-   sys_clk_p                      : in    std_logic;
-   sys_clk_n                      : in    std_logic;
-   -- differential iodelayctrl clk (reference clock)
-   clk_ref_p                                : in    std_logic;
-   clk_ref_n                                : in    std_logic;
+   -- Single-ended system clock
+   sys_clk_i                      : in    std_logic;
+   -- Single-ended iodelayctrl clk (reference clock)
+   clk_ref_i                                : in    std_logic;
    -- user interface signals
    app_addr             : in    std_logic_vector(ADDR_WIDTH-1 downto 0);
    app_cmd              : in    std_logic_vector(2 downto 0);
@@ -1067,9 +1065,11 @@ architecture arch_mig_7series_1_mig of mig_7series_1_mig is
       
   signal init_calib_complete_i       : std_logic;
 
-  signal sys_clk_i      : std_logic;
+  signal sys_clk_p       : std_logic;
+  signal sys_clk_n          : std_logic;
   signal mmcm_clk           : std_logic;
-  signal clk_ref_i               : std_logic;
+  signal clk_ref_p               : std_logic;
+  signal clk_ref_n               : std_logic;
   signal device_temp_s         : std_logic_vector(11 downto 0);
   signal device_temp_i           : std_logic_vector(11 downto 0);
 
@@ -1169,8 +1169,10 @@ begin
   ui_clk <= clk;
   ui_clk_sync_rst <= rst;
   
-  sys_clk_i <= '0';
-  clk_ref_i <= '0';
+  sys_clk_p <= '0';
+  sys_clk_n <= '0';
+  clk_ref_p <= '0';
+  clk_ref_n <= '0';
   init_calib_complete         <= init_calib_complete_i;
   device_temp <= device_temp_s;
       
@@ -1470,7 +1472,7 @@ begin
         ddr_ck_n                         => ddr3_ck_n,
         ddr_ck                           => ddr3_ck_p,
         ddr_cke                          => ddr3_cke,
-        ddr_cs_n                         => ddr3_cs_n,
+        ddr_cs_n                         => open,
         ddr_dm                           => ddr3_dm,
         ddr_odt                          => ddr3_odt,
         ddr_ras_n                        => ddr3_ras_n,
