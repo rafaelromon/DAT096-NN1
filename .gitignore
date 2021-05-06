@@ -16,7 +16,7 @@
 ##########
 # ignore folder created by tcl
 ##########
-DAT096-NN1/*
+DAT096-NN1
 !sim/*
 !src/*
 !script/*

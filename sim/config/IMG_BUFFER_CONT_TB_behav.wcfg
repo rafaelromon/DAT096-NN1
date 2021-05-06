@@ -3,67 +3,48 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="IMG_BUFFER_CONT_TB_behav.wdb" id="1">
+      <db_ref path="TOP_LEVEL_TB_behav.wdb" id="1">
          <top_modules>
-            <top_module name="IMG_BUFFER_CONT_TB" />
+            <top_module name="TOP_LEVEL_TB" />
          </top_modules>
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="20225fs"></ZoomStartTime>
-      <ZoomEndTime time="51876fs"></ZoomEndTime>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="36355fs"></ZoomEndTime>
       <Cursor1Time time="39625fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="175"></NameColumnWidth>
-      <ValueColumnWidth column_width="202"></ValueColumnWidth>
+      <ValueColumnWidth column_width="197"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="6" />
-   <wvobject fp_name="/IMG_BUFFER_CONT_TB/clk_tb" type="logic">
-      <obj_property name="ElementShortName">clk_tb</obj_property>
-      <obj_property name="ObjectShortName">clk_tb</obj_property>
+   <WVObjectSize size="7" />
+   <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/IMG_BUFFER_CONTROLLER_i/clk" type="logic">
+      <obj_property name="ElementShortName">clk</obj_property>
+      <obj_property name="ObjectShortName">clk</obj_property>
    </wvobject>
-   <wvobject fp_name="/IMG_BUFFER_CONT_TB/reset_p_tb" type="logic">
-      <obj_property name="ElementShortName">reset_p_tb</obj_property>
-      <obj_property name="ObjectShortName">reset_p_tb</obj_property>
+   <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/IMG_BUFFER_CONTROLLER_i/reset_p" type="logic">
+      <obj_property name="ElementShortName">reset_p</obj_property>
+      <obj_property name="ObjectShortName">reset_p</obj_property>
    </wvobject>
-   <wvobject fp_name="/IMG_BUFFER_CONT_TB/start_tb" type="logic">
-      <obj_property name="ElementShortName">start_tb</obj_property>
-      <obj_property name="ObjectShortName">start_tb</obj_property>
+   <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/IMG_BUFFER_CONTROLLER_i/start" type="logic">
+      <obj_property name="ElementShortName">start</obj_property>
+      <obj_property name="ObjectShortName">start</obj_property>
    </wvobject>
-   <wvobject fp_name="/IMG_BUFFER_CONT_TB/busy_tb" type="logic">
-      <obj_property name="ElementShortName">busy_tb</obj_property>
-      <obj_property name="ObjectShortName">busy_tb</obj_property>
+   <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/IMG_BUFFER_CONTROLLER_i/busy" type="logic">
+      <obj_property name="ElementShortName">busy</obj_property>
+      <obj_property name="ObjectShortName">busy</obj_property>
    </wvobject>
-   <wvobject fp_name="/IMG_BUFFER_CONT_TB/image_tb" type="array">
-      <obj_property name="ElementShortName">image_tb[16383:0]</obj_property>
-      <obj_property name="ObjectShortName">image_tb[16383:0]</obj_property>
-      <obj_property name="Radix">HEXRADIX</obj_property>
+   <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/IMG_BUFFER_CONTROLLER_i/done" type="logic">
+      <obj_property name="ElementShortName">done</obj_property>
+      <obj_property name="ObjectShortName">done</obj_property>
    </wvobject>
-   <wvobject fp_name="group40" type="group">
-      <obj_property name="label">internal</obj_property>
-      <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
-      <wvobject fp_name="/IMG_BUFFER_CONT_TB/IMG_BUFFER_CONTROLLER_i/temp_img" type="array">
-         <obj_property name="ElementShortName">temp_img[16383:0]</obj_property>
-         <obj_property name="ObjectShortName">temp_img[16383:0]</obj_property>
-         <obj_property name="Radix">HEXRADIX</obj_property>
-      </wvobject>
-      <wvobject fp_name="/IMG_BUFFER_CONT_TB/IMG_BUFFER_CONTROLLER_i/addra" type="array">
-         <obj_property name="ElementShortName">addra[5:0]</obj_property>
-         <obj_property name="ObjectShortName">addra[5:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/IMG_BUFFER_CONT_TB/IMG_BUFFER_CONTROLLER_i/douta" type="array">
-         <obj_property name="ElementShortName">douta[4095:0]</obj_property>
-         <obj_property name="ObjectShortName">douta[4095:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/IMG_BUFFER_CONT_TB/IMG_BUFFER_CONTROLLER_i/addrb" type="array">
-         <obj_property name="ElementShortName">addrb[5:0]</obj_property>
-         <obj_property name="ObjectShortName">addrb[5:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/IMG_BUFFER_CONT_TB/IMG_BUFFER_CONTROLLER_i/doutb" type="array">
-         <obj_property name="ElementShortName">doutb[4095:0]</obj_property>
-         <obj_property name="ObjectShortName">doutb[4095:0]</obj_property>
-      </wvobject>
+   <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/IMG_BUFFER_CONTROLLER_i/addra" type="array">
+      <obj_property name="ElementShortName">addra[10:0]</obj_property>
+      <obj_property name="ObjectShortName">addra[10:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/IMG_BUFFER_CONTROLLER_i/douta" type="array">
+      <obj_property name="ElementShortName">douta[127:0]</obj_property>
+      <obj_property name="ObjectShortName">douta[127:0]</obj_property>
    </wvobject>
 </wave_config>
