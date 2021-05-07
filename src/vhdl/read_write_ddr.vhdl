@@ -4,9 +4,11 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 USE IEEE.MATH_REAL.ALL;
+USE work.function_package.ALL;
 
 entity read_write_ddr is
-  GENERIC(APP_DATA_WIDTH:INTEGER:=128;
+  GENERIC(
+          APP_DATA_WIDTH:INTEGER:=128;
           DATA_WIDTH:INTEGER:=16;
           ADDR_WIDTH:INTEGER:=27);         
   port (ui_clk:IN STD_LOGIC;
@@ -40,12 +42,17 @@ ARCHITECTURE arch_read_write_ddr of read_write_ddr is
    TYPE state_type IS (IDLE,W1,W2,W3,W4,W5,R1,R2,R3,R4,R5,R6);
    SIGNAL state_signal:STATE_TYPE;
    SIGNAL next_state_signal:STATE_TYPE;
-   CONSTANT DATA_CONST:STD_LOGIC_VECTOR(55 DOWNTO 0):=(OTHERS=>'0');
-   CONSTANT ZERO_FILL_CONST:NATURAL:=NATURAL(LOG2(REAL(DATA_WIDTH)));
-   CONSTANT ADDR_HIGH_CONST:STD_LOGIC_VECTOR(ADDR_WIDTH-3-ZERO_FILL_CONST-1 DOWNTO 0):=(OTHERS=>'0');
-   CONSTANT ADDR_LOW_CONST:STD_LOGIC_VECTOR(ZERO_FILL_CONST-1 DOWNTO 0):=(OTHERS=>'0');
-   CONSTANT READ_DDR_CONST:STD_LOGIC_VECTOR(2 DOWNTO 0):= "001";
-   CONSTANT WRITE_DDR_CONST:STD_LOGIC_VECTOR(2 DOWNTO 0):= "000";
+   
+   --Special data type because it is so shite to load the WDF
+   TYPE WDF_WORD IS ARRAY(DATA_WIDTH-1 DOWNTO 0) OF STD_LOGIC;
+   TYPE WDF      IS ARRAY(DQS_SIZE_func(DATA_WIDTH)-1 DOWNTO 0) OF WDF_WORD;
+   
+   CONSTANT DATA_CONST      : STD_LOGIC_VECTOR(55 DOWNTO 0):=(OTHERS=>'0');
+   CONSTANT ZERO_FILL_CONST : NATURAL:=NATURAL(LOG2(REAL(DATA_WIDTH)));
+   CONSTANT ADDR_HIGH_CONST : STD_LOGIC_VECTOR(ADDR_WIDTH-3-ZERO_FILL_CONST-1 DOWNTO 0):=(OTHERS=>'0');
+   CONSTANT ADDR_LOW_CONST  : STD_LOGIC_VECTOR(ZERO_FILL_CONST-1 DOWNTO 0):=(OTHERS=>'0');
+   CONSTANT READ_DDR_CONST  : STD_LOGIC_VECTOR(2 DOWNTO 0):= "001";
+   CONSTANT WRITE_DDR_CONST : STD_LOGIC_VECTOR(2 DOWNTO 0):= "000";
    BEGIN
    state_transition_proc:
    PROCESS(reset_n,ui_clk)
@@ -141,7 +148,11 @@ ARCHITECTURE arch_read_write_ddr of read_write_ddr is
             app_addr_out <= ADDR_HIGH_CONST & app_addr_in & ADDR_LOW_CONST;
             app_cmd <= WRITE_DDR_CONST;
             app_en <= '1';
-            app_wdf_data_out <= DATA_CONST & app_wdf_data_in & DATA_CONST & app_wdf_data_in;            
+            -- Here we'll have to experiment a bit
+            --app_wdf_data_out <= DATA_CONST & app_wdf_data_in & DATA_CONST & app_wdf_data_in;
+            FOR i IN 0 TO DQS_SIZE_func(DATA_WIDTH)-1 LOOP
+                app_wdf_data_out((i+1)*DATA_WIDTH-1 DOWNTO i*DATA_WIDTH) <= DATA_CONST & app_wdf_data_in;
+            END LOOP;
             app_wdf_wren <= '1';
             app_wdf_end <= '0';
          WHEN W3 =>
@@ -149,7 +160,10 @@ ARCHITECTURE arch_read_write_ddr of read_write_ddr is
             app_addr_out <= ADDR_HIGH_CONST & app_addr_in & ADDR_LOW_CONST;
             app_cmd <= WRITE_DDR_CONST;
             app_en <= '1';
-            app_wdf_data_out <= DATA_CONST & app_wdf_data_in & DATA_CONST & app_wdf_data_in;
+            -- Here we'll have to experiment a bit
+            FOR i IN 0 TO DQS_SIZE_func(DATA_WIDTH)-1 LOOP
+                app_wdf_data_out((i+1)*DATA_WIDTH-1 DOWNTO i*DATA_WIDTH) <= DATA_CONST & app_wdf_data_in;
+            END LOOP;
             app_wdf_wren <= '1';
             app_wdf_end <= '1';
          WHEN W4 =>

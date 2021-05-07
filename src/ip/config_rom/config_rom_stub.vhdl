@@ -1,9 +1,9 @@
 -- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2019.2 (win64) Build 2708876 Wed Nov  6 21:40:23 MST 2019
--- Date        : Fri Mar  5 15:03:44 2021
--- Host        : ED4225-09 running 64-bit major release  (build 9200)
--- Command     : write_vhdl -force -mode synth_stub z:/DAT096-NN1/src/ip/config_rom/config_rom_stub.vhdl
+-- Date        : Thu May  6 11:47:51 2021
+-- Host        : ED4220-09 running 64-bit major release  (build 9200)
+-- Command     : write_vhdl -force -mode synth_stub Z:/git/github/DAT096-NN1/src/ip/config_rom/config_rom_stub.vhdl
 -- Design      : config_rom
 -- Purpose     : Stub declaration of top-level module interface
 -- Device      : xc7a200tfbg676-2

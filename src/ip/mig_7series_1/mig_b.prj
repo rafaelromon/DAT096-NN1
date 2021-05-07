@@ -25,13 +25,13 @@
 
   <SystemClock>No Buffer</SystemClock>
 
-  <ReferenceClock>Differential</ReferenceClock>
+  <ReferenceClock>No Buffer</ReferenceClock>
 
   <SysResetPolarity>ACTIVE HIGH</SysResetPolarity>
 
   <BankSelectionFlag>TRUE</BankSelectionFlag>
 
-  <InternalVref>0</InternalVref>
+  <InternalVref>1</InternalVref>
 
   <dci_hr_inouts_inputs>40 Ohms</dci_hr_inouts_inputs>
 
@@ -39,12 +39,12 @@
 
   <Controller number="0">
     <MemoryDevice>DDR3_SDRAM/SODIMMs/MT8JTF12864HZ-1G6</MemoryDevice>
-    <TimePeriod>3000</TimePeriod>
+    <TimePeriod>2500</TimePeriod>
     <VccAuxIO>1.8V</VccAuxIO>
-    <PHYRatio>2:1</PHYRatio>
-    <InputClkFreq>333.333</InputClkFreq>
+    <PHYRatio>4:1</PHYRatio>
+    <InputClkFreq>200</InputClkFreq>
     <UIExtraClocks>0</UIExtraClocks>
-    <MMCM_VCO>666</MMCM_VCO>
+    <MMCM_VCO>800</MMCM_VCO>
     <MMCMClkOut0> 1.000</MMCMClkOut0>
     <MMCMClkOut1>1</MMCMClkOut1>
     <MMCMClkOut2>1</MMCMClkOut2>
@@ -65,12 +65,9 @@
     <UserMemoryAddressMap>BANK_ROW_COLUMN</UserMemoryAddressMap>
     <BankSelection>
       <Bank T0="DQ[0-7]" T1="DQ[8-15]" T2="DQ[16-23]" T3="DQ[24-31]" name="35"/>
-      <Bank T1="Address/Ctrl-0" T2="Address/Ctrl-2" T3="Address/Ctrl-1" name="34"/>
+      <Bank T2="Address/Ctrl-0" T3="Address/Ctrl-1" name="34"/>
       <Bank T0="DQ[32-39]" T1="DQ[40-47]" T2="DQ[48-55]" T3="DQ[56-63]" name="33"/>
     </BankSelection>
-    <Reference_Clock>
-      <Pin Bank="34" PADName="R3/P3(CC_P/N)" name="clk_ref_p/n"/>
-    </Reference_Clock>
     <System_Control>
       <Pin Bank="16" PADName="A19" name="sys_rst"/>
       <Pin Bank="16" PADName="A22" name="init_calib_complete"/>
@@ -81,7 +78,7 @@
     </TimingParameters>
     <mrBurstLength name="Burst Length">8 - Fixed</mrBurstLength>
     <mrBurstType name="Read Burst Type and Length">Sequential</mrBurstType>
-    <mrCasLatency name="CAS Latency">5</mrCasLatency>
+    <mrCasLatency name="CAS Latency">6</mrCasLatency>
     <mrMode name="Mode">Normal</mrMode>
     <mrDllReset name="DLL Reset">No</mrDllReset>
     <mrPdMode name="DLL control for precharge PD">Slow Exit</mrPdMode>

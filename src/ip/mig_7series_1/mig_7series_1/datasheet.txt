@@ -40,9 +40,9 @@ Controller Options :
 
    Phy to Controller Clock Ratio : 4:1
 
-   Input Clock Period            : 2500 ps
+   Input Clock Period            : 5000 ps
 
-   CLKFBOUT_MULT (PLL)           : 2
+   CLKFBOUT_MULT (PLL)           : 4
 
    DIVCLK_DIVIDE (PLL)           : 1
 

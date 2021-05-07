@@ -1,8 +1,8 @@
 -- Copyright 1986-2019 Xilinx, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2019.2 (win64) Build 2708876 Wed Nov  6 21:40:23 MST 2019
--- Date        : Sun Mar 21 20:26:08 2021
--- Host        : ED4220-02 running 64-bit major release  (build 9200)
+-- Date        : Fri May  7 14:04:22 2021
+-- Host        : ED4220-09 running 64-bit major release  (build 9200)
 -- Command     : write_vhdl -force -mode synth_stub Z:/git/github/DAT096-NN1/src/ip/mig_7series_1/mig_7series_1_stub.vhdl
 -- Design      : mig_7series_1
 -- Purpose     : Stub declaration of top-level module interface
@@ -25,17 +25,16 @@ entity mig_7series_1 is
     ddr3_ck_p : out STD_LOGIC_VECTOR ( 0 to 0 );
     ddr3_ck_n : out STD_LOGIC_VECTOR ( 0 to 0 );
     ddr3_cke : out STD_LOGIC_VECTOR ( 0 to 0 );
-    ddr3_cs_n : out STD_LOGIC_VECTOR ( 0 to 0 );
     ddr3_dm : out STD_LOGIC_VECTOR ( 7 downto 0 );
     ddr3_odt : out STD_LOGIC_VECTOR ( 0 to 0 );
     app_addr : in STD_LOGIC_VECTOR ( 27 downto 0 );
     app_cmd : in STD_LOGIC_VECTOR ( 2 downto 0 );
     app_en : in STD_LOGIC;
-    app_wdf_data : in STD_LOGIC_VECTOR ( 255 downto 0 );
+    app_wdf_data : in STD_LOGIC_VECTOR ( 511 downto 0 );
     app_wdf_end : in STD_LOGIC;
-    app_wdf_mask : in STD_LOGIC_VECTOR ( 31 downto 0 );
+    app_wdf_mask : in STD_LOGIC_VECTOR ( 63 downto 0 );
     app_wdf_wren : in STD_LOGIC;
-    app_rd_data : out STD_LOGIC_VECTOR ( 255 downto 0 );
+    app_rd_data : out STD_LOGIC_VECTOR ( 511 downto 0 );
     app_rd_data_end : out STD_LOGIC;
     app_rd_data_valid : out STD_LOGIC;
     app_rdy : out STD_LOGIC;
@@ -49,10 +48,8 @@ entity mig_7series_1 is
     ui_clk : out STD_LOGIC;
     ui_clk_sync_rst : out STD_LOGIC;
     init_calib_complete : out STD_LOGIC;
-    sys_clk_p : in STD_LOGIC;
-    sys_clk_n : in STD_LOGIC;
-    clk_ref_p : in STD_LOGIC;
-    clk_ref_n : in STD_LOGIC;
+    sys_clk_i : in STD_LOGIC;
+    clk_ref_i : in STD_LOGIC;
     device_temp : out STD_LOGIC_VECTOR ( 11 downto 0 );
     sys_rst : in STD_LOGIC
   );
@@ -63,6 +60,6 @@ architecture stub of mig_7series_1 is
 attribute syn_black_box : boolean;
 attribute black_box_pad_pin : string;
 attribute syn_black_box of stub : architecture is true;
-attribute black_box_pad_pin of stub : architecture is "ddr3_dq[63:0],ddr3_dqs_p[7:0],ddr3_dqs_n[7:0],ddr3_addr[13:0],ddr3_ba[2:0],ddr3_ras_n,ddr3_cas_n,ddr3_we_n,ddr3_reset_n,ddr3_ck_p[0:0],ddr3_ck_n[0:0],ddr3_cke[0:0],ddr3_cs_n[0:0],ddr3_dm[7:0],ddr3_odt[0:0],app_addr[27:0],app_cmd[2:0],app_en,app_wdf_data[255:0],app_wdf_end,app_wdf_mask[31:0],app_wdf_wren,app_rd_data[255:0],app_rd_data_end,app_rd_data_valid,app_rdy,app_wdf_rdy,app_sr_req,app_ref_req,app_zq_req,app_sr_active,app_ref_ack,app_zq_ack,ui_clk,ui_clk_sync_rst,init_calib_complete,sys_clk_p,sys_clk_n,clk_ref_p,clk_ref_n,device_temp[11:0],sys_rst";
+attribute black_box_pad_pin of stub : architecture is "ddr3_dq[63:0],ddr3_dqs_p[7:0],ddr3_dqs_n[7:0],ddr3_addr[13:0],ddr3_ba[2:0],ddr3_ras_n,ddr3_cas_n,ddr3_we_n,ddr3_reset_n,ddr3_ck_p[0:0],ddr3_ck_n[0:0],ddr3_cke[0:0],ddr3_dm[7:0],ddr3_odt[0:0],app_addr[27:0],app_cmd[2:0],app_en,app_wdf_data[511:0],app_wdf_end,app_wdf_mask[63:0],app_wdf_wren,app_rd_data[511:0],app_rd_data_end,app_rd_data_valid,app_rdy,app_wdf_rdy,app_sr_req,app_ref_req,app_zq_req,app_sr_active,app_ref_ack,app_zq_ack,ui_clk,ui_clk_sync_rst,init_calib_complete,sys_clk_i,clk_ref_i,device_temp[11:0],sys_rst";
 begin
 end;

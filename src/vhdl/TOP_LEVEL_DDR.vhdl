@@ -57,7 +57,7 @@
 --  \___\/\___\
 --
 -- Device           : 7 Series
--- Design Name      : ddr3 SDRAM
+-- Design Name      : DDR2 SDRAM
 -- Purpose          :
 --   Top-level  module. This module serves as an example,
 --   and allows the user to synthesize a self-contained design,
@@ -73,7 +73,7 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 USE WORK.function_package.ALL;
 
-entity DDR_interface_top is
+entity TOP_LEVEL_DDR is
 
   generic (
      
@@ -85,8 +85,7 @@ entity DDR_interface_top is
                                      -- # of memory Bank Address bits.
    COL_WIDTH             : integer := 10;
                                      -- # of memory Column Address bits.
-									 -- [9:0] according to the datasheet
-   -- CS_WIDTH              : integer := 1; -- Chip select is disabled
+   CS_WIDTH              : integer := 1;
                                      -- # of unique CS outputs to memory.
    DQ_WIDTH              : integer := 64; --**
                                      -- # of DQ (data)
@@ -100,7 +99,6 @@ entity DDR_interface_top is
                                      -- # of Ranks.
    ROW_WIDTH             : integer := 14;
                                      -- # of memory Row Address bits.
-									 -- [13:0] according to the datasheet
    ADDR_WIDTH            : integer := 28;
                                      -- # = RANK_WIDTH + BANK_WIDTH
                                      --     + ROW_WIDTH + COL_WIDTH;
@@ -116,7 +114,7 @@ entity DDR_interface_top is
                                      -- DDR3 SDRAM:
                                      -- Burst Length (Mode Register 0).
                                      -- # = "8", "4", "OTF".
-                                     -- ddr3 SDRAM:
+                                     -- DDR2 SDRAM:
                                      -- Burst Length (Mode Register).
                                      -- # = "8", "4".
    
@@ -155,69 +153,67 @@ entity DDR_interface_top is
 
    TEMP_MON_CONTROL         : string  := "INTERNAL";
                                      -- # = "INTERNAL", "EXTERNAL"   
-   RST_ACT_LOW           : integer := 0
+--   RST_ACT_LOW           : integer := 1
                                      -- =1 for active low reset,
                                      -- =0 for active high.
    --***************************************************************************
    -- Added generics
    --***************************************************************************
    DW:INTEGER:=64 -- Sewts the number of bits, could be 8 or 16
-					-- Not in our 64-bit implementation
    );
   port (
+   reset_p  : IN STD_LOGIC;               -- ACTIVE LOW RESET
+   sys_rst  : IN std_logic;    -- DDR RESET
+   -- Inputs
+   sys_clk_i                      : in    std_logic;    -- Single-ended system clock
+   clk_ref_i                      : in    std_logic;
+   ui_clk                         : out   std_logic;       -- FOR TEST
    -- Inouts
    ddr3_dq                        : inout std_logic_vector(DATA_WIDTH_func(DW)-1 DOWNTO 0);
    ddr3_dqs_p                     : inout std_logic_vector(DQS_SIZE_func(DW)-1 downto 0);
    ddr3_dqs_n                     : inout std_logic_vector(DQS_SIZE_func(DW)-1 downto 0);
    -- Outputs
    ddr3_addr                      : out   std_logic_vector(ROW_WIDTH-1 downto 0);
-   ddr3_ba                        : out   std_logic_vector(BANK_WIDTH-1 downto 0);
+   ddr3_ba                        : out   std_logic_vector(2 downto 0);
    ddr3_ras_n                     : out   std_logic;
    ddr3_cas_n                     : out   std_logic;
    ddr3_we_n                      : out   std_logic;
    ddr3_ck_p                      : out   std_logic_vector(0 downto 0);
    ddr3_ck_n                      : out   std_logic_vector(0 downto 0);
    ddr3_cke                       : out   std_logic_vector(0 downto 0);
-   ddr3_cs_n                      : out   std_logic_vector(0 downto 0);
+   --ddr3_cs_n                      : out   std_logic_vector(0 downto 0);
    ddr3_dm                        : out   std_logic_vector(DM_SIZE_func(DW)-1 downto 0);
    ddr3_odt                       : out   std_logic_vector(0 downto 0);
-   -- Inputs
-   -- Single-ended system clock
-   sys_clk_i                      : in    std_logic;
-   clk_ref_i                      : in    std_logic;
    init_calib_complete            : out std_logic;
-   -- System reset - Default polarity of sys_rst pin is Active Low.
-   -- System reset polarity will change based on the option 
-   -- selected in GUI.
-      sys_rst                     : in    std_logic;
    --***************************************************************************
    -- Added ports
    --***************************************************************************
-   app_addr_in:IN std_logic_vector(2 downto 0);
-   app_wdf_data_in:IN std_logic_vector(7 downto 0); -- FOR TEST SWITCHES
-   app_rd_data_out:OUT STD_LOGIC_VECTOR(7 DOWNTO 0); -- FOR TEST LEDs
-   app_rdy:OUT STD_LOGIC;
-   app_wdf_rdy:OUT STD_LOGIC;
-   app_rd_data_valid:OUT STD_LOGIC;
-   app_rd_data_end:OUT STD_LOGIC;
-   start_write:IN STD_LOGIC;
-   start_read:IN STD_LOGIC;
-   -- AN:OUT STD_LOGIC_VECTOR(7 DOWNTO 0); -- FOR TEST 7-SEGMENT
-   -- DP:OUT STD_LOGIC;                    -- FOR TEST 7-SEGMENT
-   -- CG:OUT STD_LOGIC;                    -- FOR TEST 7-SEGMENT
-   -- CF:OUT STD_LOGIC;                    -- FOR TEST 7-SEGMENT
-   -- CE:OUT STD_LOGIC;                    -- FOR TEST 7-SEGMENT
-   -- CD:OUT STD_LOGIC;                    -- FOR TEST 7-SEGMENT
-   -- CC:OUT STD_LOGIC;                    -- FOR TEST 7-SEGMENT
-   -- CB:OUT STD_LOGIC;                    -- FOR TEST 7-SEGMENT
-   -- CA:OUT STD_LOGIC;                    -- FOR TEST 7-SEGMENT
-   ui_clk:out std_logic;                -- FOR TEST
-   locked:OUT STD_LOGIC;                -- FOR TEST
-   reset_p:IN STD_LOGIC);               -- ACTIVE HIGH RESET
+   app_addr_in          :IN std_logic_vector(2 downto 0);
+   app_wdf_data_in      :IN std_logic_vector(7 downto 0); -- FOR TEST SWITCHES
+   app_rd_data_out      :OUT STD_LOGIC_VECTOR(7 DOWNTO 0); -- FOR TEST LEDs
+   app_rdy              :OUT STD_LOGIC;
+   app_wdf_rdy          :OUT STD_LOGIC;
+   app_rd_data_valid    :OUT STD_LOGIC;
+   app_rd_data_end      :OUT STD_LOGIC;
+   --start_write          :IN STD_LOGIC;
+   start_write_pulse    :IN  STD_LOGIC;
+   --start_read           :IN STD_LOGIC;
+   start_read_pulse     :IN  STD_LOGIC;
+--   AN:OUT STD_LOGIC_VECTOR(7 DOWNTO 0); -- FOR TEST 7-SEGMENT
+--   DP:OUT STD_LOGIC;                    -- FOR TEST 7-SEGMENT
+--   CG:OUT STD_LOGIC;                    -- FOR TEST 7-SEGMENT
+--   CF:OUT STD_LOGIC;                    -- FOR TEST 7-SEGMENT
+--   CE:OUT STD_LOGIC;                    -- FOR TEST 7-SEGMENT
+--   CD:OUT STD_LOGIC;                    -- FOR TEST 7-SEGMENT
+--   CC:OUT STD_LOGIC;                    -- FOR TEST 7-SEGMENT
+--   CB:OUT STD_LOGIC;                    -- FOR TEST 7-SEGMENT
+--   CA:OUT STD_LOGIC;                    -- FOR TEST 7-SEGMENT
+    locked:OUT STD_LOGIC                  -- FOR TEST
+   );
    
-end entity DDR_interface_top;
+end entity TOP_LEVEL_DDR;
 
-architecture arch_DDR_interface_top of DDR_interface_top is
+architecture TOP_LEVEL_DDR_arch of TOP_LEVEL_DDR is
 
   -- clogb2 function - ceiling of log base 2
   function clogb2 (size : integer) return integer is
@@ -271,7 +267,7 @@ architecture arch_DDR_interface_top of DDR_interface_top is
   
 -- Start of User Design top component
 
-  component mig_7series_0
+  component mig_7series_1
 --    generic (
 --	#parameters_user_design_top_component#
 --      RST_ACT_LOW           : integer
@@ -281,14 +277,14 @@ architecture arch_DDR_interface_top of DDR_interface_top is
       ddr3_dqs_p    : inout std_logic_vector(DQS_SIZE_func(DW)-1 downto 0);
       ddr3_dqs_n    : inout std_logic_vector(DQS_SIZE_func(DW)-1 downto 0);
       ddr3_addr     : out   std_logic_vector(ROW_WIDTH-1 downto 0);
-      ddr3_ba       : out   std_logic_vector(BANK_WIDTH-1 downto 0);
+      ddr3_ba       : out   std_logic_vector(2 downto 0);
       ddr3_ras_n    : out   std_logic;
       ddr3_cas_n    : out   std_logic;
       ddr3_we_n     : out   std_logic;
       ddr3_ck_p     : out   std_logic_vector(0 downto 0);
       ddr3_ck_n     : out   std_logic_vector(0 downto 0);
       ddr3_cke      : out   std_logic_vector(0 downto 0);      
-      ddr3_cs_n     : out   std_logic_vector(0 downto 0);
+      --ddr3_cs_n     : out   std_logic_vector(0 downto 0);
       ddr3_dm       : out   std_logic_vector(DM_SIZE_func(DW)-1 downto 0);
       ddr3_odt      : out   std_logic_vector(0 downto 0);
       app_addr                  : in    std_logic_vector(ADDR_WIDTH-1 downto 0);
@@ -321,7 +317,7 @@ architecture arch_DDR_interface_top of DDR_interface_top is
       -- Added ports
       --***************************************************************************
       );
-  end component mig_7series_0;
+  end component mig_7series_1;
 
 COMPONENT clk_wiz_0
     PORT
@@ -330,16 +326,16 @@ COMPONENT clk_wiz_0
         clk_out1:OUT STD_LOGIC;
         clk_out2:OUT STD_LOGIC;
         -- Status and control signals
-        reset_p:IN STD_LOGIC;
+        resetn:IN STD_LOGIC;
         locked:OUT STD_LOGIC;
         clk_in1:IN  STD_LOGIC
         );
   END COMPONENT;
 
 COMPONENT read_write_ddr IS  
-  GENERIC(APP_DATA_WIDTH:INTEGER:=APP_DATA_WIDTH_func(DW);
-          DATA_WIDTH:INTEGER:=DATA_WIDTH_func(DW);
-          ADDR_WIDTH:INTEGER:=ADDR_WIDTH); 
+  GENERIC(APP_DATA_WIDTH:INTEGER:=APP_DATA_WIDTH_func(DW);  --changed from static value to this helper function
+          DATA_WIDTH:INTEGER:=DATA_WIDTH_func(DW);          --changed from static value to this helper function
+          ADDR_WIDTH:INTEGER:=ADDR_WIDTH);                  --changed from static value to this generic
   port (ui_clk:IN STD_LOGIC;
         reset_n:IN STD_LOGIC;
         start_write:IN STD_LOGIC;
@@ -348,7 +344,7 @@ COMPONENT read_write_ddr IS
         state:OUT STD_LOGIC_VECTOR(3 DOWNTO 0);
         app_cmd:OUT STD_LOGIC_VECTOR(2 DOWNTO 0);                                  -- command 001 = READ, 000 = WRITE
         app_addr_in:IN STD_LOGIC_VECTOR(2 DOWNTO 0);                               -- FOR TEST
-        app_addr_out:OUT STD_LOGIC_VECTOR(ADDR_WIDTH-1 DOWNTO 0);                  -- 28 bit output address
+        app_addr_out:OUT STD_LOGIC_VECTOR(ADDR_WIDTH-1 DOWNTO 0);                  -- 27 bit output address
         app_en:OUT STD_LOGIC;                                                      -- active strobe for app_addr and app_cmd
         app_rdy:IN STD_LOGIC;                                                      -- UI is ready o accept commands. Ifv the signal is desserted
                                                                                    -- when app_en is enabled app_cmd and app_addr command must
@@ -360,53 +356,53 @@ COMPONENT read_write_ddr IS
         app_wdf_data_in:IN STD_LOGIC_VECTOR(7 DOWNTO 0);                           -- data to DDR
         app_wdf_data_out:OUT STD_LOGIC_VECTOR(APP_DATA_WIDTH_func(DW)-1 DOWNTO 0); -- data to write
         app_wdf_end:OUT STD_LOGIC;                                                 -- the clock cycle containd the last data to write
-        app_wdf_mask:OUT STD_LOGIC_VECTOR(DATA_WIDTH DOWNTO 0);                    -- mask for app_wdf_data
+        app_wdf_mask:OUT STD_LOGIC_VECTOR(DATA_WIDTH-1 DOWNTO 0);                            -- mask for app_wdf_data
                                                                                    -- what bits are to be updated
         app_wdf_rdy:IN STD_LOGIC;                                                  -- the write data FIFO is ready to recive data
         app_wdf_wren:OUT STD_LOGIC                                                 -- strobe for app_wdf_data
 );
 END COMPONENT read_write_ddr;
 
-COMPONENT pulse_to_rigger is 
-  PORT(clk:IN STD_LOGIC;
-       reset_n:IN STD_LOGIC;
-       start:IN STD_LOGIC;
-       trig_pulse:OUT STD_LOGIC);
-END COMPONENT pulse_to_rigger;
+--COMPONENT pulse_to_rigger is 
+--  PORT(clk:IN STD_LOGIC;
+--       reset_n:IN STD_LOGIC;
+--       start:IN STD_LOGIC;
+--       trig_pulse:OUT STD_LOGIC);
+--END COMPONENT pulse_to_rigger;
 
--- COMPONENT seg_7_driver IS
-   -- GENERIC(timestep:NATURAL:=10000);
-   -- PORT(reset_n:IN STD_LOGIC;
-        -- clk:IN STD_LOGIC;
-        -- hex_code_0:IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-        -- hex_code_1:IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-        -- hex_code_2:IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-        -- hex_code_3:IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-        -- hex_code_4:IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-        -- hex_code_5:IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-        -- hex_code_6:IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-        -- hex_code_7:IN STD_LOGIC_VECTOR(3 DOWNTO 0);
-        -- int_code_0:IN NATURAL RANGE 0 TO 15;
-        -- int_code_1:IN NATURAL RANGE 0 TO 15;
-    	-- int_code_2:IN NATURAL RANGE 0 TO 15;
-        -- int_code_3:IN NATURAL RANGE 0 TO 15;
-        -- int_code_4:IN NATURAL RANGE 0 TO 15;
-        -- int_code_5:IN NATURAL RANGE 0 TO 15;
-    	-- int_code_6:IN NATURAL RANGE 0 TO 15;
-    	-- int_code_7:IN NATURAL RANGE 0 TO 15;
-        -- hex_int:IN STD_LOGIC_VECTOR(7 DOWNTO 0);
-        -- dot:IN STD_LOGIC_VECTOR(7 DOWNTO 0);
-        -- active_seg:IN STD_LOGIC_VECTOR(7 DOWNTO 0);
-        -- AN:OUT STD_LOGIC_VECTOR(7 DOWNTO 0);
-        -- DP:OUT STD_LOGIC;
-        -- CG:OUT STD_LOGIC;
-        -- CF:OUT STD_LOGIC;
-        -- CE:OUT STD_LOGIC;
-        -- CD:OUT STD_LOGIC;
-        -- CC:OUT STD_LOGIC;
-        -- CB:OUT STD_LOGIC;
-        -- CA:OUT STD_LOGIC);
--- END COMPONENT seg_7_driver;
+--COMPONENT seg_7_driver IS
+--   GENERIC(timestep:NATURAL:=10000);
+--   PORT(reset_n:IN STD_LOGIC;
+--        clk:IN STD_LOGIC;
+--        hex_code_0:IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+--        hex_code_1:IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+--        hex_code_2:IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+--        hex_code_3:IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+--        hex_code_4:IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+--        hex_code_5:IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+--        hex_code_6:IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+--        hex_code_7:IN STD_LOGIC_VECTOR(3 DOWNTO 0);
+--        int_code_0:IN NATURAL RANGE 0 TO 15;
+--        int_code_1:IN NATURAL RANGE 0 TO 15;
+--    	int_code_2:IN NATURAL RANGE 0 TO 15;
+--        int_code_3:IN NATURAL RANGE 0 TO 15;
+--        int_code_4:IN NATURAL RANGE 0 TO 15;
+--        int_code_5:IN NATURAL RANGE 0 TO 15;
+--    	int_code_6:IN NATURAL RANGE 0 TO 15;
+--    	int_code_7:IN NATURAL RANGE 0 TO 15;
+--        hex_int:IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+--        dot:IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+--        active_seg:IN STD_LOGIC_VECTOR(7 DOWNTO 0);
+--        AN:OUT STD_LOGIC_VECTOR(7 DOWNTO 0);
+--        DP:OUT STD_LOGIC;
+--        CG:OUT STD_LOGIC;
+--        CF:OUT STD_LOGIC;
+--        CE:OUT STD_LOGIC;
+--        CD:OUT STD_LOGIC;
+--        CC:OUT STD_LOGIC;
+--        CB:OUT STD_LOGIC;
+--        CA:OUT STD_LOGIC);
+--END COMPONENT seg_7_driver;
 
 COMPONENT ila_0 IS
 PORT (
@@ -432,7 +428,6 @@ END COMPONENT ila_0;
 -- End of User Design top component
     
   -- Signal declarations
-      
    signal app_cmd                     : std_logic_vector(2 downto 0);
    signal app_en                      : std_logic;
    SIGNAL init_calib_complete_i:std_logic;
@@ -455,8 +450,8 @@ END COMPONENT ila_0;
   signal app_wdf_wren_signal:std_logic;
   signal ui_clk_signal:std_logic;
   signal ui_clk_sync_rst_signal:std_logic;
-  SIGNAL start_read_pulse_signal:STD_LOGIC;
-  SIGNAL start_write_pulse_signal:STD_LOGIC;
+  --SIGNAL start_read_pulse_signal:STD_LOGIC;
+  --SIGNAL start_write_pulse_signal:STD_LOGIC;
   SIGNAL state_signal:STD_LOGIC_VECTOR(3 DOWNTO 0);
   SIGNAL clk_100mhz:STD_LOGIC;
   SIGNAL clk_200mhz:STD_LOGIC;
@@ -471,6 +466,8 @@ END COMPONENT ila_0;
   SIGNAL app_rd_data_valid_vector_signal:STD_LOGIC_VECTOR(0 DOWNTO 0);
   SIGNAL app_rd_data_end_vector_signal:STD_LOGIC_VECTOR(0 DOWNTO 0);
   SIGNAL loop_flag_signal:STD_LOGIC;
+  
+  SIGNAL reset_n: STD_LOGIC;
  --***************************************************************************
   
 begin
@@ -490,8 +487,10 @@ begin
   app_wdf_rdy_vector_signal(0) <= app_wdf_rdy_signal;
   app_rd_data_valid_vector_signal(0) <= app_rd_data_valid_signal;
   app_rd_data_end_vector_signal(0) <= app_rd_data_end_signal;
-  start_write_pulse_vector_signal(0) <= start_write_pulse_signal;
-  start_read_pulse_vector_signal(0) <= start_read_pulse_signal;
+  start_write_pulse_vector_signal(0) <= start_write_pulse;
+  start_read_pulse_vector_signal(0) <= start_read_pulse;
+  reset_n <= NOT reset_p;
+  
   
 -- Start of User Design top instance
 --***************************************************************************
@@ -501,7 +500,7 @@ begin
 -- for connecting the memory controller to system.
 --***************************************************************************
 
-   u_mig_7series_0 : mig_7series_0
+   u_mig_7series_1 : mig_7series_1
 --    generic map (
 --      #parameters_mapping_user_design_top_instance#
 --      RST_ACT_LOW                      => RST_ACT_LOW
@@ -520,7 +519,7 @@ begin
        ddr3_dqs_n                     => ddr3_dqs_n,
        ddr3_dqs_p                     => ddr3_dqs_p,
        init_calib_complete            => init_calib_complete_i,
-       ddr3_cs_n                      => ddr3_cs_n,
+--       ddr3_cs_n                      => ddr3_cs_n,
        ddr3_dm                        => ddr3_dm,
        ddr3_odt                       => ddr3_odt,
 -- Application interface ports
@@ -555,17 +554,19 @@ clk_pll_i0 : clk_wiz_0
       -- Status and control signals                
       resetn => reset_n,
       locked   => locked,
-      clk_in1  => sys_clk_i);
+      clk_in1  => ui_clk_signal);
 
 read_write_ddr_comp:
 COMPONENT read_write_ddr
-  GENERIC MAP(APP_DATA_WIDTH => APP_DATA_WIDTH_func(DW),
+  GENERIC MAP(APP_DATA_WIDTH => APP_DATA_WIDTH,
           DATA_WIDTH => DATA_WIDTH_func(DW),
           ADDR_WIDTH => ADDR_WIDTH) 
   port map(ui_clk => ui_clk_signal,
         reset_n => reset_n,
-        start_write => start_write_pulse_signal,
-        start_read => start_read_pulse_signal,
+        --start_write => start_write_pulse_signal,
+        start_write => start_write_pulse,
+        --start_read => start_read_pulse_signal,
+        start_read => start_read_pulse,
         loop_flag => loop_flag_signal,
         state => state_signal,
         app_cmd => app_cmd_signal,
@@ -584,57 +585,57 @@ COMPONENT read_write_ddr
         app_wdf_rdy => app_wdf_rdy_signal,
         app_wdf_wren => app_wdf_wren_signal);
 
-pulse_to_trigger_read_comp:
-COMPONENT pulse_to_rigger
-  PORT MAP(clk => ui_clk_signal,
-       reset_n => reset_n,
-       start => start_read,
-       trig_pulse => start_read_pulse_signal);
+--pulse_to_trigger_read_comp:
+--COMPONENT pulse_to_rigger
+--  PORT MAP(clk => ui_clk_signal,
+--       reset_n => reset_n,
+--       start => start_read,
+--       trig_pulse => start_read_pulse_signal);
 
-pulse_to_trigger_write_comp:
-COMPONENT pulse_to_rigger
-  PORT MAP(clk => ui_clk_signal,
-       reset_n => reset_n,
-       start => start_write,
-       trig_pulse => start_write_pulse_signal);
+--pulse_to_trigger_write_comp:
+--COMPONENT pulse_to_rigger
+--  PORT MAP(clk => ui_clk_signal,
+--       reset_n => reset_n,
+--       start => start_write,
+--       trig_pulse => start_write_pulse_signal);
  
- -- seg_7_driver_comp:
- -- COMPONENT seg_7_driver
-   -- GENERIC MAP(timestep => 10000)
-   -- PORT MAP(reset_n => reset_n,
-            -- clk => ui_clk_signal,
-            -- hex_code_0 => state_signal,
-            -- hex_code_1 => (OTHERS => '0'),
-            -- hex_code_2 => (OTHERS => '0'),
-            -- hex_code_3 => (OTHERS => '0'),
-            -- hex_code_4 => (OTHERS => '0'),
-            -- hex_code_5 => (OTHERS => '0'),
-            -- hex_code_6 => (OTHERS => '0'),
-            -- hex_code_7 => (OTHERS => '0'),
-            -- int_code_0 => 0,
-            -- int_code_1 => 0,
-        	-- int_code_2 => 0,
-        	-- int_code_3 => 0,
-            -- int_code_4 => 0,
-            -- int_code_5 => 0,
-    	    -- int_code_6 => 0,
-            -- int_code_7 => 0,
-            -- hex_int => (OTHERS => '1'),
-            -- dot => (OTHERS => '0'),
-            -- active_seg => "00000001",
-            -- AN => AN,
-            -- DP => DP,
-            -- CG => CG,
-            -- CF => CF,
-            -- CE => CE,
-            -- CD => CD,
-            -- CC => CC,
-            -- CB => CB,
-            -- CA => CA);
+-- seg_7_driver_comp:
+-- COMPONENT seg_7_driver
+--   GENERIC MAP(timestep => 10000)
+--   PORT MAP(reset_n => reset_n,
+--            clk => ui_clk_signal,
+--            hex_code_0 => state_signal,
+--            hex_code_1 => (OTHERS => '0'),
+--            hex_code_2 => (OTHERS => '0'),
+--            hex_code_3 => (OTHERS => '0'),
+--            hex_code_4 => (OTHERS => '0'),
+--            hex_code_5 => (OTHERS => '0'),
+--            hex_code_6 => (OTHERS => '0'),
+--            hex_code_7 => (OTHERS => '0'),
+--            int_code_0 => 0,
+--            int_code_1 => 0,
+--        	int_code_2 => 0,
+--        	int_code_3 => 0,
+--            int_code_4 => 0,
+--            int_code_5 => 0,
+--    	    int_code_6 => 0,
+--            int_code_7 => 0,
+--            hex_int => (OTHERS => '1'),
+--            dot => (OTHERS => '0'),
+--            active_seg => "00000001",
+--            AN => AN,
+--            DP => DP,
+--            CG => CG,
+--            CF => CF,
+--            CE => CE,
+--            CD => CD,
+--            CC => CC,
+--            CB => CB,
+--            CA => CA);
  
  ila_comp: COMPONENT ila_0
 PORT MAP(
-   clk => sys_clk_i,
+   clk => ui_clk_signal,
    probe0 => state_signal,
    probe1 => ui_clk_vector_signal,
    probe2 => start_write_pulse_vector_signal,
@@ -652,5 +653,4 @@ PORT MAP(
    probe14 => app_rd_data_end_vector_signal
 );
  
-end architecture arch_DDR_interface_top;
-
+end architecture TOP_LEVEL_DDR_arch;

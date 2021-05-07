@@ -222,9 +222,9 @@ entity mig_7series_1_mig is
    -- The following parameters are multiplier and divisor factors for PLLE2.
    -- Based on the selected design frequency these parameters vary.
    --***************************************************************************
-   CLKIN_PERIOD          : integer := 2500;
+   CLKIN_PERIOD          : integer := 5000;
                                      -- Input Clock Period
-   CLKFBOUT_MULT         : integer := 2;
+   CLKFBOUT_MULT         : integer := 4;
                                      -- write PLL VCO multiplier
    DIVCLK_DIVIDE         : integer := 1;
                                      -- write PLL VCO divisor
