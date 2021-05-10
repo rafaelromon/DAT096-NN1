@@ -4,7 +4,8 @@
 -- DAT096 - spring 2021
 -----------------------------------------------------
 -- Description:
---
+-- TODO:
+-- Channels are not implemented
 -----------------------------------------------------
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
@@ -16,7 +17,7 @@ GENERIC
   INPUT_WIDTH      : INTEGER := 128;
   INPUT_HEIGHT     : INTEGER := 128;
   INPUT_CHANNELS   : INTEGER := 8;
-  FILTERS          : INTEGER := 32;
+  FILTERS          : INTEGER := 1;
   KERNEL_HEIGHT    : INTEGER := 1;
   KERNEL_WIDTH    : INTEGER := 1;
   KERNEL_CHANNELS  : INTEGER := 8;
@@ -46,11 +47,11 @@ ARCHITECTURE PWConv_arch OF PWConv IS
   SIGNAL input_array    : ROW_ARRAY;
   SIGNAL filter_array   : IN_ARRAY;
   SIGNAL bias_array   : OUT_ARRAY;
-  
+
   SIGNAL neuron_input   : STD_LOGIC_VECTOR(KERNEL_HEIGHT*KERNEL_WIDTH*KERNEL_CHANNELS*IN_SIZE - 1 DOWNTO 0);
   SIGNAL neuron_busy_vector  : STD_LOGIC_VECTOR(FILTERS - 1 DOWNTO 0);
   SIGNAL neuron_done_vector  : STD_LOGIC_VECTOR(FILTERS - 1 DOWNTO 0);
-  SIGNAL neuron_output_array   : OUT_ARRAY; 
+  SIGNAL neuron_output_array   : OUT_ARRAY;
 
   COMPONENT Reg
 		GENERIC
@@ -88,10 +89,10 @@ ARCHITECTURE PWConv_arch OF PWConv IS
 
 begin
 
-  
-  line_buff: FOR i in 0 to INPUT_WIDTH-1 GENERATE
-    input_array(i) <= input((IN_SIZE*INPUT_WIDTH * (1+i)) - 1 DOWNTO (OUT_SIZE * i));
-  END GENERATE;  
+
+  line_buff: FOR i in 0 DOWNTO INPUT_WIDTH-1 GENERATE
+    input_array(i) <= input((IN_SIZE*INPUT_WIDTH * (1+i)) - 1 DOWNTO (IN_SIZE*INPUT_WIDTH * i));
+  END GENERATE;
 
   filter: FOR i in 0 to FILTERS-1 GENERATE
 
@@ -119,16 +120,29 @@ begin
 
   PROCESS (clk)
     VARIABLE base_row : INTEGER := 0;
-    VARIABLE base_column : INTEGER:= 0;
+    VARIABLE base_column : INTEGER:= INPUT_WIDTH;
   BEGIN
     IF reset_p = '0' THEN
         base_row := 0;
-        base_column := 0;
+        base_column := INPUT_WIDTH;
+        done <= '0';
     ELSIF RISING_EDGE(clk) THEN
-        FOR i IN 0 to KERNEL_HEIGHT-1 LOOP 
-            neuron_input <= input_array(i);
-        END LOOP;
+      IF enable = '1' THEN        
+        IF base_row + KERNEL_HEIGHT-1 < INPUT_HEIGHT THEN
+            IF base_column - (KERNEL_WIDTH+1) >= 0 THEN
+                FOR row IN 0 to KERNEL_HEIGHT-1 LOOP
+                    neuron_input(KERNEL_HEIGHT*(KERNEL_WIDTH-row) DOWNTO KERNEL_HEIGHT*(KERNEL_WIDTH-(row+1)))<= input_array(base_row+row)(base_column DOWNTO base_column-KERNEL_WIDTH+1);
+                END LOOP;
+
+                    base_column := base_column - 1;
+                ELSE
+                    base_column := INPUT_WIDTH;
+                    base_row := base_row + 1;
+                END IF;
+            else
+                done <= '1';
+            END IF;
+        END IF;
     END IF;
   END PROCESS;
-
 END PWConv_arch;
