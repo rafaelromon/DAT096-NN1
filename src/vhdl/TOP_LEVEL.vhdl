@@ -127,6 +127,9 @@ ARCHITECTURE TOP_LEVEL_arch OF TOP_LEVEL IS
 	SIGNAL locked              : STD_LOGIC;
 	
 	
+	-- Signals for testing the ddr
+	SIGNAL DDR_downsample_counter : INTEGER:=0;
+    SIGNAL DDR_address_counter    : STD_LOGIC_VECTOR(2 DOWNTO 0);
 	
     COMPONENT TOP_LEVEL_DDR IS
         PORT (
@@ -317,6 +320,34 @@ BEGIN
 			END CASE;
 		END IF;
 	END PROCESS LED_indicator_process;
+	
+	
+	-- Testing out the DDR Process
+    DDR_address_loop: PROCESS (clk)
+    BEGIN
+        IF reset_p = '1' THEN
+            DDR_downsample_counter <= 0;
+            DDR_address_counter    <= "000";
+        ELSIF RISING_EDGE(clk) THEN
+            IF DDR_downsample_counter = 2**14 THEN
+                app_addr_in <= STD_LOGIC_VECTOR(UNSIGNED(DDR_address_counter)+1);
+                app_wdf_data_in <= x"FF";
+                start_write <= '1';
+            ELSIF DDR_downsample_counter = 2**14+1 THEN
+                start_write <= '0';
+                DDR_downsample_counter <= DDR_downsample_counter+1;
+            ELSIF DDR_downsample_counter = 2**15-2 THEN
+                start_read <= '1';
+                DDR_downsample_counter <= DDR_downsample_counter+1;
+            ELSIF DDR_downsample_counter = 2**15-1 THEN
+                start_read <= '0';
+                DDR_downsample_counter <= 0;
+            ELSE
+                DDR_downsample_counter <= DDR_downsample_counter+1;
+            END IF;
+        END IF;
+    END PROCESS DDR_address_loop;
+	
 
 	-- Purpose: Control state machine
 	TOP_LEVEL_process : PROCESS (clk, CPU_RESET)
