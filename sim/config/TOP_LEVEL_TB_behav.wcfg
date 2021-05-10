@@ -3,74 +3,57 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="Kernel_Conv2D_tb_behav.wdb" id="1">
+      <db_ref path="Neuron_tb_behav.wdb" id="1">
          <top_modules>
-            <top_module name="Kernel_Conv2D_tb" />
+            <top_module name="Neuron_tb" />
          </top_modules>
       </db_ref>
    </db_ref_list>
    <zoom_setting>
-      <ZoomStartTime time="70000fs"></ZoomStartTime>
-      <ZoomEndTime time="245001fs"></ZoomEndTime>
-      <Cursor1Time time="410569fs"></Cursor1Time>
+      <ZoomStartTime time="0fs"></ZoomStartTime>
+      <ZoomEndTime time="701614fs"></ZoomEndTime>
+      <Cursor1Time time="605469fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="200"></NameColumnWidth>
-      <ValueColumnWidth column_width="382"></ValueColumnWidth>
+      <ValueColumnWidth column_width="367"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="12" />
-   <wvobject fp_name="/Kernel_Conv2D_tb/Kernel_Conv2D_i/clk" type="logic">
-      <obj_property name="ElementShortName">clk</obj_property>
-      <obj_property name="ObjectShortName">clk</obj_property>
+   <WVObjectSize size="9" />
+   <wvobject fp_name="/Neuron_tb/clk_tb" type="logic">
+      <obj_property name="ElementShortName">clk_tb</obj_property>
+      <obj_property name="ObjectShortName">clk_tb</obj_property>
    </wvobject>
-   <wvobject fp_name="/Kernel_Conv2D_tb/enable_tb" type="logic">
+   <wvobject fp_name="/Neuron_tb/reset_p_tb" type="logic">
+      <obj_property name="ElementShortName">reset_p_tb</obj_property>
+      <obj_property name="ObjectShortName">reset_p_tb</obj_property>
+   </wvobject>
+   <wvobject fp_name="/Neuron_tb/enable_tb" type="logic">
       <obj_property name="ElementShortName">enable_tb</obj_property>
       <obj_property name="ObjectShortName">enable_tb</obj_property>
    </wvobject>
-   <wvobject fp_name="/Kernel_Conv2D_tb/Kernel_Conv2D_i/busy" type="logic">
-      <obj_property name="ElementShortName">busy</obj_property>
-      <obj_property name="ObjectShortName">busy</obj_property>
+   <wvobject fp_name="/Neuron_tb/busy_tb" type="logic">
+      <obj_property name="ElementShortName">busy_tb</obj_property>
+      <obj_property name="ObjectShortName">busy_tb</obj_property>
    </wvobject>
-   <wvobject fp_name="/Kernel_Conv2D_tb/Kernel_Conv2D_i/done" type="logic">
-      <obj_property name="ElementShortName">done</obj_property>
-      <obj_property name="ObjectShortName">done</obj_property>
+   <wvobject fp_name="/Neuron_tb/done_tb" type="logic">
+      <obj_property name="ElementShortName">done_tb</obj_property>
+      <obj_property name="ObjectShortName">done_tb</obj_property>
    </wvobject>
-   <wvobject fp_name="/Kernel_Conv2D_tb/input_tb" type="array">
+   <wvobject fp_name="/Neuron_tb/input_tb" type="array">
       <obj_property name="ElementShortName">input_tb[71:0]</obj_property>
       <obj_property name="ObjectShortName">input_tb[71:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/Kernel_Conv2D_tb/filter_values_tb" type="array">
+   <wvobject fp_name="/Neuron_tb/filter_values_tb" type="array">
       <obj_property name="ElementShortName">filter_values_tb[71:0]</obj_property>
       <obj_property name="ObjectShortName">filter_values_tb[71:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/Kernel_Conv2D_tb/output_tb" type="array">
+   <wvobject fp_name="/Neuron_tb/bias_tb" type="array">
+      <obj_property name="ElementShortName">bias_tb[31:0]</obj_property>
+      <obj_property name="ObjectShortName">bias_tb[31:0]</obj_property>
+   </wvobject>
+   <wvobject fp_name="/Neuron_tb/output_tb" type="array">
       <obj_property name="ElementShortName">output_tb[31:0]</obj_property>
       <obj_property name="ObjectShortName">output_tb[31:0]</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-   </wvobject>
-   <wvobject fp_name="/Kernel_Conv2D_tb/Kernel_Conv2D_i/temp_sum" type="array">
-      <obj_property name="ElementShortName">temp_sum[31:0]</obj_property>
-      <obj_property name="ObjectShortName">temp_sum[31:0]</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-   </wvobject>
-   <wvobject fp_name="/Kernel_Conv2D_tb/Kernel_Conv2D_i/input_array" type="array">
-      <obj_property name="ElementShortName">input_array[0:8][7:0]</obj_property>
-      <obj_property name="ObjectShortName">input_array[0:8][7:0]</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-   </wvobject>
-   <wvobject fp_name="/Kernel_Conv2D_tb/Kernel_Conv2D_i/MACC_ina" type="array">
-      <obj_property name="ElementShortName">MACC_ina[7:0]</obj_property>
-      <obj_property name="ObjectShortName">MACC_ina[7:0]</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-   </wvobject>
-   <wvobject fp_name="/Kernel_Conv2D_tb/Kernel_Conv2D_i/filter_array" type="array">
-      <obj_property name="ElementShortName">filter_array[0:8][7:0]</obj_property>
-      <obj_property name="ObjectShortName">filter_array[0:8][7:0]</obj_property>
-      <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
-   </wvobject>
-   <wvobject fp_name="/Kernel_Conv2D_tb/Kernel_Conv2D_i/MACC_inb" type="array">
-      <obj_property name="ElementShortName">MACC_inb[7:0]</obj_property>
-      <obj_property name="ObjectShortName">MACC_inb[7:0]</obj_property>
       <obj_property name="Radix">SIGNEDDECRADIX</obj_property>
    </wvobject>
 </wave_config>

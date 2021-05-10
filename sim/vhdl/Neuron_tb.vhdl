@@ -17,10 +17,12 @@ ARCHITECTURE Neuron_tb_arch OF Neuron_tb IS
 
 signal clk_tb           : STD_LOGIC := '1';
 signal reset_p_tb       : STD_LOGIC := '0';
-signal enable_tb       : STD_LOGIC := '0';
+signal enable_tb        : STD_LOGIC := '0';
 signal input_tb         : STD_LOGIC_VECTOR((KERNEL_SIZE * INT_SIZE) - 1 DOWNTO 0);
 signal filter_values_tb : STD_LOGIC_VECTOR ((KERNEL_SIZE * FILTER_SIZE) - 1 DOWNTO 0);
 signal bias_tb          : STD_LOGIC_VECTOR(OUT_SIZE - 1 DOWNTO 0);
+signal busy_tb          : STD_LOGIC;
+signal done_tb          : STD_LOGIC;
 signal output_tb        : STD_LOGIC_VECTOR(OUT_SIZE - 1 DOWNTO 0);
 
 component Neuron
@@ -47,7 +49,9 @@ BEGIN
     enable        => enable_tb,
     input         => input_tb,
     filter_values => filter_values_tb,
-    bias => bias_tb,
+    bias =>   bias_tb,
+    busy => busy_tb,
+    done => done_tb,
     output        => output_tb
     );
 
