@@ -17,6 +17,7 @@ ENTITY Reg IS
   PORT( 
 	clk     : IN STD_LOGIC;
 	reset_p : IN STD_LOGIC;
+	enable  : IN STD_LOGIC;
 	input   : IN STD_LOGIC_VECTOR(SIG_WIDTH-1 DOWNTO 0);
 	output  : OUT STD_LOGIC_VECTOR(SIG_WIDTH-1 DOWNTO 0) );
 END Reg;
@@ -29,7 +30,7 @@ PROCESS(Clk, reset_p)
 BEGIN
 	IF reset_p = '1' THEN
 		output <= (OTHERS => '0');
-	ELSIF rising_edge(Clk) THEN
+	ELSIF rising_edge(Clk) and enable = '1' THEN
 		output <= input;
 	END IF;
 END PROCESS;
