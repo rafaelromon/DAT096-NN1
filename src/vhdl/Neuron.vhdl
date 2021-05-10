@@ -78,7 +78,7 @@ BEGIN
 		output  => output
 	);
 
-	Regs : FOR i IN 0 TO 8 GENERATE
+	Regs : FOR i IN 0 TO KERNEL_SIZE-1 GENERATE
 		Reg_input : Reg
 		GENERIC
 		MAP (
