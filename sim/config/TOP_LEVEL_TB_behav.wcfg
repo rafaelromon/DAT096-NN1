@@ -3,41 +3,44 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="PWConv_tb_behav.wdb" id="1">
+      <db_ref path="LINE_BUFF_tb_behav.wdb" id="1">
          <top_modules>
-            <top_module name="PWConv_tb" />
+            <top_module name="LINE_BUFF_tb" />
          </top_modules>
       </db_ref>
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="2693082fs"></ZoomEndTime>
-      <Cursor1Time time="307971fs"></Cursor1Time>
+      <ZoomEndTime time="3000000fs"></ZoomEndTime>
+      <Cursor1Time time="2000000fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="200"></NameColumnWidth>
-      <ValueColumnWidth column_width="347"></ValueColumnWidth>
+      <ValueColumnWidth column_width="292"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="5" />
-   <wvobject fp_name="/PWConv_tb/PWConv_i/clk" type="logic">
-      <obj_property name="ElementShortName">clk</obj_property>
-      <obj_property name="ObjectShortName">clk</obj_property>
+   <WVObjectSize size="6" />
+   <wvobject fp_name="/LINE_BUFF_tb/clk_tb" type="logic">
+      <obj_property name="ElementShortName">clk_tb</obj_property>
+      <obj_property name="ObjectShortName">clk_tb</obj_property>
    </wvobject>
-   <wvobject fp_name="/PWConv_tb/PWConv_i/enable" type="logic">
-      <obj_property name="ElementShortName">enable</obj_property>
-      <obj_property name="ObjectShortName">enable</obj_property>
+   <wvobject fp_name="/LINE_BUFF_tb/reset_p_tb" type="logic">
+      <obj_property name="ElementShortName">reset_p_tb</obj_property>
+      <obj_property name="ObjectShortName">reset_p_tb</obj_property>
    </wvobject>
-   <wvobject fp_name="/PWConv_tb/PWConv_i/input" type="array">
-      <obj_property name="ElementShortName">input[647:0]</obj_property>
-      <obj_property name="ObjectShortName">input[647:0]</obj_property>
+   <wvobject fp_name="/LINE_BUFF_tb/input_tb" type="array">
+      <obj_property name="ElementShortName">input_tb[647:0]</obj_property>
+      <obj_property name="ObjectShortName">input_tb[647:0]</obj_property>
    </wvobject>
-   <wvobject fp_name="/PWConv_tb/PWConv_i/input_array" type="array">
-      <obj_property name="ElementShortName">input_array[0:8][71:0]</obj_property>
-      <obj_property name="ObjectShortName">input_array[0:8][71:0]</obj_property>
-      <obj_property name="isExpanded"></obj_property>
+   <wvobject fp_name="/LINE_BUFF_tb/busy_tb" type="logic">
+      <obj_property name="ElementShortName">busy_tb</obj_property>
+      <obj_property name="ObjectShortName">busy_tb</obj_property>
    </wvobject>
-   <wvobject fp_name="/PWConv_tb/PWConv_i/neuron_input" type="array">
-      <obj_property name="ElementShortName">neuron_input[71:0]</obj_property>
-      <obj_property name="ObjectShortName">neuron_input[71:0]</obj_property>
+   <wvobject fp_name="/LINE_BUFF_tb/done_tb" type="logic">
+      <obj_property name="ElementShortName">done_tb</obj_property>
+      <obj_property name="ObjectShortName">done_tb</obj_property>
+   </wvobject>
+   <wvobject fp_name="/LINE_BUFF_tb/output_tb" type="array">
+      <obj_property name="ElementShortName">output_tb[71:0]</obj_property>
+      <obj_property name="ObjectShortName">output_tb[71:0]</obj_property>
    </wvobject>
 </wave_config>
