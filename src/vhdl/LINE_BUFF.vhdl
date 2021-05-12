@@ -139,10 +139,10 @@ BEGIN
 				WHEN WaitNext =>
 					busy <= '0';
 
-					IF base_row - (KERNEL_HEIGHT + 1) >= 0 THEN
+					IF base_row - (KERNEL_HEIGHT + STRIDE) >= 0 THEN
 						IF move = '1' THEN
-							IF base_column - (KERNEL_WIDTH + 1) >= 0 THEN
-								base_column := base_column - 1;
+							IF base_column - (KERNEL_WIDTH + STRIDE) >= 0 THEN
+								base_column := base_column - STRIDE;
 
 								state_machine <= OutputKernel;
 							ELSE
