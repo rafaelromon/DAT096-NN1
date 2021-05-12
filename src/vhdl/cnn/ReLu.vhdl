@@ -28,14 +28,14 @@ END ReLu;
 ARCHITECTURE ReLu_arch OF ReLu IS
 
 BEGIN
-    ReLu_process : PROCESS (clk)
-    BEGIN
-        IF RISING_EDGE(clk) THEN	
-            IF input < 0 THEN
-                output <= (OTHERS => '0');
-            ELSE
-                output <= unsigned(input);
-            END IF;
-        END IF;		
+	ReLu_process : PROCESS (clk)
+	BEGIN
+		IF RISING_EDGE(clk) THEN
+			IF input < 0 THEN
+				output <= (OTHERS => '0');
+			ELSE
+				output <= unsigned(input);
+			END IF;
+		END IF;
 	END PROCESS ReLu_process;
 END ReLu_arch;

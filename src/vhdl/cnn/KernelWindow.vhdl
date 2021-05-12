@@ -1,5 +1,5 @@
 -----------------------------------------------------
--- Title: LINE_BUFF.vhdl
+-- Title: KernelWindow.vhdl
 -- Author: Rafael Romon/NN-1
 -- DAT096 - spring 2021
 -----------------------------------------------------
@@ -13,7 +13,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
-ENTITY LINE_BUFF IS
+ENTITY KernelWindow IS
 	GENERIC
 	(
 		INPUT_WIDTH    : INTEGER := 128;
@@ -21,6 +21,7 @@ ENTITY LINE_BUFF IS
 		INPUT_CHANNELS : INTEGER := 8;
 		KERNEL_WIDTH   : INTEGER := 1;
 		KERNEL_HEIGHT  : INTEGER := 1;
+		KERNEL_DEPTH   : INTEGER := 1; -- IMPLEMENT DEPTH
 		STRIDE         : INTEGER := 1;
 		INTEGER_SIZE   : INTEGER := 8
 	);
@@ -28,24 +29,24 @@ ENTITY LINE_BUFF IS
 	(
 		clk     : IN  STD_LOGIC;
 		reset_p : IN  STD_LOGIC;
-		start   : IN  STD_LOGIC; -- start producing windows from input
-		move    : IN  STD_LOGIC; -- move to next window on high
-		input   : IN  STD_LOGIC_VECTOR((INPUT_WIDTH * INPUT_HEIGHT * INTEGER_SIZE) - 1 DOWNTO 0); -- layer input
-		busy    : OUT STD_LOGIC; -- low when waiting for input
-		done    : OUT STD_LOGIC; -- high when finished moving through entire input
-		output  : OUT STD_LOGIC_VECTOR((KERNEL_HEIGHT * KERNEL_WIDTH * INTEGER_SIZE) - 1 DOWNTO 0) -- kernel input
+		start   : IN  STD_LOGIC;                                                                                   -- start producing windows from input
+		move    : IN  STD_LOGIC;                                                                                   -- move to next window on high
+		input   : IN  STD_LOGIC_VECTOR((INPUT_WIDTH * INPUT_HEIGHT * INPUT_CHANNELS * INTEGER_SIZE) - 1 DOWNTO 0); -- layer input
+		busy    : OUT STD_LOGIC;                                                                                   -- low when waiting for input
+		done    : OUT STD_LOGIC;                                                                                   -- high when finished moving through entire input
+		output  : OUT STD_LOGIC_VECTOR((KERNEL_HEIGHT * KERNEL_WIDTH * KERNEL_DEPTH * INTEGER_SIZE) - 1 DOWNTO 0)  -- kernel input
 	);
-END LINE_BUFF;
+END KernelWindow;
 
-ARCHITECTURE LINE_BUFF_arch OF LINE_BUFF IS
+ARCHITECTURE KernelWindow_arch OF KernelWindow IS
 
 	TYPE states IS (Idle, LoadRows, WaitRegs, OutputKernel, WaitNext);
 	SIGNAL state_machine : states := Idle;
 
-	TYPE INPUT_BUFF IS ARRAY (0 TO KERNEL_HEIGHT - 1) OF STD_LOGIC_VECTOR(INTEGER_SIZE * INPUT_WIDTH - 1 DOWNTO 0);
+	TYPE INPUT_BUFF IS ARRAY (0 TO KERNEL_HEIGHT - 1) OF STD_LOGIC_VECTOR(INTEGER_SIZE * INPUT_WIDTH * INPUT_CHANNELS - 1 DOWNTO 0);
 	SIGNAL line_in_array  : INPUT_BUFF;
 	SIGNAL line_out_array : INPUT_BUFF;
-	SIGNAL output_signal  : STD_LOGIC_VECTOR((KERNEL_HEIGHT * KERNEL_WIDTH * INTEGER_SIZE) - 1 DOWNTO 0);
+	SIGNAL output_signal  : STD_LOGIC_VECTOR((KERNEL_HEIGHT * KERNEL_WIDTH * KERNEL_DEPTH * INTEGER_SIZE) - 1 DOWNTO 0);
 
 	COMPONENT Reg
 		GENERIC
@@ -67,7 +68,7 @@ BEGIN
 	output_buff : Reg
 	GENERIC
 	MAP(
-	SIG_WIDTH => INTEGER_SIZE * KERNEL_WIDTH * KERNEL_HEIGHT
+	SIG_WIDTH => INTEGER_SIZE * KERNEL_WIDTH * KERNEL_HEIGHT * KERNEL_DEPTH
 	)
 	PORT MAP
 	(
@@ -79,10 +80,10 @@ BEGIN
 	);
 
 	buff : FOR i IN 0 TO KERNEL_HEIGHT - 1 GENERATE
-		line_buff : Reg
+		KernelWindow : Reg
 		GENERIC
 		MAP(
-		SIG_WIDTH => INTEGER_SIZE * INPUT_WIDTH
+		SIG_WIDTH => INTEGER_SIZE * INPUT_WIDTH * KERNEL_DEPTH
 		)
 		PORT
 		MAP
@@ -95,6 +96,7 @@ BEGIN
 		);
 	END GENERATE;
 
+	-- TODO implement DEPTH
 	PROCESS (clk)
 		VARIABLE base_row    : INTEGER := 0;
 		VARIABLE base_column : INTEGER := INPUT_WIDTH;
@@ -154,9 +156,9 @@ BEGIN
 						END IF;
 					ELSE
 						done          <= '1';
-						state_machine <= Idle;					
+						state_machine <= Idle;
 					END IF;
 			END CASE;
 		END IF;
 	END PROCESS;
-END LINE_BUFF_arch;
+END KernelWindow_arch;

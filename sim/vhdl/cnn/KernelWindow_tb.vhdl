@@ -3,7 +3,7 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
-ENTITY LINE_BUFF_tb IS
+ENTITY KernelWindow_tb IS
 	GENERIC
 	(
 		INPUT_WIDTH     : INTEGER := 9;
@@ -15,9 +15,9 @@ ENTITY LINE_BUFF_tb IS
 		KERNEL_CHANNELS : INTEGER := 1;
 		INTEGER_SIZE    : INTEGER := 8
 	);
-END LINE_BUFF_tb;
+END KernelWindow_tb;
 
-ARCHITECTURE LINE_BUFF_tb_arch OF LINE_BUFF_tb IS
+ARCHITECTURE KernelWindow_tb_arch OF KernelWindow_tb IS
 
 	SIGNAL clk_tb     : STD_LOGIC := '1';
 	SIGNAL reset_p_tb : STD_LOGIC := '0';
@@ -27,7 +27,7 @@ ARCHITECTURE LINE_BUFF_tb_arch OF LINE_BUFF_tb IS
 	SIGNAL done_tb    : STD_LOGIC;
 	SIGNAL output_tb  : STD_LOGIC_VECTOR((KERNEL_HEIGHT * KERNEL_WIDTH * INTEGER_SIZE) - 1 DOWNTO 0);
 
-	COMPONENT LINE_BUFF
+	COMPONENT KernelWindow
 		GENERIC
 		(
 			INPUT_WIDTH    : INTEGER := 128;
@@ -49,10 +49,10 @@ ARCHITECTURE LINE_BUFF_tb_arch OF LINE_BUFF_tb IS
 			done    : OUT STD_LOGIC;
 			output  : OUT STD_LOGIC_VECTOR((KERNEL_HEIGHT * KERNEL_WIDTH * INTEGER_SIZE) - 1 DOWNTO 0)
 		);
-	END COMPONENT LINE_BUFF;
+	END COMPONENT KernelWindow;
 BEGIN
 
-	LINE_BUFF_i : LINE_BUFF
+	KernelWindow_i : KernelWindow
 	GENERIC
 	MAP (
 	INPUT_WIDTH    => INPUT_WIDTH,
@@ -93,4 +93,4 @@ BEGIN
 
 	END PROCESS;
 
-END LINE_BUFF_tb_arch;
+END KernelWindow_tb_arch;

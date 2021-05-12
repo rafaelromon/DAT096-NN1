@@ -20,7 +20,7 @@ ENTITY Neuron IS
 	GENERIC
 	(
 		KERNEL_SIZE : INTEGER := 9;
-		IN_SIZE    : INTEGER := 8;
+		IN_SIZE     : INTEGER := 8;
 		OUT_SIZE    : INTEGER := 32
 	);
 	PORT
@@ -44,7 +44,7 @@ ARCHITECTURE Neuron_arch OF Neuron IS
 	SIGNAL input_array   : IN_ARRAY;
 	SIGNAL filter_array  : IN_ARRAY;
 	SIGNAL temp_sum      : OUT_ARRAY;
-	SIGNAL DSP_enable   : STD_LOGIC;
+	SIGNAL DSP_enable    : STD_LOGIC;
 	SIGNAL enable_latch  : STD_LOGIC;
 	SIGNAL output_signal : STD_LOGIC_VECTOR(OUT_SIZE - 1 DOWNTO 0);
 
@@ -78,7 +78,7 @@ BEGIN
 		output  => output
 	);
 
-	Regs : FOR i IN 0 TO KERNEL_SIZE-1 GENERATE
+	Regs : FOR i IN 0 TO KERNEL_SIZE - 1 GENERATE
 		Reg_input : Reg
 		GENERIC
 		MAP (
@@ -109,11 +109,11 @@ BEGIN
 		MACC_MACRO_inst : MACC_MACRO
 		GENERIC
 		MAP (
-		DEVICE  => "7SERIES",   -- Target Device: "VIRTEX5", "7SERIES", "SPARTAN6"
-		LATENCY => 1,           -- Desired clock cycle latency, 1-4
-		WIDTH_A => IN_SIZE,    -- Multiplier A-input bus width, 1-25
-		WIDTH_B => IN_SIZE, -- Multiplier B-input bus width, 1-18
-		WIDTH_P => OUT_SIZE)    -- Accumulator output bus width, 1-48
+		DEVICE  => "7SERIES", -- Target Device: "VIRTEX5", "7SERIES", "SPARTAN6"
+		LATENCY => 1,         -- Desired clock cycle latency, 1-4
+		WIDTH_A => IN_SIZE,   -- Multiplier A-input bus width, 1-25
+		WIDTH_B => IN_SIZE,   -- Multiplier B-input bus width, 1-18
+		WIDTH_P => OUT_SIZE)  -- Accumulator output bus width, 1-48
 		PORT
 		MAP (
 		P         => temp_sum(i + 1), -- MACC ouput bus, width determined by WIDTH_P generic
@@ -121,7 +121,7 @@ BEGIN
 		ADDSUB    => '1',             -- 1-bit add/sub input, high selects add, low selects subtract
 		B         => filter_array(i), -- Multiplier input B bus, width determined by WIDTH_B generic
 		CARRYIN   => '0',             -- 1-bit carry-in input to accumulator
-		CE        => DSP_enable,     -- 1-bit active high input clock enable
+		CE        => DSP_enable,      -- 1-bit active high input clock enable
 		CLK       => clk,             -- 1-bit positive edge clock input
 		LOAD      => '1',             -- 1-bit active high input load accumulator enable
 		LOAD_DATA => temp_sum(i),     -- Load accumulator input data, width determined by WIDTH_A generic
@@ -144,7 +144,7 @@ BEGIN
 	ADD_SUB  => '1',                   -- 1-bit add/sub input, high selects add, low selects subtract
 	B        => bias,                  -- Input B bus, width defined by WIDTH generic
 	CARRYIN  => '0',                   -- 1-bit carry-in input
-	CE       => DSP_enable,           -- 1-bit clock enable input
+	CE       => DSP_enable,            -- 1-bit clock enable input
 	CLK      => clk,                   -- 1-bit clock input
 	RST      => reset_p                -- 1-bit active high synchronous reset
 	);
@@ -154,12 +154,12 @@ BEGIN
 	BEGIN
 		IF reset_p = '1' THEN
 			DSP_enable <= '0';
-			busy        <= '0';
-			done        <= '0';
+			busy       <= '0';
+			done       <= '0';
 		ELSIF RISING_EDGE(clk) THEN
 			IF enable = '1' THEN
 				temp_sum(0)  <= (OTHERS => '0');
-				DSP_enable  <= '1';
+				DSP_enable   <= '1';
 				busy         <= '1';
 				enable_latch <= '0';
 				done         <= '0';
@@ -167,15 +167,15 @@ BEGIN
 			IF DSP_enable = '1' THEN
 				IF count < KERNEL_SIZE * 2 THEN -- neuron takes 2 clock cycles per MULT_ACC and 1 for the ADD
 					count := count + 1;
-					
+
 					IF count = (KERNEL_SIZE * 2) THEN -- enable output latch
 						enable_latch <= '1';
 					END IF;
 				ELSE
-					DSP_enable <= '0';
-					busy        <= '0';
+					DSP_enable   <= '0';
+					busy         <= '0';
 					enable_latch <= '0';
-					done        <= '1';
+					done         <= '1';
 					count := 0;
 				END IF;
 			END IF;

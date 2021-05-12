@@ -3,41 +3,37 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
-ENTITY PWConv_tb is
+ENTITY Conv_tb is
   generic (
     INPUT_WIDTH     : INTEGER := 9;
     INPUT_HEIGHT    : INTEGER := 9;
-    INPUT_CHANNELS  : INTEGER := 1;
-    FILTERS         : INTEGER := 1;
     KERNEL_HEIGHT   : INTEGER := 3;
     KERNEL_WIDTH    : INTEGER := 3;
-    KERNEL_CHANNELS : INTEGER := 1;
+    KERNEL_DEPTH    : INTEGER := 1;
     IN_SIZE         : INTEGER := 8;
     OUT_SIZE        : INTEGER := 32
   );
-END PWConv_tb;
+END Conv_tb;
 
-ARCHITECTURE PWConv_tb_arch OF PWConv_tb IS
+ARCHITECTURE Conv_tb_arch OF Conv_tb IS
 
 signal clk_tb           : STD_LOGIC := '1';
 signal reset_p_tb       : STD_LOGIC := '0';
 signal start_tb        : STD_LOGIC := '0';
 signal input_tb         : STD_LOGIC_VECTOR((INPUT_WIDTH*INPUT_HEIGHT*IN_SIZE) - 1 DOWNTO 0);
-signal filter_values_tb : STD_LOGIC_VECTOR ((FILTERS*KERNEL_HEIGHT*KERNEL_WIDTH*KERNEL_CHANNELS*IN_SIZE) - 1 DOWNTO 0);
+signal filter_values_tb : STD_LOGIC_VECTOR ((KERNEL_HEIGHT*KERNEL_WIDTH*KERNEL_DEPTH*IN_SIZE) - 1 DOWNTO 0);
 signal bias_values_tb   : STD_LOGIC_VECTOR(OUT_SIZE - 1 DOWNTO 0);
 signal busy_tb          : STD_LOGIC;
 signal done_tb          : STD_LOGIC;
 signal output_tb        : STD_LOGIC_VECTOR(INPUT_WIDTH * INPUT_HEIGHT * OUT_SIZE - 1 DOWNTO 0);
 
-component PWConv
+component Conv
 generic (
   INPUT_WIDTH     : INTEGER := 128;
-  INPUT_HEIGHT    : INTEGER := 128;
-  INPUT_CHANNELS  : INTEGER := 8;
-  FILTERS         : INTEGER := 32;
+  INPUT_HEIGHT    : INTEGER := 128;  
   KERNEL_HEIGHT   : INTEGER := 1;
   KERNEL_WIDTH    : INTEGER := 1;
-  KERNEL_CHANNELS : INTEGER := 8;
+  KERNEL_DEPTH : INTEGER := 8;
   IN_SIZE         : INTEGER := 8;
   OUT_SIZE        : INTEGER := 32
 );
@@ -46,25 +42,23 @@ port (
   reset_p       : IN  STD_LOGIC;
   start        : IN  STD_LOGIC;
   input         : IN  STD_LOGIC_VECTOR((INPUT_WIDTH*INPUT_HEIGHT*IN_SIZE) - 1 DOWNTO 0);
-  filter_values : IN  STD_LOGIC_VECTOR ((FILTERS*KERNEL_HEIGHT*KERNEL_WIDTH*KERNEL_CHANNELS*IN_SIZE) - 1 DOWNTO 0);
-  bias_values   : IN  STD_LOGIC_VECTOR(FILTERS*OUT_SIZE - 1 DOWNTO 0);
+  filter_values : IN  STD_LOGIC_VECTOR ((KERNEL_HEIGHT*KERNEL_WIDTH*KERNEL_DEPTH*IN_SIZE) - 1 DOWNTO 0);
+  bias_values   : IN  STD_LOGIC_VECTOR(OUT_SIZE - 1 DOWNTO 0);
   busy          : OUT STD_LOGIC;
   done          : OUT STD_LOGIC;
   output        : OUT STD_LOGIC_VECTOR((INPUT_WIDTH * INPUT_HEIGHT * OUT_SIZE) - 1 DOWNTO 0)
 );
-end component PWConv;
+end component Conv;
 
 BEGIN
 
-PWConv_i : PWConv
+Conv_i : Conv
   generic map (
   INPUT_WIDTH     => INPUT_WIDTH,
   INPUT_HEIGHT    => INPUT_HEIGHT,
-  INPUT_CHANNELS  => INPUT_CHANNELS,
-  FILTERS         => FILTERS,
   KERNEL_HEIGHT   => KERNEL_HEIGHT,
   KERNEL_WIDTH    => KERNEL_WIDTH,
-  KERNEL_CHANNELS => KERNEL_CHANNELS,
+  KERNEL_DEPTH => KERNEL_DEPTH,
   IN_SIZE         => IN_SIZE,
   OUT_SIZE        => OUT_SIZE
   )
@@ -100,4 +94,4 @@ PWConv_i : PWConv
 
 	END PROCESS;
 
-END PWConv_tb_arch;
+END Conv_tb_arch;
