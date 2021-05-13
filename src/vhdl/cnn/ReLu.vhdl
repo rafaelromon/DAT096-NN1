@@ -4,8 +4,9 @@
 -- DAT096 - spring 2021
 -----------------------------------------------------
 -- Description:
--- Implements a ReLu filter
--- architecture of the entire system
+-- Rectified Linear Unit or Relu activation function
+-- as an entity: if input is less 0 set output to
+-- 0, else set to input.
 -----------------------------------------------------
 
 LIBRARY ieee;
@@ -20,22 +21,56 @@ ENTITY ReLu IS
 	PORT
 	(
 		clk    : IN  STD_LOGIC;
-		input  : IN  SIGNED(INT_SIZE - 1 DOWNTO 0);
-		output : OUT UNSIGNED(INT_SIZE - 1 DOWNTO 0)
+		enable : IN  STD_LOGIC;
+		reset_p : IN  STD_LOGIC;
+		input  : IN  STD_LOGIC_VECTOR(INT_SIZE - 1 DOWNTO 0);
+		output : OUT STD_LOGIC_VECTOR(INT_SIZE - 1 DOWNTO 0)
 	);
 END ReLu;
 
 ARCHITECTURE ReLu_arch OF ReLu IS
 
+signal output_signal: STD_LOGIC_VECTOR(INT_SIZE - 1 DOWNTO 0);
+
+component Reg
+generic (
+  SIG_WIDTH : INTEGER := 8
+);
+port (
+  clk     : IN  STD_LOGIC;
+  reset_p : IN  STD_LOGIC;
+  enable  : IN  STD_LOGIC;
+  input   : IN  STD_LOGIC_VECTOR(SIG_WIDTH-1 DOWNTO 0);
+  output  : OUT STD_LOGIC_VECTOR(SIG_WIDTH-1 DOWNTO 0)
+);
+end component Reg;
+
 BEGIN
-	ReLu_process : PROCESS (clk)
+
+	output_register : Reg
+	generic map (
+		SIG_WIDTH => INT_SIZE
+	)
+	port map (
+		clk     => clk,
+		reset_p => reset_p,
+		enable  => enable,
+		input   => output_signal,
+		output  => output
+	);
+
+	PROCESS (clk)
 	BEGIN
-		IF RISING_EDGE(clk) THEN
-			IF input < 0 THEN
-				output <= (OTHERS => '0');
-			ELSE
-				output <= unsigned(input);
+		IF reset_p = '1' THEN
+			output_signal <= (OTHERS => '0');
+		ELSIF RISING_EDGE(clk) THEN
+			IF enable = '1' THEN
+				IF signed(input) < 0 THEN
+					output_signal <= (OTHERS => '0');
+				ELSE
+					output_signal <= input;
+				END IF;
 			END IF;
 		END IF;
-	END PROCESS ReLu_process;
+	END PROCESS;
 END ReLu_arch;
