@@ -45,7 +45,7 @@ END Neuron;
 
 ARCHITECTURE Neuron_arch OF Neuron IS
 
-	TYPE states IS (Idle, Mult, Accumulate, AddBias, Activation, MultScale, OutputResult);
+	TYPE states IS (Idle, Mult, Accumulate, AddBias, Activation, MultScale, WaitMacc, OutputResult);
 	SIGNAL state_machine : states := Idle;
 
 	TYPE LINE_ARRAY IS ARRAY (0 TO KERNEL_HEIGHT - 1) OF STD_LOGIC_VECTOR(KERNEL_WIDTH * KERNEL_DEPTH * IO_SIZE - 1 DOWNTO 0);
@@ -255,11 +255,18 @@ BEGIN
 
 					IF line_index > 1 THEN
 						line_index := line_index - 1;
+						state_machine <= WaitMacc;
 					ELSE
 						add_enable <= '1';
 						state_machine <= Accumulate;
 					END IF;
-
+                WHEN WaitMacc =>
+                      IF wait_clk = '0' THEN -- this is a really dirty implementation
+						wait_clk := '1';
+					ELSE
+						wait_clk := '0';
+						state_machine <= MultScale;
+					END IF;
 				WHEN Accumulate =>
 					macc_enable   <= '0';
 
