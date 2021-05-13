@@ -45,7 +45,7 @@ END Neuron;
 
 ARCHITECTURE Neuron_arch OF Neuron IS
 
-	TYPE states IS (Idle, Mult, Accumulate, AddBias, Activation, MultScale);
+	TYPE states IS (Idle, Mult, Accumulate, AddBias, Activation, MultScale, OutputResult);
 	SIGNAL state_machine : states := Idle;
 
 	TYPE LINE_ARRAY IS ARRAY (0 TO KERNEL_HEIGHT - 1) OF STD_LOGIC_VECTOR(KERNEL_WIDTH * KERNEL_DEPTH * IO_SIZE - 1 DOWNTO 0);
@@ -76,13 +76,30 @@ ARCHITECTURE Neuron_arch OF Neuron IS
 	SIGNAL macc_a_array   : IO_ARRAY;
 	SIGNAL macc_b_array   : IO_ARRAY;
 	SIGNAL macc_out_array : INTERNAL_ARRAY;
-	SIGNAL macc_enable      : STD_LOGIC;
-	SIGNAL macc_load      : STD_LOGIC;
+	SIGNAL macc_enable      : STD_LOGIC := '0';
+	SIGNAL macc_load      : STD_LOGIC := '1';
 
 	SIGNAL add_a          : STD_LOGIC_VECTOR(INTERNAL_SIZE - 1 DOWNTO 0);
 	SIGNAL add_b          : STD_LOGIC_VECTOR(INTERNAL_SIZE - 1 DOWNTO 0);
 	SIGNAL add_out        : STD_LOGIC_VECTOR(INTERNAL_SIZE - 1 DOWNTO 0);
-	SIGNAL add_enable      : STD_LOGIC;
+	SIGNAL add_enable      : STD_LOGIC := '0';
+
+	SIGNAL relu_out        : STD_LOGIC_VECTOR(INTERNAL_SIZE - 1 DOWNTO 0);
+
+	component ReLu
+	generic (
+  	INT_SIZE : INTEGER := 32
+	);
+	port (
+  	clk     : IN  STD_LOGIC;
+  	enable  : IN  STD_LOGIC;
+  	reset_p : IN  STD_LOGIC;
+  	input   : IN  STD_LOGIC_VECTOR(INT_SIZE - 1 DOWNTO 0);
+  	output  : OUT STD_LOGIC_VECTOR(INT_SIZE - 1 DOWNTO 0)
+	);
+	end component ReLu;
+
+    SIGNAL mult_out        : STD_LOGIC_VECTOR(INTERNAL_SIZE*2 - 1 DOWNTO 0);
 
 BEGIN
 
@@ -100,7 +117,7 @@ BEGIN
 	);
 
 	height : FOR i IN 0 TO KERNEL_HEIGHT - 1 GENERATE
-		macc : MACC_MACRO
+		macc_comp : MACC_MACRO
 		GENERIC
 		MAP (
 		DEVICE  => "7SERIES",     -- Target Device: "VIRTEX5", "7SERIES", "SPARTAN6"
@@ -153,7 +170,7 @@ BEGIN
 		);
 	END GENERATE;
 
-	add : ADDSUB_MACRO
+	add_comp: ADDSUB_MACRO
 	GENERIC
 	MAP (
 	DEVICE  => "7SERIES",     -- Target Device: "VIRTEX5", "7SERIES", "SPARTAN6"
@@ -172,17 +189,45 @@ BEGIN
 	RST      => reset_p  -- 1-bit active high synchronous reset
 	);
 
+	ReLu_comp : ReLu
+	generic map (
+	  INT_SIZE => INTERNAL_SIZE
+	)
+	port map (
+	  clk     => clk,
+	  enable  => '1',
+	  reset_p => reset_p,
+	  input   => add_out,
+	  output  => relu_out
+	);
+
+	-- mult_comp : MULT_MACRO
+  --   generic map (
+  --     DEVICE => "7SERIES",    -- Target Device: "VIRTEX5", "7SERIES", "SPARTAN6"
+  --     LATENCY => 0,           -- Desired clock cycle latency, 0-4
+  --     WIDTH_A => INTERNAL_SIZE,          -- Multiplier A-input bus width, 1-25
+  --     WIDTH_B => INTERNAL_SIZE)          -- Multiplier B-input bus width, 1-18
+  --   port map (
+  --     P => mult_out,     -- Multiplier ouput bus, width determined by WIDTH_P generic
+  --     A => relu_out,     -- Multiplier input A bus, width determined by WIDTH_A generic
+  --     B => scale,     -- Multiplier input B bus, width determined by WIDTH_B generic
+  --     CE => '1',   -- 1-bit active high input clock enable
+  --     CLK => clk, -- 1-bit positive edge clock input
+  --     RST => reset_p  -- 1-bit input active high reset
+  --   );
+
+
 	PROCESS (clk)
 		VARIABLE line_index : INTEGER := KERNEL_WIDTH * KERNEL_DEPTH;
 		VARIABLE acc_count : INTEGER := 0;
+		VARIABLE wait_clk: STD_LOGIC := '0';
 	BEGIN
 		IF reset_p = '1' THEN
 			busy          <= '0';
 			done          <= '0';
 			macc_enable   <= '0';
 			add_enable    <= '0';
-			busy          <= '0';
-			done          <= '0';
+			macc_load     <= '1';
 			output_signal <= (OTHERS => '0');
 
 		ELSIF RISING_EDGE(clk) THEN
@@ -193,15 +238,13 @@ BEGIN
 					IF start = '1' THEN
 						busy          <= '1';
 						done          <= '0';
-						macc_enable   <= '1';
 						state_machine <= Mult;
 					END IF;
 
 				WHEN Mult =>
+					macc_enable   <= '1';
 
-					IF line_index = KERNEL_WIDTH * KERNEL_DEPTH THEN
-						macc_load <= '1'; -- reset accumulate
-					else
+					IF line_index < KERNEL_WIDTH * KERNEL_DEPTH THEN
 						macc_load <= '0'; -- start accumulating
 					END IF;
 
@@ -242,14 +285,31 @@ BEGIN
 					state_machine <= Activation;
 
 				WHEN Activation =>
-					state_machine <= MultScale;
+					IF wait_clk = '0' THEN -- this is a really dirty implementation
+						wait_clk := '1';
+					ELSE
+						wait_clk := '0';
+						state_machine <= MultScale;
+					END IF;
 
 				WHEN MultScale =>
-					state_machine <= Idle;
-					output_signal <= add_out(IO_SIZE - 1 DOWNTO 0); --truncate
-					busy          <= '0';
-					done          <= '1';
-					
+			    mult_out <= (OTHERS => '0');
+					mult_out(INTERNAL_SIZE - 1 DOWNTO 0) <= relu_out; -- TODO implement scaling
+					state_machine <= OutputResult;
+
+				WHEN OutputResult =>
+					output_signal <= mult_out(IO_SIZE - 1 DOWNTO 0); --truncate to output size
+
+					IF wait_clk = '0' THEN -- this is a really dirty implementation
+						wait_clk := '1';
+					ELSE
+						wait_clk := '0';
+						busy          <= '0';
+						done          <= '1';
+						output_enable <= '1';
+						state_machine <= Idle;
+					END IF;
+
 			END CASE;
 		END IF;
 	END PROCESS;

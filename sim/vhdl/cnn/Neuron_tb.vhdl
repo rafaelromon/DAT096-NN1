@@ -92,8 +92,9 @@ BEGIN
 		start_tb         <= '1';
 		WAIT FOR 20ns;
 		start_tb <= '0';
-		WAIT until done_tb = '1';
-    report "Simulation FInished." severity FAILURE;
+	WAIT until done_tb = '1';
+	WAIT FOR 20ns;
+    report "Simulation FInished." severity FAILURE;    
 
 	END PROCESS;
 
