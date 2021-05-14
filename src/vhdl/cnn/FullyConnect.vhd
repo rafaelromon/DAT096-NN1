@@ -57,9 +57,11 @@ ARCHITECTURE FullyConnect_arch OF FullyConnect IS
   SIGNAL neuron_busy_vector  : STD_LOGIC_VECTOR(NEURON_NUM-1 DOWNTO 0);
   SIGNAL busy_out			 : STD_LOGIC_VECTOR(NEURON_NUM-1 DOWNTO 0);
   SIGNAL neuron_done_vector  : STD_LOGIC_VECTOR(NEURON_NUM-1 DOWNTO 0);
-  SIGNAL done_out			 : STD_LOGIC_VECTOR(NEURON_NUM-1 DOWNTO 0);
+  SIGNAL done_out			 : STD_LOGIC_VECTOR(NEURON_NUM DOWNTO 0);
   SIGNAL neuron_output_array : IN_ARRAY; 
   SIGNAL pre_output          : STD_LOGIC_VECTOR(IN_SIZE-1 DOWNTO 0);        --Not really sure about this one
+  SIGNAL done_reg_in         : STD_LOGIC_VECTOR(0 DOWNTO 0);
+  SIGNAL done_reg_out        : STD_LOGIC_VECTOR(0 DOWNTO 0);
 
   COMPONENT Reg
     GENERIC(
@@ -154,19 +156,33 @@ BEGIN
     pre_output((i+1)*IN_SIZE-1 DOWNTO i*IN_SIZE) <= neuron_output_array(i);   
   END GENERATE;
  
-  busy 	 <= busy_out(NEURON_NUM-1);
-  done 	 <= done_out(NEURON_NUM-1);
+  busy 	           <= busy_out(NEURON_NUM-1);
+  done_reg_in(0)   <= done_out(NEURON_NUM-1);
   
   output_reg: reg
   GENERIC MAP(
     SIG_WIDTH => IN_SIZE
   )
   PORT MAP(
-    clk => clk,
+    clk     => clk,
     reset_p => reset_p,
-    enable => '1',
-    input => pre_output,
-    output => output
+    enable  => STD_LOGIC(done_reg_out(0)),
+    input   => pre_output,
+    output  => output
   );
+  
+    done_reg: reg
+  GENERIC MAP(
+    SIG_WIDTH => 1
+  )
+  PORT MAP(
+    clk     => clk,
+    reset_p => reset_p,
+    enable  => '1',
+    input   => done_reg_in,
+    output  => done_reg_out
+  );
+   
+   done <= done_reg_out(0);
 
 END FullyConnect_arch;

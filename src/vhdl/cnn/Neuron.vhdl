@@ -281,10 +281,10 @@ BEGIN
 					ELSE
 						IF KERNEL_HEIGHT > 1 THEN
 							state_machine <= Accumulate;
+							add_enable  <= '1';
 						ELSE
 							state_machine <= AddBias;
                         END IF;
-                        add_enable  <= '1';
 					END IF;
 
 				WHEN Accumulate => -- accumulate results from different rows
@@ -314,10 +314,23 @@ BEGIN
 					END IF;
 
 				WHEN AddBias => -- reuses adder to add bias
-					add_a         <= add_out;
-					add_b         <= bias;
-					add_enable    <= '0';
-					state_machine <= Activation;
+				    IF (KERNEL_HEIGHT > 1) THEN
+					   add_a         <= add_out;
+					   add_b         <= bias;
+					   add_enable    <= '0';
+					   state_machine <= Activation;
+					ELSE
+					   add_a         <= macc_out_array(0);
+					   add_enable    <= '1';
+					   IF wait_clk = '0' THEN -- this is a really dirty implementation
+					       wait_clk := '1';
+					   ELSE
+						  wait_clk := '0';
+						  add_b         <= bias;
+					      add_enable    <= '0';
+					      state_machine <= Activation;
+					   END IF;
+					END IF;					
 
 				WHEN Activation =>     -- waits for ReLu to work
 					IF wait_clk = '0' THEN -- this is a really dirty implementation
