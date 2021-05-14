@@ -16,12 +16,13 @@ USE ieee.numeric_std.ALL;
 ENTITY KernelWindow IS
 	GENERIC
 	(
-		INPUT_WIDTH    : INTEGER := 128;
-		INPUT_HEIGHT   : INTEGER := 128;
-		INPUT_CHANNELS : INTEGER := 8;
+		INPUT_WIDTH    : INTEGER := 9;
+		INPUT_HEIGHT   : INTEGER := 9;
+		INPUT_CHANNELS : INTEGER := 1;
 		KERNEL_WIDTH   : INTEGER := 1;
 		KERNEL_HEIGHT  : INTEGER := 1;
-		KERNEL_DEPTH   : INTEGER := 1; -- IMPLEMENT DEPTH
+		KERNEL_DEPTH   : INTEGER := 1;
+    ZERO_PADDING   : INTEGER := 0;
 		STRIDE         : INTEGER := 1;
 		INTEGER_SIZE   : INTEGER := 8
 	);
@@ -43,7 +44,11 @@ ARCHITECTURE KernelWindow_arch OF KernelWindow IS
 	TYPE states IS (Idle, LoadRows, WaitRegs, OutputKernel, WaitNext);
 	SIGNAL state_machine : states := Idle;
 
-	TYPE INPUT_BUFF IS ARRAY (0 TO KERNEL_HEIGHT - 1) OF STD_LOGIC_VECTOR(INTEGER_SIZE * INPUT_WIDTH * INPUT_CHANNELS - 1 DOWNTO 0);
+	-----
+	-- Register component and signals
+	-----
+
+	TYPE INPUT_BUFF IS ARRAY (0 TO KERNEL_HEIGHT - 1) OF STD_LOGIC_VECTOR(INTEGER_SIZE * (INPUT_WIDTH+ZERO_PADDING*2) * INPUT_CHANNELS - 1 DOWNTO 0);
 	SIGNAL line_in_array  : INPUT_BUFF;
 	SIGNAL line_out_array : INPUT_BUFF;
 	SIGNAL output_signal  : STD_LOGIC_VECTOR((KERNEL_HEIGHT * KERNEL_WIDTH * KERNEL_DEPTH * INTEGER_SIZE) - 1 DOWNTO 0);
@@ -79,11 +84,12 @@ BEGIN
 		output  => output
 	);
 
-	buff : FOR i IN 0 TO KERNEL_HEIGHT - 1 GENERATE
+	-- creates a line buffer for each row
+	row : FOR i IN 0 TO KERNEL_HEIGHT - 1 GENERATE
 		KernelWindow : Reg
 		GENERIC
 		MAP(
-		SIG_WIDTH => INTEGER_SIZE * INPUT_WIDTH * KERNEL_DEPTH
+		SIG_WIDTH => INTEGER_SIZE * (INPUT_WIDTH+ZERO_PADDING*2) * KERNEL_DEPTH
 		)
 		PORT
 		MAP
@@ -96,23 +102,20 @@ BEGIN
 		);
 	END GENERATE;
 
-	-- TODO implement DEPTH
 	PROCESS (clk)
 		VARIABLE base_row    : INTEGER := 0;
 		VARIABLE base_column : INTEGER := INPUT_WIDTH;
 	BEGIN
 		IF reset_p = '1' THEN
-			base_row    := INPUT_HEIGHT;
-			base_column := INPUT_WIDTH;
 			done          <= '0';
 			busy          <= '0';
 			output_signal <= (OTHERS => '0');
-		ELSIF RISING_EDGE(clk) THEN
 
+		ELSIF RISING_EDGE(clk) THEN
 			CASE state_machine IS
 				WHEN Idle =>
-					base_row    := INPUT_HEIGHT;
-					base_column := INPUT_WIDTH;
+					base_row    := INPUT_HEIGHT + ZERO_PADDING*2;
+			        base_column := INPUT_WIDTH + ZERO_PADDING*2;
 
 					IF start = '1' THEN
 						state_machine <= LoadRows;
@@ -122,42 +125,59 @@ BEGIN
 				WHEN LoadRows =>
 					busy <= '1';
 
-					FOR row IN 0 TO KERNEL_HEIGHT - 1 LOOP
-						line_in_array(row) <= input((INTEGER_SIZE * INPUT_WIDTH * (base_row - row)) - 1 DOWNTO (INTEGER_SIZE * INPUT_WIDTH * (base_row - row - 1)));
+					FOR row IN 0 TO KERNEL_HEIGHT-1 LOOP
+
+						IF ZERO_PADDING > 0 THEN
+
+							IF (base_row - row) > INPUT_HEIGHT+ZERO_PADDING or (base_row - row) < ZERO_PADDING THEN
+								line_in_array(row) <= (OTHERS => '0');
+							ELSE -- TODO fix ZERO_PADDING
+								line_in_array(row)(INTEGER_SIZE*(2*ZERO_PADDING+INPUT_WIDTH) - 1 DOWNTO INTEGER_SIZE*(ZERO_PADDING+INPUT_WIDTH)) <= (OTHERS => '0');
+								line_in_array(row)(INTEGER_SIZE*(ZERO_PADDING+INPUT_WIDTH) - 1 DOWNTO INTEGER_SIZE*ZERO_PADDING) <= (OTHERS => '1');
+								--line_in_array(row)(INTEGER_SIZE*(ZERO_PADDING+INPUT_WIDTH) - 1 DOWNTO INTEGER_SIZE*ZERO_PADDING) <= input((INTEGER_SIZE * INPUT_WIDTH * (base_row - row)) - 1 DOWNTO (INTEGER_SIZE * INPUT_WIDTH * (base_row - row - 1)));
+								line_in_array(row)(INTEGER_SIZE*ZERO_PADDING - 1 DOWNTO 0) <= (OTHERS => '0');
+							END IF;
+
+						ELSE
+							line_in_array(row) <= input((INTEGER_SIZE * INPUT_WIDTH * (base_row - row)) - 1 DOWNTO (INTEGER_SIZE * INPUT_WIDTH * (base_row - row - 1)));
+						END IF;
 					END LOOP;
 
 					state_machine <= WaitRegs;
 
-				WHEN WaitRegs =>
+				WHEN WaitRegs => -- waits registers on line buffers to update
 					state_machine <= OutputKernel;
 
-				WHEN OutputKernel =>
+				WHEN OutputKernel => -- slices line buffers to generate kernel window
 					busy <= '1';
-					FOR row IN 0 TO KERNEL_HEIGHT - 1 LOOP
-						output_signal((KERNEL_WIDTH * (KERNEL_HEIGHT - row) * INTEGER_SIZE) - 1 DOWNTO KERNEL_WIDTH * (KERNEL_HEIGHT - (row + 1)) * INTEGER_SIZE)
-						<= line_out_array(row)(base_column * INTEGER_SIZE - 1 DOWNTO (base_column - KERNEL_WIDTH) * INTEGER_SIZE);
-					END LOOP;
 					state_machine <= WaitNext;
-				WHEN WaitNext =>
+
+					FOR row IN 0 TO KERNEL_HEIGHT - 1 LOOP
+						output_signal((KERNEL_WIDTH * KERNEL_DEPTH * (KERNEL_HEIGHT - row) * INTEGER_SIZE) - 1 DOWNTO KERNEL_WIDTH * KERNEL_DEPTH * (KERNEL_HEIGHT - (row + 1)) * INTEGER_SIZE) <= line_out_array(row)(base_column * INTEGER_SIZE - 1 DOWNTO (base_column - KERNEL_WIDTH * KERNEL_DEPTH) * INTEGER_SIZE);
+					END LOOP;
+
+				WHEN WaitNext => -- waits to be told to move to next window
 					busy <= '0';
 
-					IF base_row - (KERNEL_HEIGHT + STRIDE) >= 0 THEN
-						IF move = '1' THEN
-							IF base_column - (KERNEL_WIDTH + STRIDE) >= 0 THEN
+					IF move = '1' THEN
+					 		-- checks to see if we can move another column
+							IF base_column - (KERNEL_WIDTH * KERNEL_DEPTH + STRIDE) >= 0 THEN
 								base_column := base_column - STRIDE;
-
 								state_machine <= OutputKernel;
-							ELSE
-								base_column := INPUT_WIDTH;
-								base_row    := base_row - STRIDE;
 
-								state_machine <= LoadRows;
+							ELSE
+								-- checks to see if we can move another row
+								IF base_row - (KERNEL_HEIGHT + STRIDE) >= 0 THEN
+									base_column := INPUT_WIDTH;
+									base_row    := base_row - STRIDE;
+									state_machine <= LoadRows;
+
+								ELSE
+									done          <= '1';
+									state_machine <= Idle;
+								END IF;
 							END IF;
 						END IF;
-					ELSE
-						done          <= '1';
-						state_machine <= Idle;
-					END IF;
 			END CASE;
 		END IF;
 	END PROCESS;
