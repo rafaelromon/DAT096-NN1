@@ -1,10 +1,10 @@
 -----------------------------------------------------
--- Title: PWConv_tb.vhdl
+-- Title: DWConv_tb.vhdl
 -- Author: Rafael Romon/NN-1
 -- DAT096 - spring 2021
 -----------------------------------------------------
 -- Description:
--- Testbench for the Conv entity used as a PointWise
+-- Testbench for the Conv entity used as a DepthWise
 -- convolution.
 -----------------------------------------------------
 
@@ -12,22 +12,22 @@ LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
 
-ENTITY PWConv_tb is
+ENTITY DWConv_tb is
   generic (
     INPUT_WIDTH    : INTEGER := 9;
     INPUT_HEIGHT   : INTEGER := 9;
     INPUT_CHANNELS : INTEGER := 1;
-    KERNEL_HEIGHT  : INTEGER := 1;
-    KERNEL_WIDTH   : INTEGER := 1;
+    KERNEL_HEIGHT  : INTEGER := 3;
+    KERNEL_WIDTH   : INTEGER := 3;
     KERNEL_DEPTH   : INTEGER := 1;
     STRIDE         : INTEGER := 1;
-    ZERO_PADDING   : INTEGER := 0;
+    ZERO_PADDING   : INTEGER := 1;
     IO_SIZE        : INTEGER := 8;
     INTERNAL_SIZE  : INTEGER := 32
   );
-END PWConv_tb;
+END DWConv_tb;
 
-ARCHITECTURE PWConv_tb_arch OF PWConv_tb IS
+ARCHITECTURE DWConv_tb_arch OF DWConv_tb IS
 
 signal clk_tb           : STD_LOGIC := '1';
 signal reset_p_tb       : STD_LOGIC;
@@ -109,7 +109,7 @@ port map (
 		reset_p_tb <= '0';
 		WAIT FOR 20ns;
 		input_tb <= x"4afeb122ba1bb0746ffc4cf796370ece7470204cb4ab519062ba00e07b23eeacd00c6b7e6a76a1a0d2583ea526a6f5603a4a0e77f646dc05735b455d0c2838547dada51c7c9f8d769fee52e2259141115b";
-    filter_values_tb <= x"01";
+    filter_values_tb <= x"010101010101010101";
     bias_tb  <= "00000000000000000000000000111000";
 		scale_tb <= "00000000000000000000000000000001";
 		start_tb <= '1';
@@ -121,4 +121,4 @@ port map (
 
 	END PROCESS;
 
-END PWConv_tb_arch;
+END DWConv_tb_arch;

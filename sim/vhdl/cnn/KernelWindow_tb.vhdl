@@ -13,8 +13,8 @@ ENTITY KernelWindow_tb IS
 		KERNEL_HEIGHT   : INTEGER := 2;
 		KERNEL_WIDTH    : INTEGER := 2;
 		KERNEL_CHANNELS : INTEGER := 1;
-		ZERO_PADDING    : INTEGER  := 0;
-		STRIDE          : INTEGER  := 1;
+		ZERO_PADDING    : INTEGER := 1;
+		STRIDE          : INTEGER := 1;
 		INTEGER_SIZE    : INTEGER := 8
 	);
 END KernelWindow_tb;
@@ -64,7 +64,7 @@ BEGIN
 	KERNEL_WIDTH   => KERNEL_WIDTH,
 	KERNEL_HEIGHT  => KERNEL_HEIGHT,
 	ZERO_PADDING  =>  ZERO_PADDING,
-	STRIDE         => STRIDE,	
+	STRIDE         => STRIDE,
 	INTEGER_SIZE   => INTEGER_SIZE
 	)
 	PORT MAP
@@ -91,10 +91,10 @@ BEGIN
 		input_tb <= x"112233445566778899";
 		start_tb <= '1';
 		WAIT FOR 20ns;
-		start_tb <= '0';		
+		start_tb <= '0';
         WAIT until done_tb = '1';
 	    WAIT FOR 20ns;
-        report "Simulation FInished." severity FAILURE;     
+        report "Simulation FInished." severity FAILURE;
 	END PROCESS;
 
 END KernelWindow_tb_arch;
