@@ -18,9 +18,12 @@ USE ieee.numeric_std.ALL;
 
 ENTITY IMG_BUFFER_CONTROLLER IS
 	GENERIC (
-		ROW_WIDTH : INTEGER := 128;
-		IMAGE_DEPTH : INTEGER := 128;
-		ADDR_WIDTH : INTEGER := 11
+		INPUT_WIDTH   : INTEGER := 3;
+		INPUT_HEIGHT  : INTEGER := 3;
+		INTEGER_SIZE  : INTEGER := 8;
+		WORD_SIZE     : INTEGER := 128;
+		IMAGE_DEPTH   : INTEGER := 128;
+		ADDR_WIDTH    : INTEGER := 11
 	);
 	PORT (
 		clk : IN STD_LOGIC; -- clock signal
@@ -28,20 +31,20 @@ ENTITY IMG_BUFFER_CONTROLLER IS
 		start : IN STD_LOGIC; -- signal to start reading new image
 		busy : OUT STD_LOGIC; -- signal indicating controller is busy reading new image
 		done : OUT STD_LOGIC;
-		image : OUT STD_LOGIC_VECTOR((ROW_WIDTH * IMAGE_DEPTH) - 1 DOWNTO 0) -- output image
+		image : OUT STD_LOGIC_VECTOR((INPUT_WIDTH * INPUT_HEIGHT * INTEGER_SIZE) - 1 DOWNTO 0) -- output image
 	);
 END IMG_BUFFER_CONTROLLER;
 
 ARCHITECTURE IMG_BUFFER_CONTROLLER_arch OF IMG_BUFFER_CONTROLLER IS
 
 	SIGNAL base_addr : INTEGER := 0;
-	SIGNAL temp_img : STD_LOGIC_VECTOR((ROW_WIDTH * IMAGE_DEPTH) - 1 DOWNTO 0);
+	SIGNAL temp_img : STD_LOGIC_VECTOR((INPUT_WIDTH * INPUT_HEIGHT * INTEGER_SIZE) - 1 DOWNTO 0);
 
 	SIGNAL addra : STD_LOGIC_VECTOR (ADDR_WIDTH-1 DOWNTO 0) := "00000000000";
-	SIGNAL douta : STD_LOGIC_VECTOR (ROW_WIDTH-1 DOWNTO 0);
+	SIGNAL douta : STD_LOGIC_VECTOR (WORD_SIZE-1 DOWNTO 0);
 
 	SIGNAL addrb : STD_LOGIC_VECTOR (ADDR_WIDTH-1 DOWNTO 0) := "00000000001";
-	SIGNAL doutb : STD_LOGIC_VECTOR (ROW_WIDTH-1 DOWNTO 0);
+	SIGNAL doutb : STD_LOGIC_VECTOR (WORD_SIZE-1 DOWNTO 0);
 
 	COMPONENT image_buffer
 		PORT (
@@ -49,14 +52,14 @@ ARCHITECTURE IMG_BUFFER_CONTROLLER_arch OF IMG_BUFFER_CONTROLLER IS
 			ena : IN STD_LOGIC;
 			wea : IN STD_LOGIC_VECTOR (0 TO 0);
 			addra : IN STD_LOGIC_VECTOR (ADDR_WIDTH-1 DOWNTO 0);
-			dina : IN STD_LOGIC_VECTOR (ROW_WIDTH-1 DOWNTO 0);
-			douta : OUT STD_LOGIC_VECTOR (ROW_WIDTH-1 DOWNTO 0);
+			dina : IN STD_LOGIC_VECTOR (WORD_SIZE-1 DOWNTO 0);
+			douta : OUT STD_LOGIC_VECTOR (WORD_SIZE-1 DOWNTO 0);
 			clkb : IN STD_LOGIC;
 			enb : IN STD_LOGIC;
 			web : IN STD_LOGIC_VECTOR (0 TO 0);
 			addrb : IN STD_LOGIC_VECTOR (ADDR_WIDTH-1 DOWNTO 0);
-			dinb : IN STD_LOGIC_VECTOR (ROW_WIDTH-1 DOWNTO 0);
-			doutb : OUT STD_LOGIC_VECTOR (ROW_WIDTH-1 DOWNTO 0)
+			dinb : IN STD_LOGIC_VECTOR (WORD_SIZE-1 DOWNTO 0);
+			doutb : OUT STD_LOGIC_VECTOR (WORD_SIZE-1 DOWNTO 0)
 		);
 	END COMPONENT image_buffer;
 BEGIN
@@ -76,7 +79,7 @@ BEGIN
 		dinb => (OTHERS => '0'),
 		doutb => doutb
 	);
-	
+
 	IMG_BUFFER_CONTROLLER_process : PROCESS (clk, reset_p)
 		VARIABLE start_flag : STD_LOGIC := '0';
 		VARIABLE read_flag : STD_LOGIC := '0';
@@ -84,21 +87,21 @@ BEGIN
 		VARIABLE vector_pos : INTEGER;
 	BEGIN
 
-		IF reset_p = '1' THEN		   
+		IF reset_p = '1' THEN
 			base_addr <= 0;
 			temp_img <= (OTHERS => '0');
-			
+
 			busy <= '0';
-			done <= '0';			
+			done <= '0';
 			image <= (OTHERS => '0');
 
 		ELSIF RISING_EDGE(clk) THEN
 			IF start = '1' THEN
 			    start_flag := '1';
-				vector_pos := (ROW_WIDTH * IMAGE_DEPTH) - 1;
-				word_count := 0;
+					vector_pos := (WORD_SIZE * IMAGE_DEPTH) - 1;
+					word_count := 0;
 			    done <= '0';
-				busy <= '1';			
+				busy <= '1';
 			END IF;
 
 			IF start_flag = '1' THEN
@@ -106,21 +109,21 @@ BEGIN
 				IF word_count < IMAGE_DEPTH THEN
 
 					addra <= STD_LOGIC_VECTOR(to_unsigned(base_addr + word_count, addra'length));
-					addrb <= STD_LOGIC_VECTOR(to_unsigned(base_addr + word_count + 1, addrb'length));					
+					addrb <= STD_LOGIC_VECTOR(to_unsigned(base_addr + word_count + 1, addrb'length));
 
-					temp_img(vector_pos DOWNTO vector_pos-ROW_WIDTH+1) <= douta;					
-					vector_pos := vector_pos - ROW_WIDTH - 1;
-					
-				    temp_img(vector_pos DOWNTO vector_pos-ROW_WIDTH+1) <= doutb;
-                    vector_pos := vector_pos - ROW_WIDTH - 1;
-                    
+					temp_img(vector_pos DOWNTO vector_pos-WORD_SIZE+1) <= douta;
+					vector_pos := vector_pos - WORD_SIZE - 1;
+
+				    temp_img(vector_pos DOWNTO vector_pos-WORD_SIZE+1) <= doutb;
+                    vector_pos := vector_pos - WORD_SIZE - 1;
+
 					word_count := word_count + 2;
 
 				ELSE
 					start_flag := '0';
 					busy <= '0';
 					done <= '1';
-					image <= temp_img;										
+					image <= temp_img;
 				END IF;
 			END IF;
 		END IF;

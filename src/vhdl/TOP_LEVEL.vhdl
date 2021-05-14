@@ -21,6 +21,12 @@ LIBRARY UNISIM;
 USE UNISIM.Vcomponents.ALL;
 
 ENTITY TOP_LEVEL IS
+	GENERIC (
+		INPUT_WIDTH   : INTEGER := 3;
+		INPUT_HEIGHT  : INTEGER := 3;
+		INTEGER_SIZE  : INTEGER := 8;
+		RESULT_SIZE   : INTEGER := 8
+	);
 	PORT
 	(
 		SYSCLK_P    : IN  STD_LOGIC;
@@ -43,38 +49,55 @@ ARCHITECTURE TOP_LEVEL_arch OF TOP_LEVEL IS
 	SIGNAL reset_signal  : STD_LOGIC := '0';
 
 	SIGNAL start_signal  : STD_LOGIC := '0';
-	
+
 	SIGNAL img_cont_start : STD_LOGIC := '1';
 	SIGNAL img_cont_busy  : STD_LOGIC;
 	SIGNAL img_cont_done  : STD_LOGIC;
 
-	COMPONENT IMG_BUFFER_CONTROLLER
-	PORT (
+	component IMG_BUFFER_CONTROLLER
+	generic (
+	  INPUT_WIDTH  : INTEGER := 3;
+	  INPUT_HEIGHT : INTEGER := 3;
+	  INTEGER_SIZE : INTEGER := 8;
+	  WORD_SIZE    : INTEGER := 128;
+	  IMAGE_DEPTH  : INTEGER := 128;
+	  ADDR_WIDTH   : INTEGER := 11
+	);
+	port (
 	  clk     : IN  STD_LOGIC;
 	  reset_p : IN  STD_LOGIC;
 	  start   : IN  STD_LOGIC;
 	  busy    : OUT STD_LOGIC;
 	  done    : OUT STD_LOGIC;
-	  image   : OUT STD_LOGIC_VECTOR(16383 DOWNTO 0)
+	  image   : OUT STD_LOGIC_VECTOR((INPUT_WIDTH * INPUT_HEIGHT * INTEGER_SIZE) - 1 DOWNTO 0)
 	);
-	END COMPONENT IMG_BUFFER_CONTROLLER;
+	end component IMG_BUFFER_CONTROLLER;
+
 
 	SIGNAL cnn_start     : STD_LOGIC := '0';
-	SIGNAL loaded_image  : STD_LOGIC_VECTOR(16383 DOWNTO 0);
-	SIGNAL cnn_finished  : STD_LOGIC;
-	SIGNAL cnn_result    : STD_LOGIC_VECTOR(5 DOWNTO 0);
+	SIGNAL loaded_image  : STD_LOGIC_VECTOR(INPUT_HEIGHT*INPUT_WIDTH*INTEGER_SIZE-1 DOWNTO 0);
+	SIGNAL cnn_busy      : STD_LOGIC;
+	SIGNAL cnn_done  : STD_LOGIC;
+	SIGNAL cnn_output    : STD_LOGIC_VECTOR(RESULT_SIZE-1 DOWNTO 0);
 
-	COMPONENT CNN IS
-		PORT
-		(
-			clk      : IN  STD_LOGIC;
-			reset_p  : IN  STD_LOGIC;
-			start    : IN  STD_LOGIC;
-			image    : IN  STD_LOGIC_VECTOR(16383 DOWNTO 0);
-			finished : OUT STD_LOGIC;
-			result   : OUT STD_LOGIC_VECTOR(5 DOWNTO 0)
-		);
-	END COMPONENT CNN;
+	component CNN
+	generic (
+  	INPUT_WIDTH   : INTEGER := 3;
+  	INPUT_HEIGHT  : INTEGER := 3;
+  	IO_SIZE       : INTEGER := 8;
+  	INTERNAL_SIZE : INTEGER := 32
+	);
+	port (
+  	clk     : IN  STD_LOGIC;
+  	reset_p : IN  STD_LOGIC;
+  	start   : IN  STD_LOGIC;
+  	input   : IN  STD_LOGIC_VECTOR(INPUT_HEIGHT * INPUT_WIDTH * IO_SIZE - 1 DOWNTO 0);
+  	busy    : OUT STD_LOGIC;
+  	done    : OUT STD_LOGIC;
+  	output  : OUT STD_LOGIC_VECTOR(IO_SIZE-1 DOWNTO 0)
+	);
+	end component CNN;
+
 
 	SIGNAL uart_start   : STD_LOGIC                    := '0';
 	SIGNAL uart_msg : STD_LOGIC_VECTOR(7 DOWNTO 0) := (OTHERS => '0');
@@ -118,17 +141,17 @@ BEGIN
   	image   => loaded_image
 	);
 
-
-	CNN_comp : CNN -- Instantiate CNN transmitter
-	PORT MAP
-	(
-        clk      => clk,
-        reset_p  => reset_signal,
-        start    => cnn_start,
-        image    => loaded_image,
-        finished => cnn_finished,
-        result   => cnn_result
+	CNN_comp : CNN
+	port map (
+	  clk     => clk,
+	  reset_p => reset_signal,
+	  start   => cnn_start,
+	  input   => loaded_image,
+	  busy    => cnn_busy,
+	  done    => cnn_done,
+	  output  => cnn_output
 	);
+
 
 	UART_TX_comp : UART_TX -- Instantiate UART transmitter
 	PORT MAP
@@ -150,7 +173,7 @@ BEGIN
 			GPIO_LED_3 <= '1';
 
 		ELSIF RISING_EDGE(clk) THEN
-					
+
 			CASE state_machine IS
 				WHEN Idle =>
 					GPIO_LED_0 <= '1';
@@ -191,11 +214,11 @@ BEGIN
 			reset_signal  <= '1';
 			state_machine <= Idle;
 
-		ELSIF RISING_EDGE(clk) THEN				
+		ELSIF RISING_EDGE(clk) THEN
 			CASE state_machine IS
 				WHEN Idle =>
 				    reset_signal  <= '0';
-				
+
 					IF GPIO_SW_N = '1' THEN
 						start_flag := '1';
 					ELSIF GPIO_SW_N = '0' AND start_flag = '1' THEN
@@ -204,19 +227,19 @@ BEGIN
 					END IF;
 
 				WHEN LoadImage =>
-					
+
 					IF img_cont_start = '0' and img_cont_busy = '0' THEN
-					   img_cont_start <= '1';					
+					   img_cont_start <= '1';
 					ELSIF img_cont_busy = '1' THEN
-					   img_cont_start <= '0';						   
-					ELSIF img_cont_done = '1' THEN		   
-					   state_machine <= ProcessImage;				   
+					   img_cont_start <= '0';
+					ELSIF img_cont_done = '1' THEN
+					   state_machine <= ProcessImage;
 					END IF;
-					
+
 
 				WHEN ProcessImage =>
 
-					IF cnn_finished = '1' THEN
+					IF cnn_done = '1' THEN
 						cnn_start     <= '0';
 						state_machine <= SendResult;
 					ELSE
@@ -227,12 +250,12 @@ BEGIN
 				    -- sends 1 through UART
 
                     IF uart_busy = '1' AND uart_done = '0' THEN
-                        uart_start <= '0';						
-                    ELSIF uart_done = '1' THEN							
+                        uart_start <= '0';
+                    ELSIF uart_done = '1' THEN
                         state_machine <= Idle;
                     ELSE
                         uart_start   <= '1';
-                        uart_msg <= "00110001";							
+                        uart_msg <= "00110001";
                     END IF;
 
 			END CASE;

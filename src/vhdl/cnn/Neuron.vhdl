@@ -295,8 +295,8 @@ BEGIN
 
 					ELSE
 						IF acc_count = 0 THEN
-							add_a <= macc_out_array(0);
-							add_b <= macc_out_array(1);
+							add_a <= macc_out_array(acc_count);
+							add_b <= macc_out_array(acc_count+1);
 							acc_count := 1;
 
 						ELSE
