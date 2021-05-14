@@ -7,6 +7,8 @@
 -- Implements a Neuron model using DPS blocks includes
 -- adding bias, passing through ReLu, multiplying by
 -- scale and truncating size.
+-- TODO
+-- implement scaling
 -----------------------------------------------------
 
 LIBRARY ieee;
@@ -45,7 +47,7 @@ END Neuron;
 
 ARCHITECTURE Neuron_arch OF Neuron IS
 
-	TYPE states IS (Idle, Mult, Accumulate, AddBias, Activation, MultScale, WaitMacc, OutputResult);
+	TYPE states IS (Idle, Mult, Accumulate, AddBias, Activation, MultScale, WaitMacc, Truncate, Finished);
 	SIGNAL state_machine : states := Idle;
 
 	-----
@@ -53,8 +55,8 @@ ARCHITECTURE Neuron_arch OF Neuron IS
 	-----
 
 	TYPE LINE_ARRAY IS ARRAY (0 TO KERNEL_HEIGHT - 1) OF STD_LOGIC_VECTOR(KERNEL_WIDTH * KERNEL_DEPTH * IO_SIZE - 1 DOWNTO 0);
-	SIGNAL input_array   : LINE_ARRAY;
-	SIGNAL filter_array  : LINE_ARRAY;
+	SIGNAL input_array  : LINE_ARRAY;
+	SIGNAL filter_array : LINE_ARRAY;
 
 	SIGNAL output_enable : STD_LOGIC;
 	SIGNAL output_signal : STD_LOGIC_VECTOR(IO_SIZE - 1 DOWNTO 0);
@@ -84,38 +86,40 @@ ARCHITECTURE Neuron_arch OF Neuron IS
 	SIGNAL macc_a_array   : IO_ARRAY;
 	SIGNAL macc_b_array   : IO_ARRAY;
 	SIGNAL macc_out_array : INTERNAL_ARRAY;
-	SIGNAL macc_enable      : STD_LOGIC := '0';
+	SIGNAL macc_enable    : STD_LOGIC := '0';
 	SIGNAL macc_load      : STD_LOGIC := '1';
 
-	SIGNAL add_a          : STD_LOGIC_VECTOR(INTERNAL_SIZE - 1 DOWNTO 0);
-	SIGNAL add_b          : STD_LOGIC_VECTOR(INTERNAL_SIZE - 1 DOWNTO 0);
-	SIGNAL add_out        : STD_LOGIC_VECTOR(INTERNAL_SIZE - 1 DOWNTO 0);
-	SIGNAL add_enable      : STD_LOGIC := '0';
+	SIGNAL add_a      : STD_LOGIC_VECTOR(INTERNAL_SIZE - 1 DOWNTO 0);
+	SIGNAL add_b      : STD_LOGIC_VECTOR(INTERNAL_SIZE - 1 DOWNTO 0);
+	SIGNAL add_out    : STD_LOGIC_VECTOR(INTERNAL_SIZE - 1 DOWNTO 0);
+	SIGNAL add_enable : STD_LOGIC := '0';
 
 	-----
 	-- ReLu component and signals
 	-----
 
-	SIGNAL relu_out        : STD_LOGIC_VECTOR(INTERNAL_SIZE - 1 DOWNTO 0);
+	SIGNAL relu_out : STD_LOGIC_VECTOR(INTERNAL_SIZE - 1 DOWNTO 0);
 
-	component ReLu
-	generic (
-  	INT_SIZE : INTEGER := 32
-	);
-	port (
-  	clk     : IN  STD_LOGIC;
-  	enable  : IN  STD_LOGIC;
-  	reset_p : IN  STD_LOGIC;
-  	input   : IN  STD_LOGIC_VECTOR(INT_SIZE - 1 DOWNTO 0);
-  	output  : OUT STD_LOGIC_VECTOR(INT_SIZE - 1 DOWNTO 0)
-	);
-	end component ReLu;
+	COMPONENT ReLu
+		GENERIC
+		(
+			INT_SIZE : INTEGER := 32
+		);
+		PORT
+		(
+			clk     : IN  STD_LOGIC;
+			enable  : IN  STD_LOGIC;
+			reset_p : IN  STD_LOGIC;
+			input   : IN  STD_LOGIC_VECTOR(INT_SIZE - 1 DOWNTO 0);
+			output  : OUT STD_LOGIC_VECTOR(INT_SIZE - 1 DOWNTO 0)
+		);
+	END COMPONENT ReLu;
 
 	-----
 	-- Residual signals from attempted scaling implementation
 	-----
 
-  SIGNAL mult_out        : STD_LOGIC_VECTOR(INTERNAL_SIZE*2 - 1 DOWNTO 0);
+	SIGNAL mult_out : STD_LOGIC_VECTOR(INTERNAL_SIZE * 2 - 1 DOWNTO 0);
 
 BEGIN
 
@@ -181,7 +185,7 @@ BEGIN
 		ADDSUB  => '1',               -- 1-bit add/sub input, high selects add, low selects subtract
 		B       => macc_b_array(i),   -- Multiplier input B bus, width determined by WIDTH_B generic
 		CARRYIN => '0',               -- 1-bit carry-in input to accumulator
-		CE      => macc_enable,               -- 1-bit active high input clock enable
+		CE      => macc_enable,       -- 1-bit active high input clock enable
 		CLK     => clk,               -- 1-bit positive edge clock input
 		LOAD    => macc_load,         -- 1-bit active high input load accumulator enable
 		LOAD_DATA => (OTHERS => '0'), -- Load accumulator input data, width determined by WIDTH_A generic
@@ -190,7 +194,7 @@ BEGIN
 
 	END GENERATE;
 
-	add_comp: ADDSUB_MACRO
+	add_comp : ADDSUB_MACRO
 	GENERIC
 	MAP (
 	DEVICE  => "7SERIES",     -- Target Device: "VIRTEX5", "7SERIES", "SPARTAN6"
@@ -198,33 +202,35 @@ BEGIN
 	WIDTH   => INTERNAL_SIZE) -- Input / Output bus width, 1-48
 	PORT
 	MAP (
-	CARRYOUT => OPEN,    -- 1-bit carry-out output signal
-	RESULT   => add_out, -- Add/sub result output, width defined by WIDTH generic
-	A        => add_a,   -- Input A bus, width defined by WIDTH generic
-	ADD_SUB  => '1',     -- 1-bit add/sub input, high selects add, low selects subtract
-	B        => add_b,   -- Input B bus, width defined by WIDTH generic
-	CARRYIN  => '0',     -- 1-bit carry-in input
-	CE       => add_enable,     -- 1-bit clock enable input
-	CLK      => clk,     -- 1-bit clock input
-	RST      => reset_p  -- 1-bit active high synchronous reset
+	CARRYOUT => OPEN,       -- 1-bit carry-out output signal
+	RESULT   => add_out,    -- Add/sub result output, width defined by WIDTH generic
+	A        => add_a,      -- Input A bus, width defined by WIDTH generic
+	ADD_SUB  => '1',        -- 1-bit add/sub input, high selects add, low selects subtract
+	B        => add_b,      -- Input B bus, width defined by WIDTH generic
+	CARRYIN  => '0',        -- 1-bit carry-in input
+	CE       => add_enable, -- 1-bit clock enable input
+	CLK      => clk,        -- 1-bit clock input
+	RST      => reset_p     -- 1-bit active high synchronous reset
 	);
 
 	ReLu_comp : ReLu
-	generic map (
-	  INT_SIZE => INTERNAL_SIZE
+	GENERIC
+	MAP (
+	INT_SIZE => INTERNAL_SIZE
 	)
-	port map (
-	  clk     => clk,
-	  enable  => '1',
-	  reset_p => reset_p,
-	  input   => add_out,
-	  output  => relu_out
+	PORT
+	MAP (
+	clk     => clk,
+	enable  => '1',
+	reset_p => reset_p,
+	input   => add_out,
+	output  => relu_out
 	);
 
 	PROCESS (clk)
-		VARIABLE line_index : INTEGER := KERNEL_WIDTH * KERNEL_DEPTH;
-		VARIABLE acc_count : INTEGER := 0;
-		VARIABLE wait_clk: STD_LOGIC := '0';
+		VARIABLE line_index : INTEGER   := KERNEL_WIDTH * KERNEL_DEPTH;
+		VARIABLE acc_count  : INTEGER   := 0;
+		VARIABLE wait_clk   : STD_LOGIC := '0';
 	BEGIN
 		IF reset_p = '1' THEN
 			busy          <= '0';
@@ -246,22 +252,22 @@ BEGIN
 					END IF;
 
 				WHEN WaitMacc => -- empty macc_buffer and wait for it to start
-						macc_enable   <= '1';
+					macc_enable <= '1';
 
-	        	IF wait_clk = '0' THEN -- this is a really dirty implementation
-							FOR i IN 0 TO KERNEL_HEIGHT - 1 LOOP
-								macc_a_array(i) <= (OTHERS => '0');
-								macc_b_array(i) <= (OTHERS => '0');
-							END LOOP;
+					IF wait_clk = '0' THEN -- this is a really dirty implementation
+						FOR i IN 0 TO KERNEL_HEIGHT - 1 LOOP
+							macc_a_array(i) <= (OTHERS => '0');
+							macc_b_array(i) <= (OTHERS => '0');
+						END LOOP;
 
-							wait_clk := '1';
+						wait_clk := '1';
 
-						ELSE
-							wait_clk := '0';
-							macc_load <= '0'; -- start accumulating
-							state_machine <= Mult;
+					ELSE
+						wait_clk := '0';
+						macc_load     <= '0'; -- start accumulating
+						state_machine <= Mult;
 
-						END IF;
+					END IF;
 
 				WHEN Mult => -- multiply and accumulate elements within a row
 
@@ -273,28 +279,32 @@ BEGIN
 					IF line_index > 1 THEN
 						line_index := line_index - 1;
 					ELSE
+						IF KERNEL_HEIGHT > 1 THEN
 							state_machine <= Accumulate;
+						ELSE
+							state_machine <= AddBias;
+                        END IF;
 					END IF;
 
 				WHEN Accumulate => -- accumulate results from different rows
-					add_enable <= '1';
-					macc_enable   <= '0';
+					add_enable  <= '1';
+					macc_enable <= '0';
 
 					IF wait_clk = '0' THEN -- this is a really dirty implementation
 						wait_clk := '1';
 
 					ELSE
-						if acc_count = 0 THEN
-								add_a <= macc_out_array(0);
-								add_b <= macc_out_array(1);
-									acc_count := 1;
+						IF acc_count = 0 THEN
+							add_a <= macc_out_array(0);
+							add_b <= macc_out_array(1);
+							acc_count := 1;
 
 						ELSE
-								add_a <= add_out;
-								add_b <= macc_out_array(acc_count);
+							add_a <= add_out;
+							add_b <= macc_out_array(acc_count);
 						END IF;
 
-						IF acc_count < KERNEL_HEIGHT-1 THEN
+						IF acc_count < KERNEL_HEIGHT - 1 THEN
 							acc_count := acc_count + 1;
 
 						ELSE
@@ -303,13 +313,13 @@ BEGIN
 						END IF;
 					END IF;
 
-				WHEN AddBias    => -- reuses adder to add bias
-					add_a <= add_out;
-					add_b <= bias;
-					add_enable <= '0';
+				WHEN AddBias => -- reuses adder to add bias
+					add_a         <= add_out;
+					add_b         <= bias;
+					add_enable    <= '0';
 					state_machine <= Activation;
 
-				WHEN Activation => -- waits for ReLu to work
+				WHEN Activation =>     -- waits for ReLu to work
 					IF wait_clk = '0' THEN -- this is a really dirty implementation
 						wait_clk := '1';
 					ELSE
@@ -317,21 +327,21 @@ BEGIN
 						state_machine <= MultScale;
 					END IF;
 
-				WHEN MultScale =>  -- TODO implement scaling
-			    mult_out <= (OTHERS => '0');
+				WHEN MultScale => -- TODO implement scaling
+					mult_out                             <= (OTHERS => '0');
 					mult_out(INTERNAL_SIZE - 1 DOWNTO 0) <= relu_out;
-					state_machine <= OutputResult;
+					state_machine                        <= Truncate;
 
-				WHEN OutputResult => -- truncates to int8 and outputs
+				WHEN Truncate =>                                 -- truncates to int8 and outputs
 					output_signal <= mult_out(IO_SIZE - 1 DOWNTO 0); --truncate to output size
+					output_enable <= '1';
+					state_machine <= Finished;
 
-					IF wait_clk = '0' THEN -- this is a really dirty implementation
-						wait_clk := '1';
-					ELSE
-						wait_clk := '0';
-						busy          <= '0';
-						done          <= '1';
-						output_enable <= '1';
+				WHEN Finished =>
+					busy <= '0';
+					done <= '1';
+
+					IF start = '0' THEN
 						state_machine <= Idle;
 					END IF;
 
