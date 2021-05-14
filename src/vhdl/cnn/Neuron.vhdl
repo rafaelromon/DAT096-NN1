@@ -256,17 +256,24 @@ BEGIN
 					IF line_index > 1 THEN
 						line_index := line_index - 1;
 						state_machine <= WaitMacc;
-					ELSE
-						add_enable <= '1';
-						state_machine <= Accumulate;
+					ELSE												
+						IF wait_clk = '0' THEN -- this is a really dirty implementation
+							wait_clk := '1';
+						ELSE
+							wait_clk := '0';
+							add_enable <= '1';
+							state_machine <= Accumulate;
+						END IF;
 					END IF;
-                WHEN WaitMacc =>
-                      IF wait_clk = '0' THEN -- this is a really dirty implementation
+
+	      WHEN WaitMacc =>
+        	IF wait_clk = '0' THEN -- this is a really dirty implementation
 						wait_clk := '1';
 					ELSE
 						wait_clk := '0';
 						state_machine <= MultScale;
 					END IF;
+
 				WHEN Accumulate =>
 					macc_enable   <= '0';
 
