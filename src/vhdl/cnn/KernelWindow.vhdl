@@ -7,7 +7,7 @@
 -- Implements line buffers controlled by a state machine that output a kernel
 -- window
 -- TODO:
--- Channels are not implemented
+-- check that start is low before going to idle
 -----------------------------------------------------
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
@@ -118,12 +118,12 @@ BEGIN
 			        base_column := INPUT_WIDTH + ZERO_PADDING*2;
 
 					IF start = '1' THEN
+						busy <= '1';
+						done <= '0';
 						state_machine <= LoadRows;
-						done          <= '0';
 					END IF;
 
 				WHEN LoadRows =>
-					busy <= '1';
 
 					FOR row IN 0 TO KERNEL_HEIGHT-1 LOOP
 
@@ -160,6 +160,8 @@ BEGIN
 					busy <= '0';
 
 					IF move = '1' THEN
+							busy <= '1';
+
 					 		-- checks to see if we can move another column
 							IF base_column - (KERNEL_WIDTH * KERNEL_DEPTH + STRIDE) >= 0 THEN
 								base_column := base_column - STRIDE;

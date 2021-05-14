@@ -34,20 +34,20 @@ ENTITY Conv IS
 		scale         : IN  STD_LOGIC_VECTOR(INTERNAL_SIZE - 1 DOWNTO 0);
 		busy          : OUT STD_LOGIC;
 		done          : OUT STD_LOGIC;
-		output        : OUT STD_LOGIC_VECTOR(((INPUT_WIDTH * INPUT_HEIGHT * INTERNAL_SIZE)/STRIDE) - 1 DOWNTO 0)
+		output        : OUT STD_LOGIC_VECTOR(((INPUT_WIDTH * INPUT_HEIGHT * IO_SIZE)/STRIDE) - 1 DOWNTO 0)
 	);
 END Conv;
 
 ARCHITECTURE Conv_arch OF Conv IS
 
-	TYPE states IS (Idle, Working, Finished);
+	TYPE states IS (Idle, WaitWindow, WaitNeuron, Finished);
 	SIGNAL state_machine : states := Idle;
 
 	-----
 	-- Reg component and signals
 	-----
 
-	SIGNAL output_signal : STD_LOGIC_VECTOR(((INPUT_WIDTH * INPUT_HEIGHT * INTERNAL_SIZE)/STRIDE) - 1 DOWNTO 0);
+	SIGNAL output_signal : STD_LOGIC_VECTOR(((INPUT_WIDTH * INPUT_HEIGHT * IO_SIZE)/STRIDE) - 1 DOWNTO 0);
 	SIGNAL output_enable : STD_LOGIC := '0';
 
 	COMPONENT Reg
@@ -70,6 +70,7 @@ ARCHITECTURE Conv_arch OF Conv IS
 	-----
 
 	SIGNAL window_start  : STD_LOGIC;
+	SIGNAL window_move  : STD_LOGIC;
 	SIGNAL window_output : STD_LOGIC_VECTOR(KERNEL_HEIGHT * KERNEL_WIDTH * KERNEL_DEPTH * IO_SIZE - 1 DOWNTO 0);
 	SIGNAL window_busy   : STD_LOGIC;
 	SIGNAL window_done   : STD_LOGIC;
@@ -137,7 +138,7 @@ BEGIN
 	output_buff : Reg
 	GENERIC
 	MAP(
-	SIG_WIDTH => INPUT_WIDTH * INPUT_HEIGHT * INTERNAL_SIZE
+	SIG_WIDTH => (INPUT_WIDTH * INPUT_HEIGHT * IO_SIZE)/STRIDE
 	)
 	PORT MAP
 	(
@@ -166,7 +167,7 @@ BEGIN
 	clk     => clk,
 	reset_p => reset_p,
 	start   => window_start,
-	move    => neuron_done,
+	move    => window_move,
 	input   => input,
 	busy    => window_busy,
 	done    => window_done,
@@ -195,7 +196,7 @@ BEGIN
 	output        => neuron_output
 	);
 	PROCESS (clk)
-		VARIABLE output_index : INTEGER := INPUT_HEIGHT * INPUT_WIDTH;
+		VARIABLE output_index : INTEGER := (INPUT_WIDTH * INPUT_HEIGHT)/STRIDE;
 	BEGIN
 		IF reset_p = '1' THEN
 			busy          <= '0';
@@ -209,28 +210,34 @@ BEGIN
 			CASE state_machine IS
 				WHEN Idle =>
 					IF start = '1' THEN
-						output_index := INPUT_HEIGHT * INPUT_WIDTH;
+						output_index := (INPUT_WIDTH * INPUT_HEIGHT)/STRIDE;
 						window_start  <= '1';
 						output_enable <= '0';
 						busy          <= '1';
 						done          <= '0';
-						state_machine <= Working;
+						state_machine <= WaitWindow;
 					END IF;
 
-				WHEN Working =>
-					window_start <= '0';
-					neuron_start <= NOT(window_busy);
-
+				WHEN WaitWindow =>
+				    window_start <= '0';
+				    window_move  <= '0';
+				    
+                    IF window_done = '1' THEN
+                        output_enable <= '1';
+                        state_machine <= Finished;
+				    ELSIF window_busy = '0' and window_start = '0' and window_move = '0' THEN
+                        neuron_start <= '1';
+                        state_machine <= WaitNeuron;
+				    END IF;
+				    
+				WHEN WaitNeuron =>				                    
+                    neuron_start <= '0';
+                    
 					IF neuron_done = '1' THEN
-						output_signal((INTERNAL_SIZE * output_index) - 1 DOWNTO INTERNAL_SIZE * (output_index - 1)) <= neuron_output;
-
-						IF window_done = '1' THEN
-							output_enable <= '1';
-							state_machine <= Finished;
-
-						ELSE
-							output_index := output_index - 1;
-						END IF;
+						output_signal((IO_SIZE * output_index) - 1 DOWNTO IO_SIZE * (output_index - 1)) <= neuron_output;                                               
+                        output_index := output_index - 1;
+                        window_move <= '1';
+                        state_machine <= WaitWindow;
 
 					END IF;
 

@@ -1,3 +1,11 @@
+-----------------------------------------------------
+-- Title: Neuron_tb.vhdl
+-- Author: Rafael Romon/NN-1
+-- DAT096 - spring 2021
+-----------------------------------------------------
+-- Description:
+-- Testbench for the Neuron entity.
+-----------------------------------------------------
 
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
@@ -94,11 +102,11 @@ BEGIN
 			ASSERT ( output_tb = "10001110" )
 			REPORT "Wrong value"
 			SEVERITY WARNING;
-		WAIT FOR 20ns;	
+		WAIT FOR 20ns;
 		start_tb <= '0';
 	WAIT until done_tb = '1';
 	WAIT FOR 20ns;
-    report "Simulation Finished." severity FAILURE;    
+    report "Simulation Finished." severity FAILURE;
 
 	END PROCESS;
 
