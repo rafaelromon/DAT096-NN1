@@ -143,7 +143,7 @@ BEGIN
 		input_line : Reg
 		GENERIC
 		MAP(
-		SIG_WIDTH => IO_SIZE * KERNEL_HEIGHT * KERNEL_DEPTH
+		SIG_WIDTH => IO_SIZE * KERNEL_WIDTH * KERNEL_DEPTH
 		)
 		PORT
 		MAP
@@ -158,7 +158,7 @@ BEGIN
 		filter_line : Reg
 		GENERIC
 		MAP(
-		SIG_WIDTH => IO_SIZE * KERNEL_HEIGHT * KERNEL_DEPTH
+		SIG_WIDTH => IO_SIZE * KERNEL_WIDTH * KERNEL_DEPTH
 		)
 		PORT
 		MAP
@@ -284,10 +284,10 @@ BEGIN
 						ELSE
 							state_machine <= AddBias;
                         END IF;
+                        add_enable  <= '1';
 					END IF;
 
 				WHEN Accumulate => -- accumulate results from different rows
-					add_enable  <= '1';
 					macc_enable <= '0';
 
 					IF wait_clk = '0' THEN -- this is a really dirty implementation
