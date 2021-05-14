@@ -238,15 +238,26 @@ BEGIN
 					IF start = '1' THEN
 						busy          <= '1';
 						done          <= '0';
-						state_machine <= Mult;
+						state_machine <= WaitMacc;
 					END IF;
+				WHEN WaitMacc => -- Empty macc_buffer and wait for delay
+						macc_enable   <= '1';
+	        	IF wait_clk = '0' THEN -- this is a really dirty implementation
+
+							FOR i IN 0 TO KERNEL_HEIGHT - 1 LOOP
+								macc_a_array(i) <= (OTHERS => '0');
+								macc_b_array(i) <= (OTHERS => '0');
+							END LOOP;
+
+							wait_clk := '1';
+
+						ELSE
+							wait_clk := '0';
+							macc_load <= '0'; -- start accumulating
+							state_machine <= Mult;
+						END IF;
 
 				WHEN Mult =>
-					macc_enable   <= '1';
-
-					IF line_index < KERNEL_WIDTH * KERNEL_DEPTH THEN
-						macc_load <= '0'; -- start accumulating
-					END IF;
 
 					FOR i IN 0 TO KERNEL_HEIGHT - 1 LOOP
 						macc_a_array(i) <= input_array(i)((IO_SIZE * line_index) - 1 DOWNTO IO_SIZE * (line_index - 1));
@@ -255,41 +266,32 @@ BEGIN
 
 					IF line_index > 1 THEN
 						line_index := line_index - 1;
-						state_machine <= WaitMacc;
-					ELSE												
-						IF wait_clk = '0' THEN -- this is a really dirty implementation
-							wait_clk := '1';
-						ELSE
-							wait_clk := '0';
-							add_enable <= '1';
-							state_machine <= Accumulate;
-						END IF;
-					END IF;
-
-	      WHEN WaitMacc =>
-        	IF wait_clk = '0' THEN -- this is a really dirty implementation
-						wait_clk := '1';
 					ELSE
-						wait_clk := '0';
-						state_machine <= MultScale;
+							state_machine <= Accumulate;
 					END IF;
 
 				WHEN Accumulate =>
+					add_enable <= '1';
 					macc_enable   <= '0';
 
-					if acc_count = 0 THEN
-							add_a <= macc_out_array(0);
-							add_b <= macc_out_array(1);
-							acc_count := 1;
+					IF wait_clk = '0' THEN -- this is a really dirty implementation
+						wait_clk := '1';
 					ELSE
-							add_a <= add_out;
-							add_b <= macc_out_array(acc_count);
-					END IF;
+						if acc_count = 0 THEN
+								add_a <= macc_out_array(0);
+								add_b <= macc_out_array(1);
+								acc_count := 1;
+						ELSE
+								add_a <= add_out;
+								add_b <= macc_out_array(acc_count);
+						END IF;
 
-					IF acc_count < KERNEL_HEIGHT-1 THEN
-						acc_count := acc_count + 1;
-					ELSE
-						state_machine <= AddBias;
+						IF acc_count < KERNEL_HEIGHT-1 THEN
+							acc_count := acc_count + 1;
+						ELSE
+							wait_clk := '0';
+							state_machine <= AddBias;
+						END IF;
 					END IF;
 
 				WHEN AddBias    =>
@@ -306,9 +308,9 @@ BEGIN
 						state_machine <= MultScale;
 					END IF;
 
-				WHEN MultScale =>
+				WHEN MultScale =>  -- TODO implement scaling
 			    mult_out <= (OTHERS => '0');
-					mult_out(INTERNAL_SIZE - 1 DOWNTO 0) <= relu_out; -- TODO implement scaling
+					mult_out(INTERNAL_SIZE - 1 DOWNTO 0) <= relu_out;
 					state_machine <= OutputResult;
 
 				WHEN OutputResult =>
