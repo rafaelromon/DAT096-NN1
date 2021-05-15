@@ -70,7 +70,7 @@ ARCHITECTURE Conv_arch OF Conv IS
 	-----
 
 	SIGNAL window_start  : STD_LOGIC;
-	SIGNAL window_move  : STD_LOGIC;
+	SIGNAL window_move   : STD_LOGIC;
 	SIGNAL window_output : STD_LOGIC_VECTOR(KERNEL_HEIGHT * KERNEL_WIDTH * KERNEL_DEPTH * IO_SIZE - 1 DOWNTO 0);
 	SIGNAL window_busy   : STD_LOGIC;
 	SIGNAL window_done   : STD_LOGIC;
@@ -219,25 +219,25 @@ BEGIN
 					END IF;
 
 				WHEN WaitWindow =>
-				    window_start <= '0';
-				    window_move  <= '0';
-				    
-                    IF window_done = '1' THEN
-                        output_enable <= '1';
-                        state_machine <= Finished;
-				    ELSIF window_busy = '0' and window_start = '0' and window_move = '0' THEN
-                        neuron_start <= '1';
-                        state_machine <= WaitNeuron;
-				    END IF;
-				    
-				WHEN WaitNeuron =>				                    
-                    neuron_start <= '0';
-                    
+					window_start <= '0';
+					window_move  <= '0';
+
+					IF window_done = '1' THEN
+						output_enable <= '1';
+						state_machine <= Finished;
+					ELSIF window_busy = '0' AND window_start = '0' AND window_move = '0' THEN
+						neuron_start  <= '1';
+						state_machine <= WaitNeuron;
+					END IF;
+
+				WHEN WaitNeuron =>
+					neuron_start <= '0';
+
 					IF neuron_done = '1' THEN
-						output_signal((IO_SIZE * output_index) - 1 DOWNTO IO_SIZE * (output_index - 1)) <= neuron_output;                                               
-                        output_index := output_index - 1;
-                        window_move <= '1';
-                        state_machine <= WaitWindow;
+						output_signal((IO_SIZE * output_index) - 1 DOWNTO IO_SIZE * (output_index - 1)) <= neuron_output;
+						output_index := output_index - 1;
+						window_move   <= '1';
+						state_machine <= WaitWindow;
 
 					END IF;
 

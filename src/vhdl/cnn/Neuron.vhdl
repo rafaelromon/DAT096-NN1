@@ -1,14 +1,17 @@
 -----------------------------------------------------
 -- Title: Neuron.vhdl
 -- Author: Rafael Romon/NN-1
+--         Sebastian Bengtsson/NN-1
 -- DAT096 - spring 2021
 -----------------------------------------------------
 -- Description:
 -- Implements a Neuron model using DPS blocks includes
 -- adding bias, passing through ReLu, multiplying by
 -- scale and truncating size.
--- TODO
--- implement scaling
+-- TODO:
+-- * implement scaling
+-- * rework state machine
+-- * accumulate stage not optimized for N > 3
 -----------------------------------------------------
 
 LIBRARY ieee;
@@ -281,10 +284,10 @@ BEGIN
 					ELSE
 						IF KERNEL_HEIGHT > 1 THEN
 							state_machine <= Accumulate;
-							add_enable  <= '1';
+							add_enable    <= '1';
 						ELSE
 							state_machine <= AddBias;
-                        END IF;
+						END IF;
 					END IF;
 
 				WHEN Accumulate => -- accumulate results from different rows
@@ -296,7 +299,7 @@ BEGIN
 					ELSE
 						IF acc_count = 0 THEN
 							add_a <= macc_out_array(acc_count);
-							add_b <= macc_out_array(acc_count+1);
+							add_b <= macc_out_array(acc_count + 1);
 							acc_count := 1;
 
 						ELSE
@@ -314,23 +317,23 @@ BEGIN
 					END IF;
 
 				WHEN AddBias => -- reuses adder to add bias
-				    IF (KERNEL_HEIGHT > 1) THEN
-					   add_a         <= add_out;
-					   add_b         <= bias;
-					   add_enable    <= '0';
-					   state_machine <= Activation;
+					IF (KERNEL_HEIGHT > 1) THEN
+						add_a         <= add_out;
+						add_b         <= bias;
+						add_enable    <= '0';
+						state_machine <= Activation;
 					ELSE
-					   add_a         <= macc_out_array(0);
-					   add_enable    <= '1';
-					   IF wait_clk = '0' THEN -- this is a really dirty implementation
-					       wait_clk := '1';
-					   ELSE
-						  wait_clk := '0';
-						  add_b         <= bias;
-					      add_enable    <= '0';
-					      state_machine <= Activation;
-					   END IF;
-					END IF;					
+						add_a      <= macc_out_array(0);
+						add_enable <= '1';
+						IF wait_clk = '0' THEN -- this is a really dirty implementation
+							wait_clk := '1';
+						ELSE
+							wait_clk := '0';
+							add_b         <= bias;
+							add_enable    <= '0';
+							state_machine <= Activation;
+						END IF;
+					END IF;
 
 				WHEN Activation =>     -- waits for ReLu to work
 					IF wait_clk = '0' THEN -- this is a really dirty implementation
@@ -340,7 +343,7 @@ BEGIN
 						state_machine <= MultScale;
 					END IF;
 
-				WHEN MultScale => -- TODO implement scaling
+				WHEN MultScale                                  => -- TODO implement scaling
 					mult_out                             <= (OTHERS => '0');
 					mult_out(INTERNAL_SIZE - 1 DOWNTO 0) <= relu_out;
 					state_machine                        <= Truncate;

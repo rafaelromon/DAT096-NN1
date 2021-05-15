@@ -7,7 +7,8 @@
 -- Implements line buffers controlled by a state machine that output a kernel
 -- window
 -- TODO:
--- check that start is low before going to idle
+-- * check that start is low before going to idle
+-- * add ready signal to simplify Conv State Machine
 -----------------------------------------------------
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
