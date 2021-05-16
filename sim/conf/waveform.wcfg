@@ -3,77 +3,113 @@
    <wave_state>
    </wave_state>
    <db_ref_list>
-      <db_ref path="IMG_BUFFER_CONT_TB_behav.wdb" id="1">
+      <db_ref path="TOP_LEVEL_TB_behav.wdb" id="1">
          <top_modules>
-            <top_module name="IMG_BUFFER_CONT_TB" />
+            <top_module name="TOP_LEVEL_TB" />
          </top_modules>
       </db_ref>
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="350001fs"></ZoomEndTime>
+      <ZoomEndTime time="84401fs"></ZoomEndTime>
       <Cursor1Time time="178414fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="200"></NameColumnWidth>
-      <ValueColumnWidth column_width="96"></ValueColumnWidth>
+      <ValueColumnWidth column_width="86"></ValueColumnWidth>
    </column_width_setting>
    <WVObjectSize size="7" />
-   <wvobject fp_name="/IMG_BUFFER_CONT_TB/clk_tb" type="logic">
-      <obj_property name="ElementShortName">clk_tb</obj_property>
-      <obj_property name="ObjectShortName">clk_tb</obj_property>
+   <wvobject fp_name="/TOP_LEVEL_TB/pushbutton_tb" type="logic">
+      <obj_property name="ElementShortName">pushbutton_tb</obj_property>
+      <obj_property name="ObjectShortName">pushbutton_tb</obj_property>
    </wvobject>
-   <wvobject fp_name="/IMG_BUFFER_CONT_TB/reset_p_tb" type="logic">
-      <obj_property name="ElementShortName">reset_p_tb</obj_property>
-      <obj_property name="ObjectShortName">reset_p_tb</obj_property>
+   <wvobject fp_name="/TOP_LEVEL_TB/uart_tx_tb" type="logic">
+      <obj_property name="ElementShortName">uart_tx_tb</obj_property>
+      <obj_property name="ObjectShortName">uart_tx_tb</obj_property>
    </wvobject>
-   <wvobject fp_name="/IMG_BUFFER_CONT_TB/start_tb" type="logic">
-      <obj_property name="ElementShortName">start_tb</obj_property>
-      <obj_property name="ObjectShortName">start_tb</obj_property>
+   <wvobject fp_name="/TOP_LEVEL_TB/led_0_tb" type="logic">
+      <obj_property name="ElementShortName">led_0_tb</obj_property>
+      <obj_property name="ObjectShortName">led_0_tb</obj_property>
    </wvobject>
-   <wvobject fp_name="/IMG_BUFFER_CONT_TB/busy_tb" type="logic">
-      <obj_property name="ElementShortName">busy_tb</obj_property>
-      <obj_property name="ObjectShortName">busy_tb</obj_property>
+   <wvobject fp_name="/TOP_LEVEL_TB/led_1_tb" type="logic">
+      <obj_property name="ElementShortName">led_1_tb</obj_property>
+      <obj_property name="ObjectShortName">led_1_tb</obj_property>
    </wvobject>
-   <wvobject fp_name="/IMG_BUFFER_CONT_TB/done_tb" type="logic">
-      <obj_property name="ElementShortName">done_tb</obj_property>
-      <obj_property name="ObjectShortName">done_tb</obj_property>
+   <wvobject fp_name="/TOP_LEVEL_TB/led_2_tb" type="logic">
+      <obj_property name="ElementShortName">led_2_tb</obj_property>
+      <obj_property name="ObjectShortName">led_2_tb</obj_property>
    </wvobject>
-   <wvobject fp_name="/IMG_BUFFER_CONT_TB/output_tb" type="array">
-      <obj_property name="ElementShortName">output_tb[71:0]</obj_property>
-      <obj_property name="ObjectShortName">output_tb[71:0]</obj_property>
+   <wvobject fp_name="/TOP_LEVEL_TB/led_3_tb" type="logic">
+      <obj_property name="ElementShortName">led_3_tb</obj_property>
+      <obj_property name="ObjectShortName">led_3_tb</obj_property>
    </wvobject>
    <wvobject fp_name="group43" type="group">
       <obj_property name="label">internal</obj_property>
       <obj_property name="DisplayName">label</obj_property>
       <obj_property name="isExpanded"></obj_property>
-      <wvobject fp_name="/IMG_BUFFER_CONT_TB/IMG_BUFFER_CONTROLLER_test/addra" type="array">
-         <obj_property name="ElementShortName">addra[2:0]</obj_property>
-         <obj_property name="ObjectShortName">addra[2:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/IMG_BUFFER_CONT_TB/IMG_BUFFER_CONTROLLER_test/douta" type="array">
-         <obj_property name="ElementShortName">douta[71:0]</obj_property>
-         <obj_property name="ObjectShortName">douta[71:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/IMG_BUFFER_CONT_TB/IMG_BUFFER_CONTROLLER_test/addrb" type="array">
-         <obj_property name="ElementShortName">addrb[2:0]</obj_property>
-         <obj_property name="ObjectShortName">addrb[2:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/IMG_BUFFER_CONT_TB/IMG_BUFFER_CONTROLLER_test/doutb" type="array">
-         <obj_property name="ElementShortName">doutb[71:0]</obj_property>
-         <obj_property name="ObjectShortName">doutb[71:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/IMG_BUFFER_CONT_TB/IMG_BUFFER_CONTROLLER_test/state_machine" type="other">
+      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/state_machine" type="other">
          <obj_property name="ElementShortName">state_machine</obj_property>
          <obj_property name="ObjectShortName">state_machine</obj_property>
       </wvobject>
-      <wvobject fp_name="/IMG_BUFFER_CONT_TB/IMG_BUFFER_CONTROLLER_test/output_signal" type="array">
-         <obj_property name="ElementShortName">output_signal[71:0]</obj_property>
-         <obj_property name="ObjectShortName">output_signal[71:0]</obj_property>
+      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/clk" type="logic">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
       </wvobject>
-      <wvobject fp_name="/IMG_BUFFER_CONT_TB/IMG_BUFFER_CONTROLLER_test/output_enable" type="logic">
-         <obj_property name="ElementShortName">output_enable</obj_property>
-         <obj_property name="ObjectShortName">output_enable</obj_property>
+      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/reset_p" type="logic">
+         <obj_property name="ElementShortName">reset_p</obj_property>
+         <obj_property name="ObjectShortName">reset_p</obj_property>
+      </wvobject>
+      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/start" type="logic">
+         <obj_property name="ElementShortName">start</obj_property>
+         <obj_property name="ObjectShortName">start</obj_property>
+      </wvobject>
+      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/img_cont_start" type="logic">
+         <obj_property name="ElementShortName">img_cont_start</obj_property>
+         <obj_property name="ObjectShortName">img_cont_start</obj_property>
+      </wvobject>
+      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/img_cont_busy" type="logic">
+         <obj_property name="ElementShortName">img_cont_busy</obj_property>
+         <obj_property name="ObjectShortName">img_cont_busy</obj_property>
+      </wvobject>
+      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/img_cont_done" type="logic">
+         <obj_property name="ElementShortName">img_cont_done</obj_property>
+         <obj_property name="ObjectShortName">img_cont_done</obj_property>
+      </wvobject>
+      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/cnn_start" type="logic">
+         <obj_property name="ElementShortName">cnn_start</obj_property>
+         <obj_property name="ObjectShortName">cnn_start</obj_property>
+      </wvobject>
+      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/cnn_input" type="array">
+         <obj_property name="ElementShortName">cnn_input[71:0]</obj_property>
+         <obj_property name="ObjectShortName">cnn_input[71:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/cnn_busy" type="logic">
+         <obj_property name="ElementShortName">cnn_busy</obj_property>
+         <obj_property name="ObjectShortName">cnn_busy</obj_property>
+      </wvobject>
+      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/cnn_done" type="logic">
+         <obj_property name="ElementShortName">cnn_done</obj_property>
+         <obj_property name="ObjectShortName">cnn_done</obj_property>
+      </wvobject>
+      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/cnn_output" type="array">
+         <obj_property name="ElementShortName">cnn_output[7:0]</obj_property>
+         <obj_property name="ObjectShortName">cnn_output[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/uart_start" type="logic">
+         <obj_property name="ElementShortName">uart_start</obj_property>
+         <obj_property name="ObjectShortName">uart_start</obj_property>
+      </wvobject>
+      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/uart_msg" type="array">
+         <obj_property name="ElementShortName">uart_msg[7:0]</obj_property>
+         <obj_property name="ObjectShortName">uart_msg[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/uart_busy" type="logic">
+         <obj_property name="ElementShortName">uart_busy</obj_property>
+         <obj_property name="ObjectShortName">uart_busy</obj_property>
+      </wvobject>
+      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/uart_done" type="logic">
+         <obj_property name="ElementShortName">uart_done</obj_property>
+         <obj_property name="ObjectShortName">uart_done</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>

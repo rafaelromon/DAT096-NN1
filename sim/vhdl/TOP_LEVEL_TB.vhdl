@@ -1,3 +1,12 @@
+-----------------------------------------------------
+-- Title: DWConv_tb.vhdl
+-- Author: Rafael Romon/NN-1
+-- DAT096 - spring 2021
+-----------------------------------------------------
+-- Description:
+-- Testbench for the TOP_LEVEL entity
+-----------------------------------------------------
+
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
@@ -61,7 +70,8 @@ BEGIN
 		pushbutton_tb <= '1';
 		WAIT FOR 20ns;
 		pushbutton_tb <= '0';
-		WAIT FOR 10000ms;
+		WAIT until led_0_tb = '1';
+		report "Simulation Finished." severity FAILURE;
 
 	END PROCESS;
 
