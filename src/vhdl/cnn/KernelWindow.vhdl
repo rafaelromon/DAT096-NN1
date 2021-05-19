@@ -35,6 +35,7 @@ ENTITY KernelWindow IS
 		move    : IN  STD_LOGIC;                                                                                   -- move to next window on high
 		input   : IN  STD_LOGIC_VECTOR((INPUT_WIDTH * INPUT_HEIGHT * INPUT_CHANNELS * INTEGER_SIZE) - 1 DOWNTO 0); -- layer input
 		busy    : OUT STD_LOGIC;                                                                                   -- low when waiting for input
+		ready    : OUT STD_LOGIC;
 		done    : OUT STD_LOGIC;                                                                                   -- high when finished moving through entire input
 		output  : OUT STD_LOGIC_VECTOR((KERNEL_HEIGHT * KERNEL_WIDTH * KERNEL_DEPTH * INTEGER_SIZE) - 1 DOWNTO 0)  -- kernel input
 	);
@@ -42,7 +43,7 @@ END KernelWindow;
 
 ARCHITECTURE KernelWindow_arch OF KernelWindow IS
 
-	TYPE states IS (Idle, LoadRows, WaitRegs, OutputKernel, WaitNext);
+	TYPE states IS (Idle, LoadRows, WaitRegs, SliceKernel, OutputKernel, WaitNext);
 	SIGNAL state_machine : states := Idle;
 
 	-----
@@ -110,6 +111,7 @@ BEGIN
 		IF reset_p = '1' THEN
 			done          <= '0';
 			busy          <= '0';
+			ready         <= '0';
 			output_signal <= (OTHERS => '0');
 
 		ELSIF RISING_EDGE(clk) THEN
@@ -147,26 +149,33 @@ BEGIN
 					state_machine <= WaitRegs;
 
 				WHEN WaitRegs => -- waits registers on line buffers to update
-					state_machine <= OutputKernel;
+					state_machine <= SliceKernel;
 
-				WHEN OutputKernel => -- slices line buffers to generate kernel window
-					busy          <= '1';
-					state_machine <= WaitNext;
-
+				WHEN SliceKernel =>  -- slices line buffers to generate kernel window
 					FOR row IN 0 TO KERNEL_HEIGHT - 1 LOOP
 						output_signal((KERNEL_WIDTH * KERNEL_DEPTH * (KERNEL_HEIGHT - row) * INTEGER_SIZE) - 1 DOWNTO KERNEL_WIDTH * KERNEL_DEPTH * (KERNEL_HEIGHT - (row + 1)) * INTEGER_SIZE) <= line_out_array(row)(base_column * INTEGER_SIZE - 1 DOWNTO (base_column - KERNEL_WIDTH * KERNEL_DEPTH) * INTEGER_SIZE);
 					END LOOP;
 
-				WHEN WaitNext => -- waits to be told to move to next window
+					state_machine <= OutputKernel;
+
+				WHEN OutputKernel =>
 					busy <= '0';
+					ready <= '1';
+
+					IF move = '0' THEN
+						state_machine <= WaitNext;
+					END IF;
+
+				WHEN WaitNext => -- waits to be told to move to next window
 
 					IF move = '1' THEN
 						busy <= '1';
+						ready <= '0';
 
 						-- checks to see if we can move another column
 						IF base_column - (KERNEL_WIDTH * KERNEL_DEPTH + STRIDE) >= 0 THEN
 							base_column := base_column - STRIDE;
-							state_machine <= OutputKernel;
+							state_machine <= SliceKernel;
 
 						ELSE
 							-- checks to see if we can move another row

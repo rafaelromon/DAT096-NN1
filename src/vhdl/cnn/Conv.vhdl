@@ -40,7 +40,7 @@ END Conv;
 
 ARCHITECTURE Conv_arch OF Conv IS
 
-	TYPE states IS (Idle, WaitWindow, WaitNeuron, Finished);
+	TYPE states IS (Idle, Working, Result, Finished);
 	SIGNAL state_machine : states := Idle;
 
 	-----
@@ -48,7 +48,6 @@ ARCHITECTURE Conv_arch OF Conv IS
 	-----
 
 	SIGNAL output_signal : STD_LOGIC_VECTOR(((INPUT_WIDTH * INPUT_HEIGHT * IO_SIZE)/STRIDE) - 1 DOWNTO 0);
-	SIGNAL output_enable : STD_LOGIC := '0';
 
 	COMPONENT Reg
 		GENERIC
@@ -73,6 +72,7 @@ ARCHITECTURE Conv_arch OF Conv IS
 	SIGNAL window_move   : STD_LOGIC;
 	SIGNAL window_output : STD_LOGIC_VECTOR(KERNEL_HEIGHT * KERNEL_WIDTH * KERNEL_DEPTH * IO_SIZE - 1 DOWNTO 0);
 	SIGNAL window_busy   : STD_LOGIC;
+	SIGNAL window_ready  : STD_LOGIC;
 	SIGNAL window_done   : STD_LOGIC;
 
 	COMPONENT KernelWindow
@@ -96,6 +96,7 @@ ARCHITECTURE Conv_arch OF Conv IS
 			move    : IN  STD_LOGIC;
 			input   : IN  STD_LOGIC_VECTOR((INPUT_WIDTH * INPUT_HEIGHT * INPUT_CHANNELS * INTEGER_SIZE) - 1 DOWNTO 0);
 			busy    : OUT STD_LOGIC;
+			ready   : OUT STD_LOGIC;
 			done    : OUT STD_LOGIC;
 			output  : OUT STD_LOGIC_VECTOR((KERNEL_HEIGHT * KERNEL_WIDTH * KERNEL_DEPTH * INTEGER_SIZE) - 1 DOWNTO 0)
 		);
@@ -144,7 +145,7 @@ BEGIN
 	(
 		clk     => clk,
 		reset_p => reset_p,
-		enable  => output_enable,
+		enable  => window_done,
 		input   => output_signal,
 		output  => output
 	);
@@ -167,9 +168,10 @@ BEGIN
 	clk     => clk,
 	reset_p => reset_p,
 	start   => window_start,
-	move    => window_move,
+	move    => neuron_done,
 	input   => input,
 	busy    => window_busy,
+	ready   => window_ready,
 	done    => window_done,
 	output  => window_output
 	);
@@ -186,7 +188,7 @@ BEGIN
 	MAP (
 	clk           => clk,
 	reset_p       => reset_p,
-	start         => neuron_start,
+	start         => window_ready,
 	input         => window_output,
 	filter_values => filter_values,
 	bias          => bias,
@@ -202,7 +204,6 @@ BEGIN
 			busy          <= '0';
 			done          <= '0';
 			window_start  <= '0';
-			output_enable <= '1';
 			output_signal <= (OTHERS => '0');
 
 		ELSIF RISING_EDGE(clk) THEN
@@ -212,33 +213,27 @@ BEGIN
 					IF start = '1' THEN
 						output_index := (INPUT_WIDTH * INPUT_HEIGHT)/STRIDE;
 						window_start  <= '1';
-						output_enable <= '0';
 						busy          <= '1';
 						done          <= '0';
-						state_machine <= WaitWindow;
+						state_machine <= Working;
 					END IF;
 
-				WHEN WaitWindow =>
-					window_start <= '0';
-					window_move  <= '0';
-
-					IF window_done = '1' THEN
-						output_enable <= '1';
-						state_machine <= Finished;
-					ELSIF window_busy = '0' AND window_start = '0' AND window_move = '0' THEN
-						neuron_start  <= '1';
-						state_machine <= WaitNeuron;
-					END IF;
-
-				WHEN WaitNeuron =>
-					neuron_start <= '0';
+				WHEN Working =>
+					window_start  <= '0';
 
 					IF neuron_done = '1' THEN
 						output_signal((IO_SIZE * output_index) - 1 DOWNTO IO_SIZE * (output_index - 1)) <= neuron_output;
 						output_index := output_index - 1;
-						window_move   <= '1';
-						state_machine <= WaitWindow;
+						state_machine <= Result;
+					END IF;
 
+				WHEN Result =>
+					IF window_done = '1' THEN
+						state_machine <= Finished;
+					END IF;
+
+					IF neuron_done = '0' THEN
+						state_machine <= Working;
 					END IF;
 
 				WHEN Finished =>
