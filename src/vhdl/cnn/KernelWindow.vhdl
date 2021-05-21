@@ -134,9 +134,8 @@ BEGIN
 
 							IF (base_row - row) > INPUT_HEIGHT + ZERO_PADDING OR (base_row - row) = ZERO_PADDING THEN
 								line_in_array(row) <= (OTHERS => '0');
-							ELSE -- TODO fix ZERO_PADDING
-								line_in_array(row)(INTEGER_SIZE * (2 * ZERO_PADDING + INPUT_WIDTH) - 1 DOWNTO INTEGER_SIZE * (ZERO_PADDING + INPUT_WIDTH)) <= (OTHERS => '0');
-								-- line_in_array(row)(INTEGER_SIZE*(ZERO_PADDING+INPUT_WIDTH) - 1 DOWNTO INTEGER_SIZE*ZERO_PADDING) <= (OTHERS => '1');
+							ELSE
+								line_in_array(row)(INTEGER_SIZE * (2 * ZERO_PADDING + INPUT_WIDTH) - 1 DOWNTO INTEGER_SIZE * (ZERO_PADDING + INPUT_WIDTH)) <= (OTHERS => '0');					
 								line_in_array(row)(INTEGER_SIZE * (ZERO_PADDING + INPUT_WIDTH) - 1 DOWNTO INTEGER_SIZE * ZERO_PADDING) <= input((INTEGER_SIZE * INPUT_WIDTH * (base_row - row - ZERO_PADDING)) - 1 DOWNTO (INTEGER_SIZE * INPUT_WIDTH * (base_row - row - 1 - ZERO_PADDING)));
 								line_in_array(row)(INTEGER_SIZE * ZERO_PADDING - 1 DOWNTO 0)                                           <= (OTHERS => '0');
 							END IF;
