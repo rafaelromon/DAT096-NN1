@@ -99,46 +99,42 @@ BEGIN
 		scale_tb         <= "00000000000000000000000000000001";
 		start_tb         <= '1';
 		WAIT FOR 20ns;
-			ASSERT ( output_tb = "10001110" )
-			REPORT "Wrong value"
+		ASSERT (output_tb = "10001110")
+		REPORT "Wrong value"
 			SEVERITY WARNING;
 		WAIT FOR 20ns;
 		start_tb <= '0';
-	WAIT until done_tb = '1';
-	WAIT FOR 20ns;
-    report "Simulation Finished." severity FAILURE;
+		WAIT UNTIL done_tb = '1';
+		WAIT FOR 20ns;
+		REPORT "Simulation Finished." SEVERITY FAILURE;
 
 	END PROCESS;
 
--- input vector
---    '10000111'
---    '10001000'
---    '11011101'
---    '01111101'
---    '01100101'
---    '10101100'
---    '10111110'
---    '10000110'
---    '01011010'
+	-- input vector
+	--    '10000111'
+	--    '10001000'
+	--    '11011101'
+	--    '01111101'
+	--    '01100101'
+	--    '10101100'
+	--    '10111110'
+	--    '10000110'
+	--    '01011010'
 
--- kernel vector
---    '00100111'
---    '10010111'
---    '01000100'
---    '00001100'
---    '11000010'
---    '00111111'
---    '01110010'
---    '10110001'
---    '01011100'
+	-- kernel vector
+	--    '00100111'
+	--    '10010111'
+	--    '01000100'
+	--    '00001100'
+	--    '11000010'
+	--    '00111111'
+	--    '01110010'
+	--    '10110001'
+	--    '01011100'
 
--- bias
--- 	  '00000000000000000000000010111101'
+	-- bias
+	-- 	  '00000000000000000000000010111101'
 
--- output vector
--- 	  '00000000000000011110111010001110'
-
-
-
-
+	-- output vector
+	-- 	  '00000000000000011110111010001110'
 END Neuron_tb_arch;

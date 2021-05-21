@@ -69,7 +69,6 @@ ARCHITECTURE Conv_arch OF Conv IS
 	-----
 
 	SIGNAL window_start  : STD_LOGIC;
-	SIGNAL window_move   : STD_LOGIC;
 	SIGNAL window_output : STD_LOGIC_VECTOR(KERNEL_HEIGHT * KERNEL_WIDTH * KERNEL_DEPTH * IO_SIZE - 1 DOWNTO 0);
 	SIGNAL window_busy   : STD_LOGIC;
 	SIGNAL window_ready  : STD_LOGIC;
@@ -106,9 +105,8 @@ ARCHITECTURE Conv_arch OF Conv IS
 	-- Neuron component and signals
 	-----
 
-	SIGNAL neuron_start  : STD_LOGIC := '0';
-	SIGNAL neuron_busy   : STD_LOGIC := '0';
-	SIGNAL neuron_done   : STD_LOGIC := '0';
+	SIGNAL neuron_busy   : STD_LOGIC;
+	SIGNAL neuron_done   : STD_LOGIC;
 	SIGNAL neuron_output : STD_LOGIC_VECTOR(IO_SIZE - 1 DOWNTO 0);
 
 	COMPONENT Neuron
@@ -219,7 +217,7 @@ BEGIN
 					END IF;
 
 				WHEN Working =>
-					window_start  <= '0';
+					window_start <= '0';
 
 					IF neuron_done = '1' THEN
 						output_signal((IO_SIZE * output_index) - 1 DOWNTO IO_SIZE * (output_index - 1)) <= neuron_output;
