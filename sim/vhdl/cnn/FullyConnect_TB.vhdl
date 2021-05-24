@@ -35,6 +35,7 @@ ARCHITECTURE FullyConnect_TB_arch OF FullyConnect_TB IS
 	SIGNAL input_tb         : STD_LOGIC_VECTOR((INPUT_NUM * IO_SIZE) - 1 DOWNTO 0);
 	SIGNAL weight_values_tb : STD_LOGIC_VECTOR((INPUT_NUM * NEURON_NUM * IO_SIZE) - 1 DOWNTO 0);
 	SIGNAL bias_values_tb   : STD_LOGIC_VECTOR(NEURON_NUM * INTERNAL_SIZE - 1 DOWNTO 0);
+	SIGNAL scale_values_tb  : STD_LOGIC_VECTOR(NEURON_NUM * INTERNAL_SIZE - 1 DOWNTO 0);
 	SIGNAL busy_tb          : STD_LOGIC;
 	SIGNAL done_tb          : STD_LOGIC;
 	SIGNAL output_tb        : STD_LOGIC_VECTOR(NEURON_NUM * IO_SIZE - 1 DOWNTO 0);
@@ -55,6 +56,7 @@ ARCHITECTURE FullyConnect_TB_arch OF FullyConnect_TB IS
 			input         : IN  STD_LOGIC_VECTOR((INPUT_NUM * IO_SIZE) - 1 DOWNTO 0);
 			weight_values : IN  STD_LOGIC_VECTOR((INPUT_NUM * NEURON_NUM * IO_SIZE) - 1 DOWNTO 0);
 			bias_values   : IN  STD_LOGIC_VECTOR(NEURON_NUM * INTERNAL_SIZE - 1 DOWNTO 0);
+			scale_values  : IN  STD_LOGIC_VECTOR(NEURON_NUM * INTERNAL_SIZE - 1 DOWNTO 0);
 			busy          : OUT STD_LOGIC;
 			done          : OUT STD_LOGIC;
 			output        : OUT STD_LOGIC_VECTOR(NEURON_NUM * IO_SIZE - 1 DOWNTO 0)
@@ -79,6 +81,7 @@ BEGIN
 		input         => input_tb,
 		weight_values => weight_values_tb,
 		bias_values   => bias_values_tb,
+		scale_values  => scale_values_tb,
 		busy          => busy_tb,
 		done          => done_tb,
 		output        => output_tb
@@ -101,6 +104,7 @@ BEGIN
 		input_tb         <= x"010203040506070809";
 		weight_values_tb <= x"020202020202020202";
 		bias_values_tb   <= x"00000001";
+		scale_values_tb   <= x"00000001";
 
 		WAIT UNTIL done_tb = '1';
 		ASSERT output_tb = x"5b"

@@ -35,6 +35,7 @@ ENTITY FullyConnect IS
 		input         : IN  STD_LOGIC_VECTOR((INPUT_NUM * IO_SIZE) - 1 DOWNTO 0);
 		weight_values : IN  STD_LOGIC_VECTOR((INPUT_NUM * NEURON_NUM * IO_SIZE) - 1 DOWNTO 0);
 		bias_values   : IN  STD_LOGIC_VECTOR(NEURON_NUM * INTERNAL_SIZE - 1 DOWNTO 0);
+		scale_values  : IN  STD_LOGIC_VECTOR(NEURON_NUM * INTERNAL_SIZE - 1 DOWNTO 0);
 		busy          : OUT STD_LOGIC;
 		done          : OUT STD_LOGIC;
 		output        : OUT STD_LOGIC_VECTOR(NEURON_NUM * IO_SIZE - 1 DOWNTO 0)
@@ -55,6 +56,7 @@ ARCHITECTURE FullyConnect_arch OF FullyConnect IS
 
 	SIGNAL weight_array : FILTER_ARRAY;
 	SIGNAL bias_array   : INTERNAL_ARRAY;
+	SIGNAL scale_array  : INTERNAL_ARRAY;
 
 	SIGNAL neuron_start        : STD_LOGIC;
 	SIGNAL neuron_busy_vector  : STD_LOGIC_VECTOR(NEURON_NUM - 1 DOWNTO 0);
@@ -112,6 +114,7 @@ BEGIN
 	Neuron_operation : FOR i IN 0 TO NEURON_NUM - 1 GENERATE
 		weight_array(i) <= weight_values(((i + 1) * IO_SIZE * INPUT_NUM - 1) DOWNTO (i * IO_SIZE * INPUT_NUM));
 		bias_array(i)   <= bias_values(((i + 1) * INTERNAL_SIZE - 1) DOWNTO (i * INTERNAL_SIZE));
+		scale_array(i)   <= scale_values(((i + 1) * INTERNAL_SIZE - 1) DOWNTO (i * INTERNAL_SIZE));
 
 		neuron_comp : Neuron
 		GENERIC
@@ -130,7 +133,7 @@ BEGIN
 			input         => input,
 			filter_values => weight_array(i),
 			bias          => bias_array(i),
-			scale         => x"FFFFFFFF",
+			scale         => scale_array(i),
 			busy          => neuron_busy_vector(i),
 			done          => neuron_done_vector(i),
 			output        => neuron_output_array(i)
@@ -158,6 +161,7 @@ BEGIN
 			busy          <= '0';
 			done          <= '0';
 			neuron_start  <= '0';
+			output_enable <= '0';
 			output_signal <= (OTHERS => '0');
 
 		ELSIF RISING_EDGE(clk) THEN

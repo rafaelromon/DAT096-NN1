@@ -41,13 +41,11 @@ ARCHITECTURE CNN_arch OF CNN IS
 	-- DepthWise and PointWise Conv components and signals
 	-----
 
-	SIGNAL dw_start     : STD_LOGIC;
-	SIGNAL dw_done      : STD_LOGIC;                                                           -- same as pw_start
-	SIGNAL dw_output    : STD_LOGIC_VECTOR(INPUT_WIDTH * INPUT_HEIGHT * IO_SIZE - 1 DOWNTO 0); -- same as pw_input
-	SIGNAL pw_done      : STD_LOGIC;                                                           -- same as dense_start
-	SIGNAL pw_output    : STD_LOGIC_VECTOR(INPUT_WIDTH * INPUT_HEIGHT * IO_SIZE - 1 DOWNTO 0); -- same as dense_input
-	SIGNAL dense_done   : STD_LOGIC;
-	SIGNAL dense_output : STD_LOGIC_VECTOR(IO_SIZE - 1 DOWNTO 0);
+	SIGNAL dw_start  : STD_LOGIC;
+	SIGNAL dw_done   : STD_LOGIC;                                                           -- same as pw_start
+	SIGNAL dw_output : STD_LOGIC_VECTOR(INPUT_WIDTH * INPUT_HEIGHT * IO_SIZE - 1 DOWNTO 0); -- same as pw_input
+	SIGNAL pw_done   : STD_LOGIC;                                                           -- same as dense_start
+	SIGNAL pw_output : STD_LOGIC_VECTOR(INPUT_WIDTH * INPUT_HEIGHT * IO_SIZE - 1 DOWNTO 0); -- same as dense_input
 
 	COMPONENT Conv
 		GENERIC
@@ -78,6 +76,35 @@ ARCHITECTURE CNN_arch OF CNN IS
 		);
 	END COMPONENT Conv;
 
+	-----
+	-- FullyConnect components and signals
+	-----
+
+	SIGNAL dense_done   : STD_LOGIC; -- same as pw_input
+	SIGNAL dense_output : STD_LOGIC_VECTOR(IO_SIZE - 1 DOWNTO 0);
+
+	COMPONENT FullyConnect
+		GENERIC
+		(
+			INPUT_NUM     : INTEGER := 9;
+			NEURON_NUM    : INTEGER := 1;
+			IO_SIZE       : INTEGER := 8;
+			INTERNAL_SIZE : INTEGER := 32
+		);
+		PORT
+		(
+			clk           : IN  STD_LOGIC;
+			reset_p       : IN  STD_LOGIC;
+			start         : IN  STD_LOGIC;
+			input         : IN  STD_LOGIC_VECTOR((INPUT_NUM * IO_SIZE) - 1 DOWNTO 0);
+			weight_values : IN  STD_LOGIC_VECTOR((INPUT_NUM * NEURON_NUM * IO_SIZE) - 1 DOWNTO 0);
+			bias_values   : IN  STD_LOGIC_VECTOR(NEURON_NUM * INTERNAL_SIZE - 1 DOWNTO 0);
+			scale_values  : IN  STD_LOGIC_VECTOR(NEURON_NUM * INTERNAL_SIZE - 1 DOWNTO 0);
+			busy          : OUT STD_LOGIC;
+			done          : OUT STD_LOGIC;
+			output        : OUT STD_LOGIC_VECTOR(NEURON_NUM * IO_SIZE - 1 DOWNTO 0)
+		);
+	END COMPONENT FullyConnect;
 	-----
 	-- Reg component and signals
 	-----
@@ -169,10 +196,30 @@ BEGIN
 	scale         => "00000000000000000000000000000001",
 	busy          => OPEN,
 	done          => pw_done,
-	--output        => OPEN
-	output => pw_output
+	output        => pw_output
 	);
 
+	Dense_comp : FullyConnect
+	GENERIC
+	MAP (
+	INPUT_NUM     => INPUT_WIDTH * INPUT_HEIGHT,
+	NEURON_NUM    => 1,
+	IO_SIZE       => IO_SIZE,
+	INTERNAL_SIZE => INTERNAL_SIZE
+	)
+	PORT
+	MAP (
+	clk           => clk,
+	reset_p       => reset_p,
+	start         => pw_done,
+	input         => pw_output,
+	weight_values => x"010101010101010101",
+	bias_values   => x"01000001",
+	scale_values  => x"00000001",
+	busy          => OPEN,
+	done          => dense_done,
+	output        => dense_output
+	);
 	PROCESS (clk, reset_p)
 	BEGIN
 		IF reset_p = '1' THEN
@@ -188,19 +235,19 @@ BEGIN
 						busy          <= '1';
 						done          <= '0';
 						output_enable <= '0';
-						dw_start     <= '1';
+						dw_start      <= '1';
 						state_machine <= Layers;
 					END IF;
 
 				WHEN Layers =>
-                    dw_start     <= '0';
-                    
-					IF pw_done = '1' THEN
+					dw_start <= '0';
+
+					IF dense_done = '1' THEN
 						state_machine <= Dequantize;
 					END IF;
 
 				WHEN Dequantize =>
-					output_signal <= pw_output(IO_SIZE - 1 DOWNTO 0); -- skip for now as Dense is on Sebastians computer
+					output_signal <= dense_output;
 					output_enable <= '1';
 					state_machine <= Finished;
 
