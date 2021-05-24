@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wave_config>
+   <wave_state>
+   </wave_state>
+   <db_ref_list>
+      <db_ref path="CNN_tb_behav.wdb" id="1">
+         <top_modules>
+            <top_module name="CNN_tb" />
+         </top_modules>
+      </db_ref>
+   </db_ref_list>
+   <zoom_setting>
+      <ZoomStartTime time="6241939fs"></ZoomStartTime>
+      <ZoomEndTime time="6586400fs"></ZoomEndTime>
+      <Cursor1Time time="6513518fs"></Cursor1Time>
+   </zoom_setting>
+   <column_width_setting>
+      <NameColumnWidth column_width="202"></NameColumnWidth>
+      <ValueColumnWidth column_width="177"></ValueColumnWidth>
+   </column_width_setting>
+   <WVObjectSize size="1" />
+   <wvobject fp_name="group109" type="group">
+      <obj_property name="label">Dense</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/clk" type="logic">
+         <obj_property name="ElementShortName">clk</obj_property>
+         <obj_property name="ObjectShortName">clk</obj_property>
+      </wvobject>
+      <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/reset_p" type="logic">
+         <obj_property name="ElementShortName">reset_p</obj_property>
+         <obj_property name="ObjectShortName">reset_p</obj_property>
+      </wvobject>
+      <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/start" type="logic">
+         <obj_property name="ElementShortName">start</obj_property>
+         <obj_property name="ObjectShortName">start</obj_property>
+      </wvobject>
+      <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/input" type="array">
+         <obj_property name="ElementShortName">input[71:0]</obj_property>
+         <obj_property name="ObjectShortName">input[71:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/weight_values" type="array">
+         <obj_property name="ElementShortName">weight_values[71:0]</obj_property>
+         <obj_property name="ObjectShortName">weight_values[71:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/bias_values" type="array">
+         <obj_property name="ElementShortName">bias_values[31:0]</obj_property>
+         <obj_property name="ObjectShortName">bias_values[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/scale_values" type="array">
+         <obj_property name="ElementShortName">scale_values[31:0]</obj_property>
+         <obj_property name="ObjectShortName">scale_values[31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/busy" type="logic">
+         <obj_property name="ElementShortName">busy</obj_property>
+         <obj_property name="ObjectShortName">busy</obj_property>
+      </wvobject>
+      <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/done" type="logic">
+         <obj_property name="ElementShortName">done</obj_property>
+         <obj_property name="ObjectShortName">done</obj_property>
+      </wvobject>
+      <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/output" type="array">
+         <obj_property name="ElementShortName">output[7:0]</obj_property>
+         <obj_property name="ObjectShortName">output[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/state_machine" type="other">
+         <obj_property name="ElementShortName">state_machine</obj_property>
+         <obj_property name="ObjectShortName">state_machine</obj_property>
+      </wvobject>
+      <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/weight_array" type="array">
+         <obj_property name="ElementShortName">weight_array[0:0][71:0]</obj_property>
+         <obj_property name="ObjectShortName">weight_array[0:0][71:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/bias_array" type="array">
+         <obj_property name="ElementShortName">bias_array[0:0][31:0]</obj_property>
+         <obj_property name="ObjectShortName">bias_array[0:0][31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/scale_array" type="array">
+         <obj_property name="ElementShortName">scale_array[0:0][31:0]</obj_property>
+         <obj_property name="ObjectShortName">scale_array[0:0][31:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/neuron_start" type="logic">
+         <obj_property name="ElementShortName">neuron_start</obj_property>
+         <obj_property name="ObjectShortName">neuron_start</obj_property>
+      </wvobject>
+      <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/neuron_busy_vector" type="array">
+         <obj_property name="ElementShortName">neuron_busy_vector[0:0]</obj_property>
+         <obj_property name="ObjectShortName">neuron_busy_vector[0:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/neuron_done_vector" type="array">
+         <obj_property name="ElementShortName">neuron_done_vector[0:0]</obj_property>
+         <obj_property name="ObjectShortName">neuron_done_vector[0:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/neuron_output_array" type="array">
+         <obj_property name="ElementShortName">neuron_output_array[0:0][7:0]</obj_property>
+         <obj_property name="ObjectShortName">neuron_output_array[0:0][7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/output_enable" type="logic">
+         <obj_property name="ElementShortName">output_enable</obj_property>
+         <obj_property name="ObjectShortName">output_enable</obj_property>
+      </wvobject>
+      <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/output_signal" type="array">
+         <obj_property name="ElementShortName">output_signal[7:0]</obj_property>
+         <obj_property name="ObjectShortName">output_signal[7:0]</obj_property>
+      </wvobject>
+      <wvobject fp_name="group119" type="group">
+         <obj_property name="label">output reg</obj_property>
+         <obj_property name="DisplayName">label</obj_property>
+         <obj_property name="isExpanded"></obj_property>
+         <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/output_reg/clk" type="logic">
+            <obj_property name="ElementShortName">clk</obj_property>
+            <obj_property name="ObjectShortName">clk</obj_property>
+         </wvobject>
+         <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/output_reg/reset_p" type="logic">
+            <obj_property name="ElementShortName">reset_p</obj_property>
+            <obj_property name="ObjectShortName">reset_p</obj_property>
+         </wvobject>
+         <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/output_reg/enable" type="logic">
+            <obj_property name="ElementShortName">enable</obj_property>
+            <obj_property name="ObjectShortName">enable</obj_property>
+         </wvobject>
+         <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/output_reg/input" type="array">
+            <obj_property name="ElementShortName">input[7:0]</obj_property>
+            <obj_property name="ObjectShortName">input[7:0]</obj_property>
+         </wvobject>
+         <wvobject fp_name="/CNN_tb/CNN_comp/Dense_comp/output_reg/output" type="array">
+            <obj_property name="ElementShortName">output[7:0]</obj_property>
+            <obj_property name="ObjectShortName">output[7:0]</obj_property>
+         </wvobject>
+      </wvobject>
+   </wvobject>
+</wave_config>
