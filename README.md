@@ -98,9 +98,9 @@ Vivado version 2019.2 is advised for synthesis and implementation as some of the
    cd DAT096-NN1/
    ```
 3. Generate the project using the .tcl script
-  ```sh
-  source ./git_project.tcl
-  ```
+    ```sh
+    source ./git_project.tcl
+    ```
 
 <!-- USAGE EXAMPLES -->
 ## Usage
