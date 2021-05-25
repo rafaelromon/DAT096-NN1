@@ -69,7 +69,7 @@ BEGIN
 		WAIT FOR 20ns;
 		pushbutton_tb <= '1';
 		WAIT FOR 20ns;
-		pushbutton_tb <= '0';
+		pushbutton_tb <= '0';		
 		WAIT until led_0_tb = '1';
 		report "Simulation Finished." severity FAILURE;
 
