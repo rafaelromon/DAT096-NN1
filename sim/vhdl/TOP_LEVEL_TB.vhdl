@@ -1,3 +1,12 @@
+-----------------------------------------------------
+-- Title: DWConv_tb.vhdl
+-- Author: Rafael Romon/NN-1
+-- DAT096 - spring 2021
+-----------------------------------------------------
+-- Description:
+-- Testbench for the TOP_LEVEL entity
+-----------------------------------------------------
+
 LIBRARY ieee;
 USE ieee.std_logic_1164.ALL;
 USE ieee.numeric_std.ALL;
@@ -8,10 +17,6 @@ END TOP_LEVEL_TB;
 ARCHITECTURE TOP_LEVEL_TB_arch OF TOP_LEVEL_TB IS
 
 	COMPONENT TOP_LEVEL
-		GENERIC (
-			clk_freq : INTEGER := 100;
-			testbench : STD_LOGIC
-		);
 		PORT (
 			SYSCLK_P : IN STD_LOGIC;
 			SYSCLK_N : IN STD_LOGIC;
@@ -39,9 +44,6 @@ ARCHITECTURE TOP_LEVEL_TB_arch OF TOP_LEVEL_TB IS
 BEGIN
 
 	TOP_LEVEL_comp : TOP_LEVEL
-	GENERIC MAP(
-		testbench => '1'
-	)
 	PORT MAP
 	(
 		SYSCLK_P => clk_p_tb,
@@ -67,8 +69,9 @@ BEGIN
 		WAIT FOR 20ns;
 		pushbutton_tb <= '1';
 		WAIT FOR 20ns;
-		pushbutton_tb <= '0';
-		WAIT FOR 10000ms;
+		pushbutton_tb <= '0';		
+		WAIT until led_0_tb = '1';
+		report "Simulation Finished." severity FAILURE;
 
 	END PROCESS;
 
