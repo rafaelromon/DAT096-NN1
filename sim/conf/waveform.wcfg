@@ -11,14 +11,14 @@
    </db_ref_list>
    <zoom_setting>
       <ZoomStartTime time="0fs"></ZoomStartTime>
-      <ZoomEndTime time="422663fs"></ZoomEndTime>
-      <Cursor1Time time="6513518fs"></Cursor1Time>
+      <ZoomEndTime time="2291630001fs"></ZoomEndTime>
+      <Cursor1Time time="1842006392fs"></Cursor1Time>
    </zoom_setting>
    <column_width_setting>
       <NameColumnWidth column_width="202"></NameColumnWidth>
-      <ValueColumnWidth column_width="172"></ValueColumnWidth>
+      <ValueColumnWidth column_width="152"></ValueColumnWidth>
    </column_width_setting>
-   <WVObjectSize size="11" />
+   <WVObjectSize size="13" />
    <wvobject fp_name="/TOP_LEVEL_TB/clk_p_tb" type="logic">
       <obj_property name="ElementShortName">clk_p_tb</obj_property>
       <obj_property name="ObjectShortName">clk_p_tb</obj_property>
@@ -38,6 +38,10 @@
    <wvobject fp_name="/TOP_LEVEL_TB/uart_tx_tb" type="logic">
       <obj_property name="ElementShortName">uart_tx_tb</obj_property>
       <obj_property name="ObjectShortName">uart_tx_tb</obj_property>
+   </wvobject>
+   <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/uart_comp/baud_pulse" type="logic">
+      <obj_property name="ElementShortName">baud_pulse</obj_property>
+      <obj_property name="ObjectShortName">baud_pulse</obj_property>
    </wvobject>
    <wvobject fp_name="/TOP_LEVEL_TB/uart_rts_tb" type="logic">
       <obj_property name="ElementShortName">uart_rts_tb</obj_property>
@@ -62,11 +66,6 @@
    <wvobject fp_name="group65" type="group">
       <obj_property name="label">internal</obj_property>
       <obj_property name="DisplayName">label</obj_property>
-      <obj_property name="isExpanded"></obj_property>
-      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/state_machine" type="other">
-         <obj_property name="ElementShortName">state_machine</obj_property>
-         <obj_property name="ObjectShortName">state_machine</obj_property>
-      </wvobject>
       <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/clk" type="logic">
          <obj_property name="ElementShortName">clk</obj_property>
          <obj_property name="ObjectShortName">clk</obj_property>
@@ -79,41 +78,13 @@
          <obj_property name="ElementShortName">start</obj_property>
          <obj_property name="ObjectShortName">start</obj_property>
       </wvobject>
-      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/img_cont_start" type="logic">
-         <obj_property name="ElementShortName">img_cont_start</obj_property>
-         <obj_property name="ObjectShortName">img_cont_start</obj_property>
-      </wvobject>
-      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/img_cont_busy" type="logic">
-         <obj_property name="ElementShortName">img_cont_busy</obj_property>
-         <obj_property name="ObjectShortName">img_cont_busy</obj_property>
-      </wvobject>
       <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/img_cont_done" type="logic">
          <obj_property name="ElementShortName">img_cont_done</obj_property>
          <obj_property name="ObjectShortName">img_cont_done</obj_property>
       </wvobject>
-      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/cnn_start" type="logic">
-         <obj_property name="ElementShortName">cnn_start</obj_property>
-         <obj_property name="ObjectShortName">cnn_start</obj_property>
-      </wvobject>
-      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/cnn_input" type="array">
-         <obj_property name="ElementShortName">cnn_input[71:0]</obj_property>
-         <obj_property name="ObjectShortName">cnn_input[71:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/cnn_busy" type="logic">
-         <obj_property name="ElementShortName">cnn_busy</obj_property>
-         <obj_property name="ObjectShortName">cnn_busy</obj_property>
-      </wvobject>
       <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/cnn_done" type="logic">
          <obj_property name="ElementShortName">cnn_done</obj_property>
          <obj_property name="ObjectShortName">cnn_done</obj_property>
-      </wvobject>
-      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/cnn_output" type="array">
-         <obj_property name="ElementShortName">cnn_output[7:0]</obj_property>
-         <obj_property name="ObjectShortName">cnn_output[7:0]</obj_property>
-      </wvobject>
-      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/uart_start" type="logic">
-         <obj_property name="ElementShortName">uart_start</obj_property>
-         <obj_property name="ObjectShortName">uart_start</obj_property>
       </wvobject>
       <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/uart_msg" type="array">
          <obj_property name="ElementShortName">uart_msg[7:0]</obj_property>
@@ -123,9 +94,18 @@
          <obj_property name="ElementShortName">uart_busy</obj_property>
          <obj_property name="ObjectShortName">uart_busy</obj_property>
       </wvobject>
-      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/uart_done" type="logic">
-         <obj_property name="ElementShortName">uart_done</obj_property>
-         <obj_property name="ObjectShortName">uart_done</obj_property>
+   </wvobject>
+   <wvobject fp_name="group190" type="group">
+      <obj_property name="label">uart</obj_property>
+      <obj_property name="DisplayName">label</obj_property>
+      <obj_property name="isExpanded"></obj_property>
+      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/uart_comp/tx_state" type="other">
+         <obj_property name="ElementShortName">tx_state</obj_property>
+         <obj_property name="ObjectShortName">tx_state</obj_property>
+      </wvobject>
+      <wvobject fp_name="/TOP_LEVEL_TB/TOP_LEVEL_comp/uart_comp/tx_data" type="array">
+         <obj_property name="ElementShortName">tx_data[7:0]</obj_property>
+         <obj_property name="ObjectShortName">tx_data[7:0]</obj_property>
       </wvobject>
    </wvobject>
 </wave_config>

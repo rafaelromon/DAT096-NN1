@@ -104,22 +104,36 @@ ARCHITECTURE TOP_LEVEL_arch OF TOP_LEVEL IS
 			output  : OUT STD_LOGIC_VECTOR(IO_SIZE - 1 DOWNTO 0)
 		);
 	END COMPONENT CNN;
-	SIGNAL uart_start : STD_LOGIC                    := '0';
-	SIGNAL uart_msg   : STD_LOGIC_VECTOR(7 DOWNTO 0) := (OTHERS => '0');
-	SIGNAL uart_busy  : STD_LOGIC;
-	SIGNAL uart_done  : STD_LOGIC;
+	SIGNAL uart_start  : STD_LOGIC                    := '0';
+	SIGNAL uart_msg    : STD_LOGIC_VECTOR(7 DOWNTO 0) := (OTHERS => '0');
+	SIGNAL uart_reset  : STD_LOGIC := '1';
+	SIGNAL uart_busy   : STD_LOGIC;	
 
-	COMPONENT UART_TX IS
+	COMPONENT uart
+		GENERIC
+		(
+			clk_freq  : INTEGER := 50_000_000;
+			baud_rate : INTEGER := 19_200;
+			os_rate   : INTEGER := 16;
+			d_width   : INTEGER := 8;
+			parity    : INTEGER := 1;
+			parity_eo : STD_LOGIC
+		);
 		PORT
 		(
-			clk       : IN  STD_LOGIC;
-			TX_DV     : IN  STD_LOGIC;
-			TX_Byte   : IN  STD_LOGIC_VECTOR(7 DOWNTO 0);
-			TX_Active : OUT STD_LOGIC;
-			TX_Serial : OUT STD_LOGIC;
-			TX_Done   : OUT STD_LOGIC
+			clk      : IN  STD_LOGIC;
+			reset_n  : IN  STD_LOGIC;
+			tx_ena   : IN  STD_LOGIC;
+			tx_data  : IN  STD_LOGIC_VECTOR(d_width - 1 DOWNTO 0);
+			rx       : IN  STD_LOGIC;
+			rx_busy  : OUT STD_LOGIC;
+			rx_error : OUT STD_LOGIC;
+			rx_data  : OUT STD_LOGIC_VECTOR(d_width - 1 DOWNTO 0);
+			tx_busy  : OUT STD_LOGIC;
+			tx       : OUT STD_LOGIC
 		);
-	END COMPONENT UART_TX;
+	END COMPONENT uart;
+
 BEGIN
 
 	-- LVDS input to internal single
@@ -167,18 +181,29 @@ BEGIN
 	output  => cnn_output
 	);
 
-	UART_TX_comp : UART_TX
+	uart_comp : uart
+	GENERIC
+	MAP (
+	clk_freq  => 100_000_000,
+	baud_rate => 9600,
+	os_rate   => 16,
+	d_width   => 8,
+	parity    => 0,
+	parity_eo => '0'
+	)
 	PORT
-	MAP
-	(
-	clk       => clk,
-	TX_DV     => uart_start,
-	TX_Byte   => uart_msg,
-	TX_Active => uart_busy,
-	TX_Serial => USB_UART_TX,
-	TX_Done   => uart_done
+	MAP (
+	clk      => clk,
+	reset_n  => uart_reset,
+	tx_ena   => uart_start,
+	tx_data  => uart_msg,
+	rx => '1', -- always high so no message
+	rx_busy  => OPEN,
+	rx_error => OPEN,
+	rx_data  => OPEN,
+	tx_busy  => uart_busy,
+	tx       => USB_UART_TX
 	);
-
 	LED_indicator_process : PROCESS (clk)
 	BEGIN
 		IF CPU_RESET = '1' THEN
@@ -228,12 +253,14 @@ BEGIN
 		IF CPU_RESET = '1' THEN
 			start_flag := '0';
 			reset_p       <= '1';
+			uart_reset    <= '0';
 			state_machine <= Idle;
 
 		ELSIF RISING_EDGE(clk) THEN
 			CASE state_machine IS
 				WHEN Idle =>
 					reset_p <= '0';
+					uart_reset    <= '1';
 
 					IF GPIO_SW_N = '1' THEN
 						start_flag := '1';
@@ -262,10 +289,10 @@ BEGIN
 					msg_count := msg_count - 1;
 					state_machine <= WaitUART;
 
-				WHEN WaitUART =>
-					uart_start <= '0';
-
-					IF uart_done = '1' THEN
+				WHEN WaitUART =>			
+				    IF uart_busy = '1' and uart_start = '1' THEN
+				    	uart_start <= '0';
+					ELSIF uart_busy = '0' and uart_start = '0' THEN
 						IF msg_count = 0 THEN
 							state_machine <= Idle;
 
