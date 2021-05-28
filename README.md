@@ -126,5 +126,5 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[license-shield]: https://img.shields.io/github/license/rafaelromon/repo.svg?style=for-the-badge
+[license-shield]: https://img.shields.io/github/license/rafaelromon/DAT096-NN1.svg?style=for-the-badge
 [license-url]: https://github.com/rafaelromon/DAT096-NN1/blob/main/LICENSE
